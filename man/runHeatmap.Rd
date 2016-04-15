@@ -18,7 +18,7 @@ runHeatmap(data, title = "Title", dend = "both", names = FALSE,
 
 \item{names, }{a flag to show the rownames}
 
-\item{clustering_method}{= c('complete', 'ward', 'single', 'average',
+\item{clustering_method}{= c('complete', 'ward.D2', 'single', 'average',
 'mcquitty', 'median' , 'centroid')}
 
 \item{distance_method}{= c('cor','euclidean', 'maximum', 'manhattan',

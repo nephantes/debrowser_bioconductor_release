@@ -5,7 +5,10 @@
 \title{getMainPanel, main panel for volcano, scatter and maplot.  
 Barplot and box plots are in this page too}
 \usage{
-getMainPanel()
+getMainPanel(randstr = NULL)
+}
+\arguments{
+\item{randstr, }{random string for the plot containers}
 }
 \value{
 the panel for main plots;

@@ -13,7 +13,6 @@
 #' @return deseq2 results
 #'
 #' @export
-#' @import DESeq2
 #'
 #' @examples
 #'     x <- runDESeq(data<-NULL, columns<-c())
@@ -22,6 +21,7 @@
 runDESeq <- function(data, columns, conds,
     fitType = c("parametric", "local", "mean"),
     non_expressed_cutoff = 10) {
+        data <- data[, columns]
         if ( !is.null(data) ){
             data[, columns] <- apply(data[, columns], 2,
                 function(x) as.integer(x))

@@ -1,29 +1,26 @@
 #' Prepares initial samples to fill condition boxes.  
 #' it reads the sample names from the data and splits into two. 
 #'
-#' @param dat, data that have the sample names in the header
+#' @param cnames, sample names in the header of a dataset
 #' @param part, c(1,2). 1=first half and 2= second half
 #' @return sample names.
 #'
 #' @examples
-#'     x<-getSampleNames(mtcars, 1)
-#'     x<-getSampleNames(mtcars, 2)
+#'     x<-getSampleNames()
 #' @export
 #'
 
-getSampleNames <- function(dat, part) {
-    if (is.null(dat)) {
-        return(NULL)
-    }
-    cnames <- colnames(dat)
-    start <- 1
-    n <- length(cnames)
-    end <- floor(n / 2) + 1
-    if (part == 2) {
-        start <- floor(n / 2) + 2
-        end <- n
-    }
-    cn <- cnames[start:end]
+getSampleNames <- function(cnames = NULL, part = 1) {
+    if (is.null(cnames)) return(NULL)
+      
+    startpos <- 1
+    endpos <- length(cnames)
+    if (part == 1)
+        endpos <- floor(endpos / 2) 
+    else if (part == 0)
+        startpos <- floor(endpos / 2) + 1
+
+    cn <- cnames[startpos:endpos]
     m <- as.list(NULL)
     for (i in seq(cn)) {
         m[[i]] <- cn[i]

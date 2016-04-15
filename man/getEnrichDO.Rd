@@ -4,7 +4,7 @@
 \alias{getEnrichDO}
 \title{getEnrichDO}
 \usage{
-getEnrichDO(genelist, pvalueCutoff = 0.01)
+getEnrichDO(genelist = NULL, pvalueCutoff = 0.01)
 }
 \arguments{
 \item{genelist, }{gene list}
@@ -21,8 +21,6 @@ getEnrichDO
 \code{getEnrichDO}
 }
 \examples{
-    genelist<-getGeneList(c('OCLN', 'ABCC2'))
-    x <- getEnrichDO(genelist, NULL)
-
+    x <- getEnrichDO()
 }
 

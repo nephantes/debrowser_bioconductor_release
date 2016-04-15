@@ -4,12 +4,17 @@
 \alias{volcanoZoom}
 \title{Prepares volcano plot}
 \usage{
-volcanoZoom(dat = NULL, data_tooltip = NULL)
+volcanoZoom(dat = NULL, data_tooltip = NULL, domains = NULL,
+  colors = NULL)
 }
 \arguments{
 \item{dat, }{dataframe that has log2FoldChange and log10padj values}
 
 \item{data_tooltip, }{toolstip specific to this plot}
+
+\item{domains, }{the domains to be colored}
+
+\item{colors, }{colors for each domain}
 }
 \value{
 zoomed volcano plot

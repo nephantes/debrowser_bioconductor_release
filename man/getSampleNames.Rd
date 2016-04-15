@@ -5,10 +5,10 @@
 \title{Prepares initial samples to fill condition boxes.  
 it reads the sample names from the data and splits into two.}
 \usage{
-getSampleNames(dat, part)
+getSampleNames(cnames = NULL, part = 1)
 }
 \arguments{
-\item{dat, }{data that have the sample names in the header}
+\item{cnames, }{sample names in the header of a dataset}
 
 \item{part, }{c(1,2). 1=first half and 2= second half}
 }
@@ -20,7 +20,6 @@ Prepares initial samples to fill condition boxes.
 it reads the sample names from the data and splits into two.
 }
 \examples{
-    x<-getSampleNames(mtcars, 1)
-    x<-getSampleNames(mtcars, 2)
+    x<-getSampleNames()
 }
 

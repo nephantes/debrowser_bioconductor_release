@@ -15,13 +15,12 @@
 
 run_pca <- function(x=NULL, retx = TRUE,
                 center = TRUE, scale = TRUE) {
-    if ( !is.null(x) ){
+    if ( is.null(x) ) return (NULL)
         pca <- prcomp(t(x), retx = retx,
                 center = center, scale. = scale)
         variances <- pca$sdev ^ 2
         explained <- variances / sum(variances)
         return(list(PCs = pca$x, explained = explained))
-    }
 }
 
 #' Plot PCA results.
@@ -51,7 +50,6 @@ run_pca <- function(x=NULL, retx = TRUE,
 #'             factors = c("samples", "conditions"))
 #'
 #' @export
-#' @import ggplot2
 #'
 plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
     metadata = NULL, color = NULL, shape = NULL,
@@ -87,3 +85,39 @@ plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
             scale_y_discrete(labels = round_vals)
         p
 }
+
+#' getPCAexplained
+#' @param datasetInput, selected data
+#' @param cols, columns
+#' @param input, from usern)
+#' @return explained plot
+#' @examples
+#'     x <- getPCAexplained()
+#'
+#' @export
+#'
+
+getPCAexplained <- function(datasetInput = NULL, 
+    cols = NULL, input = NULL) {
+    if (is.null(datasetInput)) return(NULL)
+    a <- NULL
+    if (input$qcplot == "pca"){
+        if (!is.null(cols))
+            dataset <- datasetInput[, cols]
+        else
+            dataset <- datasetInput[,c(input$samples)]
+        pca_data <- run_pca(getNormalizedMatrix(dataset))
+        datexp <- data.frame(cbind(unlist(lapply(c(1:6), 
+            function(x){paste0("PC", x)})), 
+            round(pca_data$explained * 100, 2)))
+        colnames(datexp) <- c("PCs", "explained")
+        datexp$explained <- as.numeric( as.character(datexp$explained) )
+        a <- ggplot(datexp, aes(x = PCs, y = explained)) +
+            geom_bar(stat="identity") + ylab("% variance explained")
+        colourfield = NULL
+        if ("Legend" %in% colnames(datasetInput))
+            colourfield = 'Legend'
+    }
+    a
+}
+

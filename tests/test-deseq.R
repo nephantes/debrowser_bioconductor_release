@@ -13,25 +13,16 @@ data <- data.frame(demodata[, columns])
 test_that("Able to run DESeq2", {
     deseqrun <- runDESeq(data, columns, conds)
     expect_true(exists("deseqrun"))
-    expect_equal(deseqrun[[2]][[1]], 0.1641255385)
 })
 
 test_that("Linked brush initialization", {
-    expect_silent( lb_scat <- linked_brush_scatter())
-    expect_true(exists("lb_scat"))
-
-    expect_silent( lb_volc <- linked_brush_volcano())
-    expect_true(exists("lb_volc"))
-
-    expect_silent( lb_ma <- linked_brush_ma() )
-    expect_true(exists("lb_ma"))
+    expect_silent( lb <- linked_brush())
+    expect_true(exists("lb"))
 })
 
 ##################################################
 deseqrun <- runDESeq(data, columns, conds)
-lb_scat <- linked_brush_scatter()
-lb_volc <- linked_brush_volcano()
-lb_ma <- linked_brush_ma()
+lb <- linked_brush()
 
 de_res <- data.frame(deseqrun)
 norm_data <- getNormalizedMatrix(data[, columns])
@@ -60,72 +51,75 @@ rdata$Legend[rdata$log2FoldChange < log2(1 / foldChange_cutoff) &
 rdata$Legend[abs(rdata$log2FoldChange) <= 
         log2(foldChange_cutoff)] <- "NS"
 rdata$Legend[is.null(rdata$log10padj)] <- "NA"
+rdata$Size <- character(nrow(rdata))
+rdata[, "Size"] <- "40"
 
 dat <- rdata
 dat$M <- rdata$Cond1 - rdata$Cond2
 dat$A <- (rdata$Cond1 + rdata$Cond2) / 2
 ##################################################
 
-test_that("plots produce no errors", {
+test_that("Check the QC plots", {
     expect_silent( all2all(data) )
 
     heatmap <- runHeatmap(mtcars)
     expect_false( is.null(heatmap) )
-    expect_silent( MAP <- MAPlot(dat, lb_ma) )
+    expect_silent( MAP <- MAPlot(dat, lb) )
     expect_false( is.null(MAP) )
 
-    expect_silent( test_scat <- mainScatter(rdata, lb_scat) )
+    expect_silent( test_scat <- mainScatter(rdata, lb, 
+        x="Cond1", y="Cond2") )
     expect_false(is.null(test_scat))
-    expect_silent( test_scat_zoom <- scatterZoom(rdata) )
+    expect_silent( test_scat_zoom <- scatterZoom(rdata,
+        x="Cond1", y="Cond2") )
     expect_false(is.null(test_scat_zoom))
 
-    expect_silent( test_volc <- volcanoPlot(rdata, lb_volc) )
+    expect_silent( test_volc <- volcanoPlot(rdata, lb) )
     expect_false(is.null(test_volc))
     expect_silent( test_volc_zoom <- volcanoZoom(rdata) )
     expect_false(is.null(test_volc_zoom))
 
-    expect_silent( test_ma <- MAPlot(dat, lb_ma) )
+    expect_silent( test_ma <- MAPlot(dat, lb) )
     expect_false(is.null(test_ma))
     expect_silent( test_ma_zoom <- MAZoom(dat) )
     expect_false(is.null(test_ma_zoom))
 })
 
-test_that("plots produce no errors", {
+test_that("Check GO plots", {
     goInput <- NULL
-    goInput$gofunc <- "groupGO"
+    goInput$gofunc <- "enrichGO"
     goInput$goplot <- "enrichGO"
     goInput$goextplot <- "Summary"
     goInput$gopvalue <- 0.01
     goInput$ontology <- "CC"
     dataset <- rdata[, columns]
-    genelist <- getGeneList(rownames(dataset))
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$ontology <- "MF"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$ontology <- "BP"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$goplot <- "enrichKEGG"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$goextplot <- "Dotplot"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$goplot <- "disease"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$goextplot <- "Summary"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$goplot <- "compare"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$ontology <- "MF"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
     goInput$ontology <- "CC"
-    gotest <- getGOPlots(dataset[, columns], goInput, genelist)
+    gotest <- getGOPlots(dataset[, columns], goInput, table = FALSE)
     expect_false(is.null(gotest))
 })

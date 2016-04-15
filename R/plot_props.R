@@ -21,8 +21,8 @@
 #'     set_options(width = 400, height = 350)
 #'
 add_title_pos <- function(vis, ..., title = "Plot Title", 
-                        align = "left", angle = 0, dx = 0, dy = 0) {
-        add_axis(vis, "x", properties =
+    align = "left", angle = 0, dx = 0, dy = 0) {
+        add_axis(vis, "x", title_offset=(-1*dy + 10), properties =
             axis_props(labels = list(angle = angle, align = align,
                 fontSize = 10, dy = dx, dx = dy))) %>% 
             add_axis("x", orient = "top", ticks = 0, title = title,
@@ -46,12 +46,51 @@ getToolTipText <- function(dat=NULL){
     if (is.null(dat)) return(NULL)
 
     paste("<b>", dat$ID, "</b><br>",
-        x, "=", round(dat[, x], digits = 2), " ",
-        y, "=", round(dat[, y], digits = 2),
+        "x=", round(dat$x, digits = 2), " ",
+        "y=", round(dat$y, digits = 2),
         "<br>", "padj=", format.pval(dat[, "padj"]), " ",
         "-log10padj=", round(dat[, "log10padj"], digits = 2),
         "<br>", "log2FoldChange=", round(dat[, "log2FoldChange"],
             digits = 2), " ",
         "foldChange=", round(dat[, "foldChange"], digits = 2),
             "<br>", sep = " ")
+}
+
+#' Prepares the plots going to be shown when a gene hovered
+#' in the main plots 
+#'
+#' @param bardata, barplot data
+#' @param genename, gene name in the barplots
+#'
+#' @export
+#'
+#' @examples
+#'     getHoverPlots()
+#'
+getHoverPlots <- function(bardata=NULL, genename=NULL){
+    if (is.null(bardata)) return(NULL)
+    colnames(bardata) <- c("libs", "count", "conds")
+
+    ypos <- -5 * max(nchar(as.vector(bardata$libs)))
+    bardata$count <- as.numeric(as.character(bardata$count))
+
+    title3 <- paste(genename, " variation")
+    title4 <- paste(genename, " conditions")
+
+    vis3 <- bardata %>%
+        ggvis(x = ~libs, y = ~count,
+        fill = ~conds) %>%
+    group_by(conds) %>% layer_bars() %>%
+    add_title_pos(title = title3, angle = 310,
+                    dy = ypos, dx = 0) %>%
+    set_options(width = 400, height = 350)
+    vis3 %>% bind_shiny("plot3")
+
+    vis4 <- bardata %>%
+        ggvis(x = ~conds, y = ~count,
+            fill = ~conds) %>%
+        group_by(conds) %>% layer_boxplots() %>%
+        add_title_pos(title = title4, align = "middle") %>%
+            set_options(width = 400, height = 350)
+    vis4 %>% bind_shiny("plot4")
 }

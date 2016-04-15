@@ -1,36 +1,65 @@
 Package: debrowser
 Type: Package
-Title: Differential Expresion Analysis Browser
-Version: 0.99.0
-Date: 2016-01-31
-Author: Alper Kucukural <alper.kucukural@umassmed.edu>, Nicholas
-        Merowsky <nicholas.merowsky@umassmed.edu>, Manuel Garber
-        <manuel.garber@umassmed.edu>
+Title: Interactive Differential Expresion Analysis Browser
+Version: 1.0.0
+Date: 2016-04-13
+Author: Alper Kucukural <alper.kucukural@umassmed.edu>,
+        Nicholas Merowsky <nicholas.merowsky@umassmed.edu>,
+        Manuel Garber <manuel.garber@umassmed.edu>
 Maintainer: Alper Kucukural <alper.kucukural@umassmed.edu>
-Description: Bioinformatics platform containing interactive plots and
-        tables for differential gene and region expression studies.
-        Allows visualizing expression data much more deeply in an
-        interactive and faster way. By changing the parameters, user
-        can easily discover different parts of the data that like never
-        have been done before. Manually creating and looking these
-        plots takes time. With this system users can prepare plots
-        without writing any code. Differential expression, PCA and
-        clustering analysis are made on site and the results are shown
-        in various plots such as scatter, bar, box, volcano, ma plots
-        and Heatmaps.
-Depends: R (>= 3.3.0), shiny, ggvis
+Description: Bioinformatics platform containing interactive plots and tables
+    for differential gene and region expression studies. Allows visualizing
+    expression data much more deeply in an interactive and faster way. By
+    changing the parameters, user can easily discover different parts of the
+    data that like never have been done before. Manually creating and looking
+    these plots takes time. With this system users can prepare plots without
+    writing any code. Differential expression, PCA and clustering analysis are
+    made on site and the results are shown in various plots such as scatter,
+    bar, box, volcano, ma plots and Heatmaps.
+Depends:
+    R (>= 3.3.0),
+    shiny,
+    ggvis,
+    jsonlite
 License: GPL-3 + file LICENSE
 LazyData: true
-Imports: clusterProfiler, DT, ggvis, ReactomePA, ggplot2, RColorBrewer,
-        annotate, gplots, AnnotationDbi, DESeq2, org.Hs.eg.db, DOSE,
-        edgeR, igraph, grDevices, graphics, stats, utils,
-        GenomicRanges, IRanges, S4Vectors, SummarizedExperiment
+Imports:
+    clusterProfiler,
+    DT,
+    ReactomePA,
+    ggplot2,
+    RColorBrewer,
+    annotate,
+    gplots,
+    AnnotationDbi,
+    DESeq2,
+    org.Hs.eg.db,
+    DOSE,
+    edgeR,
+    igraph,
+    grDevices,
+    graphics,
+    stats,
+    utils,
+    GenomicRanges,
+    IRanges,
+    S4Vectors,
+    SummarizedExperiment,
+    stringi,
+    shinyjs
 RoxygenNote: 5.0.1
-Suggests: knitr, rmarkdown, R.rsp, testthat
-VignetteBuilder: knitr, R.rsp
-URL: http://debrowser.umassmed.edu/ and
-        https://github.com/UMMS-Biocore/debrowser
+Suggests: knitr,
+    rmarkdown,
+    R.rsp,
+    testthat
+VignetteBuilder: knitr,  R.rsp
+URL: http://debrowser.umassmed.edu/ and 
+    https://github.com/UMMS-Biocore/debrowser
 BugReports: https://github.com/UMMS-Biocore/debrowser/issues/new
-biocViews: Sequencing, ChIPSeq, RNASeq, DifferentialExpression,
-        GeneExpression, Clustering
-NeedsCompilation: no
+biocViews:
+    Sequencing,
+    ChIPSeq,
+    RNASeq,
+    DifferentialExpression,
+    GeneExpression,
+    Clustering

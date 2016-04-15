@@ -5,7 +5,12 @@
 \title{getDownloadSection, download section button and dataset selection
     box in the menu}
 \usage{
-getDownloadSection()
+getDownloadSection(flag = FALSE, type = "main")
+}
+\arguments{
+\item{flag, }{to show the download selection}
+
+\item{type, }{main vs. QC section}
 }
 \value{
 the panel for download section in the menu;

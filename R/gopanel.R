@@ -1,87 +1,85 @@
 #' getGoPanel, go term analysis panel
-#'
+#' 
+#' @param flag, flag to show the element in the ui
 #' @note \code{getGoPanel}
 #' @return the panel for go term analysis;
 #'
-#' @examples
+#' @examples  
 #'     x <- getGoPanel()
 #'
 #' @export
-#'
-getGoPanel <- function(){
-    a <- list(
-        column(3,
-            sliderInput("gopvalue", "p-value cutoff",
-                0, 1, 0.01, step = 0.001)),
-            conditionalPanel (( condition <- "input.goplot=='enrichGO' ||
-                input.goplot=='compare'"),
-                    column( 3,
-                        selectInput("ontology", "Choose an ontology:",
-                            choices =  c( "CC", "MF", "BP"))
-            )),
-            conditionalPanel (( condition <- "input.goplot!='compare'"),
-                    column( 3,
-                        selectInput("goextplot", "Plot Type:",
-                            choices =  c("Summary", "Dotplot"))
-            )),
-            conditionalPanel (( condition <- "input.goplot=='compare'"),
-                    column( 3,
-                        selectInput("gofunc", "Plot Function:",
-                            choices =  c( "groupGO", "enrichGO", "enrichKEGG"))
-            )),
-            column( 3,
-                actionButton("startGO", "Submit"),
-                downloadButton("downloadGOPlot", "Download")),
-            column(12,
-                wellPanel( plotOutput("GOPlots1"))) )
+#' 
+getGoPanel <- function(flag = FALSE){
+    a <- NULL
+    if (flag)
+        a <- list(
+            conditionalPanel(condition = "!input.startGO",
+                helpText( "Please select parameters and press the 
+                    submit button in the left menu
+                    for the plots" )),
+            tabsetPanel(id = "gotabs", type = "tabs",
+                tabPanel(title = "Plot", value = "gopanel1", id="gopanel1",
+                     column(12, wellPanel( plotOutput("GOPlots1")))),
+                tabPanel(title = "Table", value = "gopanel2", id="gopanel2",
+                     column(12, wellPanel( DT::dataTableOutput("gotable"))))
+            ))
     a
 }
 
 #' getGOPlots, go term analysis panel
 #'
 #' @param dataset, the dataset used
-#' @param inputGO, input Gene Ontology
-#' @param genelist, list of genes
+#' @param input, input params
+#' @param table, table flag to return dataset to show in a datatable
 #' @note \code{getGOPlots}
 #' @return the panel for go plots;
 #'
 #' @examples
 #'     x<- getGOPlots(mtcars)
-#'
 #' @export
-#'
-getGOPlots <- function(dataset, inputGO = NULL, genelist = list(1)){
+#' 
+getGOPlots <- function(dataset, input = NULL, table = FALSE){
+    if (is.null(dataset) || is.null(input)) return(NULL)
     a <- NULL
-    if (!is.null(dataset) && !is.null(inputGO)){
-        if (inputGO$goplot == "enrichGO"){
-            res <- getEnrichGO(genelist, ont = inputGO$ontology,
-                pvalueCutoff = inputGO$gopvalue)
-            a <- res$p
-            if (inputGO$goextplot == "Dotplot"){
-                a <- dotplot(res$enrich_p, showCategory = 30)
-            }
-            else if (inputGO$goextplot == "enrichMap"){
-                a <- enrichMap(res$enrich_p, vertex.label.cex = 1.2,
-                    layout = igraph::layout.kamada.kawai)
-            }
+    genelist <- getGeneList(rownames(dataset))
+    if (input$goplot == "enrichGO"){
+        res <- getEnrichGO(genelist, ont = input$ontology,
+            pvalueCutoff = input$gopvalue)
+        if (table)
+            a<-res$table
+        else{
+        a <- res$p
+        if (input$goextplot == "Dotplot")
+            a <- dotplot(res$enrich_p, showCategory=30)
         }
-        else if (inputGO$goplot == "enrichKEGG"){
-            res <- getEnrichKEGG(genelist, pvalueCutoff = inputGO$gopvalue)
+    }
+    else if (input$goplot == "enrichKEGG"){
+        res <- getEnrichKEGG(genelist, pvalueCutoff=
+            as.numeric(input$pvaluetxt))
+        if (table)
+            a<-res$table
+        else{
             a <- res$p
-            if (inputGO$goextplot == "Dotplot"){
-                a <- dotplot(res$enrich_p, showCategory = 30)
-            }
+            if (input$goextplot == "Dotplot")
+                a <- dotplot(res$enrich_p, showCategory=30)
         }
-        else if (inputGO$goplot == "compare"){
-            cl <- clusterData(dataset)
-            a <- compareClust(cl, fun = inputGO$gofunc, inputGO$ontology)
-        }
-        else if (inputGO$goplot == "disease"){
-            res <- getEnrichDO(genelist, pvalueCutoff = inputGO$gopvalue )
+    }
+    else if (input$goplot == "compare"){
+        cl <- clusterData(dataset)
+        res <- compareClust(cl, fun=input$gofunc, input$ontology)
+        if (table)
+            a<-res$table
+        else
+            a<-res$p
+    }
+    else if (input$goplot == "disease"){
+        res <- getEnrichDO(genelist, pvalueCutoff=as.numeric(input$pvaluetxt) )
+        if (table)
+            a<-res$table
+        else{
             a <- res$p
-            if (inputGO$goextplot == "Dotplot"){
-                a <- dotplot(res$enrich_p, showCategory = 30)
-            }
+            if (input$goextplot == "Dotplot")
+                a <- dotplot(res$enrich_p, showCategory=30)
         }
     }
     a

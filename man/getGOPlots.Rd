@@ -4,14 +4,14 @@
 \alias{getGOPlots}
 \title{getGOPlots, go term analysis panel}
 \usage{
-getGOPlots(dataset, inputGO = NULL, genelist = list(1))
+getGOPlots(dataset, input = NULL, table = FALSE)
 }
 \arguments{
 \item{dataset, }{the dataset used}
 
-\item{inputGO, }{input Gene Ontology}
+\item{input, }{input params}
 
-\item{genelist, }{list of genes}
+\item{table, }{table flag to return dataset to show in a datatable}
 }
 \value{
 the panel for go plots;
@@ -24,6 +24,5 @@ getGOPlots, go term analysis panel
 }
 \examples{
     x<- getGOPlots(mtcars)
-
 }
 

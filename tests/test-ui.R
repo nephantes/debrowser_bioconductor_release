@@ -9,31 +9,31 @@ test_that("able to create the basic UI", {
 })
 
 test_that("able to create panel UI", {
-    expect_silent( addPanel <- getAddPanel() )
-    expect_true(exists("addPanel"))
-    expect_equal(addPanel[[1]][[1]], "div")
+    expect_silent( QCPanel <- getQCPanel(TRUE) )
+    expect_true(exists("QCPanel"))
+    expect_equal(QCPanel[[1]][[1]], "div")
 
     expect_silent( leftMenu <- getLeftMenu() )
     expect_true(exists("leftMenu"))
     expect_equal(leftMenu[[1]][[1]], "div")
 
-    expect_silent( downloads <- getDownloadSection() )
+    expect_silent( downloads <- getDownloadSection(TRUE) )
     expect_true(exists("downloads"))
     expect_equal(downloads[[1]][[1]], "div")
 
-    expect_silent( getMain <- getMainPanel() )
+    expect_silent( getMain <- getMainPanel("randstr") )
     expect_true(exists("getMain"))
     expect_equal(getMain[[1]][[1]], "div")
 
-    expect_silent( getStart <- getStartUp() )
+    expect_silent( getStart <- getStartupMsg() )
     expect_true(exists("getStart"))
     expect_equal(getStart[[1]][[1]], "div")
 
-    expect_silent( getAfter <- getAfterLoad() )
+    expect_silent( getAfter <- getAfterLoadMsg() )
     expect_true(exists("getAfter"))
     expect_equal(getAfter[[1]][[1]], "div")
 
-    expect_silent(getGO <- getGoPanel() )
+    expect_silent(getGO <- getGoPanel(TRUE) )
     expect_true(exists("getGO"))
     expect_equal(getGO[[1]][[1]], "div")
 })

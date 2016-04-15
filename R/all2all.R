@@ -11,7 +11,10 @@
 
 all2all <- function(data, cex=2) {
     pcor <- function(x, y, ...) panel.cor(x, y, cex.cor = cex)
-    pairs(log10(data[1:1000, ]), cex = 0.25,
+    nr <- nrow(data)
+    if (nr > 1000)
+        nr <- 1000
+    pairs(log10(data[1:nr, ]), cex = 0.25,
             diag.panel = panel.hist, lower.panel = pcor)
 }
 
@@ -50,14 +53,12 @@ panel.hist <- function(x, ...) {
 #'
 #' @export
 #'
-#'
-
 panel.cor <- function(x, y, prefix = "rho=", cex.cor=2, ...){
     usr <- par("usr")
     on.exit(par(usr))
     par(usr = c(0, 1, 0, 1))
     r <- cor.test(x, y, method = "spearman",
-                na.rm = TRUE, exact = FALSE)$estimate
+        na.rm = TRUE, exact = FALSE)$estimate
     txt <- round(r, digits = 2)
     txt <- paste0(prefix, txt)
     text(0.5, 0.5, txt, cex = cex.cor)

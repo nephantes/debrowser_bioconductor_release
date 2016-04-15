@@ -5,7 +5,7 @@
 \title{getNormalized matrix
 it requires edgeR package}
 \usage{
-getNormalizedMatrix(M, method = "TMM")
+getNormalizedMatrix(M = NULL, method = "TMM")
 }
 \arguments{
 \item{M, }{numeric matrix}

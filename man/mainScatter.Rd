@@ -4,7 +4,8 @@
 \alias{mainScatter}
 \title{Main scatter plot}
 \usage{
-mainScatter(dat = NULL, lb = NULL, data_tooltip = NULL)
+mainScatter(dat = NULL, lb = NULL, data_tooltip = NULL, x = NULL,
+  y = NULL, domains = NULL, colors = NULL)
 }
 \arguments{
 \item{dat, }{dataframe that has log2FoldChange and log10padj values}
@@ -12,6 +13,14 @@ mainScatter(dat = NULL, lb = NULL, data_tooltip = NULL)
 \item{lb, }{the linked brush}
 
 \item{data_tooltip, }{toolstip specific to this plot}
+
+\item{x, }{the name of the x coordinate}
+
+\item{y, }{the name of the y coordinate}
+
+\item{domains, }{the domains to be colored}
+
+\item{colors, }{colors for each domain}
 }
 \value{
 volcano plot

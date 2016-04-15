@@ -3,6 +3,8 @@
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param lb, the linked brush
 #' @param data_tooltip, toolstip specific to this plot
+#' @param domains, the domains to be colored 
+#' @param colors, colors for each domain
 #' @return MA plot
 #'
 #' @examples
@@ -11,18 +13,19 @@
 #' @export
 #'
 
-MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL) {
+MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL,
+                domains = NULL, colors = NULL) {
     if ( is.null(dat) ) return(NULL)
     dat %>%
     ggvis(~A, ~M) %>%
-    layer_points( size := 40, size.hover := 200, fillOpacity := 0.2,
+    layer_points( size := ~Size, size.hover := 200, fillOpacity := 0.2,
         fillOpacity.hover := 0.7, fill.brush := "red",
         opacity := 0.8, stroke = ~Legend, key :=  ~ID) %>%
         lb$input() %>% add_tooltip(data_tooltip, "hover") %>%
-        add_legend("stroke", title = "MA Plot",
-        values = c("NS", "Up", "Down")) %>%
-        scale_nominal("stroke", domain = c("NS", "Up", "Down"),
-            range = c("#aaa", "green", "orange")) %>%
+        add_legend("stroke", title = "Plot",
+            values = c(domains) ) %>%
+        scale_nominal("stroke", domain = c(domains),
+            range = c(colors) ) %>%
         set_options(width = 400, height = 350)
 }
 
@@ -30,6 +33,8 @@ MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL) {
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param data_tooltip, toolstip specific to this plot
+#' @param domains, the domains to be colored 
+#' @param colors, colors for each domain
 #' @return zoomed MA plot
 #'
 #' @examples
@@ -37,15 +42,17 @@ MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL) {
 #'
 #' @export
 #'
-MAZoom <- function(dat = NULL, data_tooltip = NULL) {
+MAZoom <- function(dat = NULL, data_tooltip = NULL,
+                domains = NULL, colors = NULL) {
     if ( is.null(dat) ) return(NULL)
     dat %>% ggvis(~A, ~M) %>%
-        layer_points(size := 40, size.hover := 200,
+        layer_points(size := ~Size, size.hover := 200,
             stroke = ~Legend, key := ~ID, fill = ~padj) %>%
         add_tooltip(data_tooltip, "hover") %>%
-        scale_nominal("stroke", domain = c("NS", "Up", "Down"),
-            range = c("#aaa", "green", "orange")) %>%
-        add_legend("stroke", title = "MA Plot",
-        values = c("NS", "Up", "Down")) %>% hide_legend("fill") %>%
+        add_legend("stroke", title = "Plot",
+            values = c(domains) ) %>%
+        scale_nominal("stroke", domain = c(domains),
+            range = c(colors) ) %>%
+        hide_legend("fill") %>%
         set_options(width = 400, height = 350, duration = 0)
 }

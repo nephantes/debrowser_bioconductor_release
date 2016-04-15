@@ -9,11 +9,12 @@
 #' @examples
 #'     x <- getNormalizedMatrix(mtcars)
 #'
-#' @import edgeR
 #' @export
 #'
-#'
-getNormalizedMatrix <- function(M, method = "TMM") {
+getNormalizedMatrix <- function(M = NULL, method = "TMM") {
+    if (is.null(M) ) return (NULL)
+    M[, colnames(M)] <- apply(M[, colnames(M)], 2,
+        function(x) as.integer(x))
     norm.factors <- calcNormFactors(M, method = method)
     return(equalizeLibSizes(DGEList(M,
         norm.factors = norm.factors))$pseudo.counts)
