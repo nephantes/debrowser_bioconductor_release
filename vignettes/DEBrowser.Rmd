@@ -63,12 +63,6 @@ First, you will have to install R and/or RStudio.
 openssl-devel, libxml2-devel, libcurl-devel, libpng-devel)
 
 ```
-# Installation instructions:
-
-source("https://bioconductor.org/biocLite.R")
-
-biocLite("debrowser")
-
 # Installation instructions from source:
 # 1. Install the dependencies by running the lines below in R or RStudio. 
 ### Packages for R.

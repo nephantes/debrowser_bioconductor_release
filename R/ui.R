@@ -7,6 +7,7 @@
 #'     x<-deUI()
 #'
 #' @export
+#' 
 
 deUI <- function() {
     shinyUI(fluidPage(

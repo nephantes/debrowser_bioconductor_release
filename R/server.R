@@ -10,28 +10,30 @@
 #'     deServer
 #'
 #' @export
-#' @import clusterProfiler
-#' @importFrom shiny actionButton actionLink addResourcePath column
-#'             conditionalPanel downloadButton downloadHandler
-#'             eventReactive fileInput fluidPage helpText isolate
-#'             mainPanel need observe outputOptions plotOutput
-#'             radioButtons reactive reactiveValues renderPlot
-#'             renderUI runApp selectInput shinyUI sidebarLayout
-#'             sidebarPanel sliderInput tabPanel tabsetPanel
-#'             textOutput titlePanel uiOutput updateRadioButtons
-#'             updateTabsetPanel wellPanel tags h4 isolate
-#'             shinyServer observeEvent updateTextInput HTML
-#'             textInput parseQueryString img numericInput
-#' @importFrom shinyjs show hide enable disable useShinyjs
+#' @import     clusterProfiler
+#' @importFrom shiny  actionButton  actionLink  addResourcePath  column 
+#'             conditionalPanel  downloadButton  downloadHandler 
+#'             eventReactive  fileInput  fluidPage  helpText  isolate 
+#'             mainPanel  need  numericInput  observe  observeEvent 
+#'             outputOptions  parseQueryString  plotOutput  radioButtons 
+#'             reactive  reactiveValues  renderPlot  renderUI  runApp 
+#'             selectInput  shinyApp  shinyServer  shinyUI  sidebarLayout 
+#'             sidebarPanel  sliderInput  stopApp  tabPanel  tabsetPanel 
+#'             textInput  textOutput  titlePanel  uiOutput tags HTML
+#'             h4 img icon updateTabsetPanel  updateTextInput  validate 
+#'             wellPanel
+#' @importFrom shinyjs show hide enable disable useShinyjs extendShinyjs
+#'             js
 #' @importFrom DT datatable dataTableOutput renderDataTable formatStyle
 #'             styleInterval
-#' @importFrom ggplot2 aes_string geom_point ggplot labs ylab
-#'             scale_x_discrete scale_y_discrete aes geom_bar
+#' @importFrom ggplot2 aes aes_string geom_bar geom_point ggplot
+#'             labs scale_x_discrete scale_y_discrete ylab
 #'             autoplot
 #' @importFrom ggvis add_axis add_legend add_tooltip axis_props
 #'             bind_shiny create_broker ggvis ggvisOutput handle_brush
 #'             hide_legend layer_bars layer_boxplots layer_points
 #'             scale_nominal set_options %>% group_by
+#' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
 #' @importFrom grDevices dev.off pdf
 #' @importFrom graphics barplot hist pairs par rect text
@@ -40,12 +42,13 @@
 #' @importFrom utils read.table write.table
 #' @importFrom DOSE enrichDO enrichMap gseaplot
 #' @importMethodsFrom AnnotationDbi as.data.frame as.list colnames
-#'             head mappedkeys nrow subset
+#'             head mappedkeys ncol nrow subset
 #' @importMethodsFrom GenomicRanges as.factor
 #' @importMethodsFrom IRanges as.matrix "colnames<-" mean
 #'             nchar paste rownames toupper unique which
-#' @importMethodsFrom S4Vectors t
-#' @importMethodsFrom SummarizedExperiment cbind
+#'             as.matrix lapply rev "rownames<-"
+#' @importMethodsFrom S4Vectors t grepl
+#' @importMethodsFrom SummarizedExperiment cbind order
 #' @importFrom jsonlite fromJSON
 #' @importFrom stringi stri_rand_strings
 #' @importFrom ReactomePA enrichPathway
@@ -53,15 +56,24 @@
 #' @importFrom DESeq2 DESeq results DESeqDataSetFromMatrix
 #' @importFrom org.Hs.eg.db org.Hs.egSYMBOL2EG
 #' @importFrom annotate geneSymbols
+#' @import     V8
 
 deServer <- function(input, output, session) {
     tryCatch(
     {
         if (!interactive()) {
+            ctx <- v8();
             options( shiny.maxRequestSize = 30 * 1024 ^ 2,
                 shiny.fullstacktrace = TRUE, shiny.trace=TRUE, 
                 shiny.autoreload=TRUE)
+            #library(debrowser)
         }
+        observeEvent(input$refresh, {
+            js$refresh();
+        })
+        observeEvent(input$stopApp, {
+            stopApp(returnValue = invisible())
+        })
         output$programtitle <- renderUI({
             togglePanels(0, c(0), session)
             getProgramTitle(session)
