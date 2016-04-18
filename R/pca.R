@@ -107,7 +107,8 @@ getPCAexplained <- function(datasetInput = NULL,
         else
             dataset <- datasetInput[,c(input$samples)]
         pca_data <- run_pca(getNormalizedMatrix(dataset))
-        datexp <- data.frame(cbind(unlist(lapply(c(1:6), 
+        datexp <- data.frame(cbind(unlist(lapply(
+            c(1:length(pca_data$explained)), 
             function(x){paste0("PC", x)})), 
             round(pca_data$explained * 100, 2)))
         colnames(datexp) <- c("PCs", "explained")

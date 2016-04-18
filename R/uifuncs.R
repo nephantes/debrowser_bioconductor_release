@@ -420,7 +420,7 @@ getTableStyle <- function(dat = NULL, input = NULL,
     padj = c("padj"), foldChange=c("foldChange")){
     if (is.null(dat)) return (NULL)
     a <- dat 
-    if(!is.null(padj) && padj != "")
+    if(!is.null(padj) && padj != "" && !input$goQCplots)
         a <- a %>% formatStyle(
             padj,
             color = styleInterval(c(0, input$padjtxt), 
@@ -428,7 +428,7 @@ getTableStyle <- function(dat = NULL, input = NULL,
             backgroundColor = styleInterval(
             input$padjtxt, c('green', 'white'))
         ) 
-    if(!is.null(foldChange) && foldChange != "")
+    if(!is.null(foldChange) && foldChange != "" && !input$goQCplots)
         a <- a %>% formatStyle(
             foldChange,
             color = styleInterval(c(1/as.numeric(input$foldChangetxt), 

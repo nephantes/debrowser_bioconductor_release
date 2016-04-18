@@ -318,9 +318,8 @@ deServer <- function(input, output, session) {
                 m <- DT::datatable(init_data(), options =
                 list(lengthMenu = list(c(10, 25, 50, 100),
                 c("10", "25", "50", "100")),
-                pageLength = 25, paging = TRUE, searching = TRUE)) 
-            if (!input$goQCplots)
-                m %>% getTableStyle(input)
+                pageLength = 25, paging = TRUE, searching = TRUE)) %>% 
+                getTableStyle(input)
             m
         })
 
@@ -342,20 +341,20 @@ deServer <- function(input, output, session) {
         })
         output$selected <- DT::renderDataTable({
             if (is.null(selected$data)) return(NULL)
-                DT::datatable(selected$data$getSelected(), 
+                m <- DT::datatable(selected$data$getSelected(), 
                 options = list(lengthMenu = list(c(10, 25, 50, 100),
                 c("10", "25", "50", "100")),
-                pageLength = 25, paging = TRUE, searching = TRUE)) %>%
-                getTableStyle(input)
+                pageLength = 25, paging = TRUE, searching = TRUE)) %>% 
+                getTableStyle(input)    
+            m
         })
         output$geneset <- DT::renderDataTable({
             if (is.null(getGeneSet())) return(NULL)
                 m <- DT::datatable(getGeneSet(), options =
                     list(lengthMenu = list(c(10, 25, 50, 100),
                     c("10", "25", "50", "100")),
-                    pageLength = 25, paging = TRUE, searching = TRUE)) 
-            if (!input$goQCplots)
-                m %>% getTableStyle(input)
+                    pageLength = 25, paging = TRUE, searching = TRUE)) %>% 
+                    getTableStyle(input)
             m
         })
         getGeneSet <- reactive({
@@ -380,9 +379,8 @@ deServer <- function(input, output, session) {
             m <- DT::datatable(getMostVaried(), options =
                 list(lengthMenu = list(c(10, 25, 50, 100),
                 c("10", "25", "50", "100")),
-                pageLength = 25, paging = TRUE, searching = TRUE)) 
-            if (!input$goQCplots)
-                m %>% getTableStyle(input)
+                pageLength = 25, paging = TRUE, searching = TRUE)) %>% 
+                getTableStyle(input)
             m
         })
         output$mergedcomp <- DT::renderDataTable({
