@@ -89,7 +89,7 @@ getGOLeftMenu <- function() {
             ),
             conditionalPanel( ( condition <- "input.goplot=='compare'"),
                 selectInput("gofunc", "Plot Function:",
-                choices =  c( "enrichGO", "enrichDO", "enrichKEGG"))
+                choices =  c( "enrichGO", "enrichKEGG"))
             ),
             actionButton("startGO", "Submit"),
             downloadButton("downloadGOPlot", "Download Plots"))
