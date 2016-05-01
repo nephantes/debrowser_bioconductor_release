@@ -13,7 +13,7 @@ prepDataForQC(dataset = NULL)
 data
 }
 \description{
-prepDataForQC
+Prepares selected data for QC plots.
 }
 \examples{
     x <- prepDataForQC()

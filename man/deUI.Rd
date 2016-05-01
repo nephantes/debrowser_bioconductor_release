@@ -2,7 +2,7 @@
 % Please edit documentation in R/ui.R
 \name{deUI}
 \alias{deUI}
-\title{shinyUI to be able to run interactively}
+\title{deUI}
 \usage{
 deUI()
 }
@@ -10,7 +10,7 @@ deUI()
 the panel for main plots;
 }
 \description{
-shinyUI to be able to run interactively
+Creates a shinyUI to be able to run DEBrowser interactively.
 }
 \note{
 \code{deUI}

@@ -1,4 +1,7 @@
-#' PCA analysis
+#' run_pca
+#'
+#' Runs PCA on the selected dataset.
+#'
 #' @param x, dataframe with experiment data
 #' @param retx, specifies if the data should be returned
 #' @param center, center the PCA (Boolean)
@@ -12,7 +15,6 @@
 #'
 #' @export
 #'
-
 run_pca <- function(x=NULL, retx = TRUE,
                 center = TRUE, scale = TRUE) {
     if ( is.null(x) ) return (NULL)
@@ -23,7 +25,9 @@ run_pca <- function(x=NULL, retx = TRUE,
         return(list(PCs = pca$x, explained = explained))
 }
 
-#' Plot PCA results.
+#' plot_pca
+#'
+#' Plots the PCA results for the selected dataset.
 #'
 #' @param x, dataframe with data
 #' @param pcx, x axis label
@@ -87,6 +91,10 @@ plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
 }
 
 #' getPCAexplained
+#'
+#' Creates a more detailed plot using the PCA results from
+#' the selected dataset.
+#'
 #' @param datasetInput, selected data
 #' @param cols, columns
 #' @param input, from usern)
@@ -96,7 +104,6 @@ plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
 #'
 #' @export
 #'
-
 getPCAexplained <- function(datasetInput = NULL, 
     cols = NULL, input = NULL) {
     if (is.null(datasetInput)) return(NULL)

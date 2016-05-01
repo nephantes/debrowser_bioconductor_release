@@ -2,7 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getLoadingMsg}
 \alias{getLoadingMsg}
-\title{getLoadingMsg and gif}
+\title{getLoadingMsg}
 \usage{
 getLoadingMsg()
 }
@@ -10,7 +10,8 @@ getLoadingMsg()
 loading msg
 }
 \description{
-getLoadingMsg and gif
+Creates and displays the loading message/gif to be displayed
+within the DEBrowser.
 }
 \note{
 \code{getLoadingMsg}

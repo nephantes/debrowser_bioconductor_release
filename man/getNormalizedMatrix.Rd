@@ -2,8 +2,7 @@
 % Please edit documentation in R/normalization.R
 \name{getNormalizedMatrix}
 \alias{getNormalizedMatrix}
-\title{getNormalized matrix
-it requires edgeR package}
+\title{getNormalizedMatrix}
 \usage{
 getNormalizedMatrix(M = NULL, method = "TMM")
 }
@@ -16,8 +15,8 @@ getNormalizedMatrix(M = NULL, method = "TMM")
 normalized matrix
 }
 \description{
-getNormalized matrix
-it requires edgeR package
+Normalizes the matrix passed to be used within various methods
+within DEBrowser.  Requires edgeR package
 }
 \note{
 \code{getGoPanel}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/deseq2.R
 \name{runDESeq}
 \alias{runDESeq}
-\title{Run DESeq2 algorithm.}
+\title{runDESeq}
 \usage{
 runDESeq(data, columns, conds, fitType = c("parametric", "local", "mean"),
   non_expressed_cutoff = 10)
@@ -27,7 +27,8 @@ regions/genes/isoforms this cutoff is used}
 deseq2 results
 }
 \description{
-Run DESeq2 algorithm.
+Run DESeq2 algorithm on the selected conditions.  Output is
+to be used for the interactive display.
 }
 \examples{
     x <- runDESeq(data<-NULL, columns<-c())

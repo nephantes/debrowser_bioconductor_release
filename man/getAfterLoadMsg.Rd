@@ -10,7 +10,8 @@ getAfterLoadMsg()
 return After Load Msg
 }
 \description{
-getAfterLoadMsg
+Generates and displays the message to be shown after loading data
+within the DEBrowser.
 }
 \note{
 \code{getAfterLoadMsg}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/startShiny.R
 \name{startDEBrowser}
 \alias{startDEBrowser}
-\title{startDEBrowser to be able to run interactively}
+\title{startDEBrowser}
 \usage{
 startDEBrowser()
 }
@@ -10,7 +10,7 @@ startDEBrowser()
 the app
 }
 \description{
-startDEBrowser to be able to run interactively
+Starts the DEBrowser to be able to run interactively.
 }
 \note{
 \code{startDEBrowser}

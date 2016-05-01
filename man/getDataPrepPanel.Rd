@@ -2,7 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getDataPrepPanel}
 \alias{getDataPrepPanel}
-\title{Condition selection screen}
+\title{getDataPrepPanel}
 \usage{
 getDataPrepPanel(flag = FALSE)
 }
@@ -13,7 +13,8 @@ getDataPrepPanel(flag = FALSE)
 returns the left menu according to the selected tab;
 }
 \description{
-Condition selection screen
+Create and show the Condition selection screen to the user
+within the DEBrowser.
 }
 \note{
 \code{getDataPrepPanel}

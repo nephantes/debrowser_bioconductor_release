@@ -1,4 +1,7 @@
 #' getConditionSelector
+#'
+#' Selects user input conditions to run in DESeq.
+#'
 #' @param num, panel that is going to be shown
 #' @param choices, sample list
 #' @param selected, selected smaple list
@@ -15,7 +18,10 @@ getConditionSelector<- function(num=0, choices = NULL, selected = NULL) {
             selected = selected)))
 }
 
-#' selectConditions, multiple condition selection
+#' selectConditions
+#'
+#' Selects user input conditions, multiple if present, to be
+#' used in DESeq.
 #'
 #' @param Dataset, used dataset 
 #' @param choicecounter, total number of comparisons

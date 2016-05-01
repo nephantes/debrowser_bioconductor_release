@@ -1,5 +1,6 @@
-#' Modified linked brush object.
+#' link_brush
 #'
+#' Modified linked brush object.
 #' A link brush function modified to be able to create non-reactive
 #' linked brush object for ggvis plots
 #'
@@ -15,7 +16,6 @@
 #' @examples
 #'     lb <- link_brush()
 #'
-
 link_brush <- function() {
     rv <- shiny::reactiveValues(under_brush = character())
     input <- function(vis) {

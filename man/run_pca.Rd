@@ -2,7 +2,7 @@
 % Please edit documentation in R/pca.R
 \name{run_pca}
 \alias{run_pca}
-\title{PCA analysis}
+\title{run_pca}
 \usage{
 run_pca(x = NULL, retx = TRUE, center = TRUE, scale = TRUE)
 }
@@ -19,7 +19,7 @@ run_pca(x = NULL, retx = TRUE, center = TRUE, scale = TRUE)
 pca list
 }
 \description{
-PCA analysis
+Runs PCA on the selected dataset.
 }
 \examples{
     load(system.file("extdata", "demo", "demodata.Rda", 

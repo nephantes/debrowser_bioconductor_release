@@ -1,4 +1,7 @@
-#' getGoPanel, go term analysis panel
+#' getGoPanel
+#'
+#' Creates go term analysis panel within the shiny
+#' display.
 #' 
 #' @param flag, flag to show the element in the ui
 #' @note \code{getGoPanel}
@@ -26,7 +29,10 @@ getGoPanel <- function(flag = FALSE){
     a
 }
 
-#' getGOPlots, go term analysis panel
+#' getGOPlots
+#'
+#' Go term analysis panel.  Generates appropriate GO plot
+#' based on user selection.
 #'
 #' @param dataset, the dataset used
 #' @param input, input params

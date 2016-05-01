@@ -15,7 +15,7 @@ getPCselection(num = 1, xy = "x")
 PC selection for PCA analysis
 }
 \description{
-getPCselection
+Generates the PC selection number to be used within DEBrowser.
 }
 \note{
 \code{getPCselection}

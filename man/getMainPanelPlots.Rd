@@ -22,7 +22,7 @@ getMainPanelPlots(filt_data = NULL, cols = NULL, conds = NULL,
 panel
 }
 \description{
-getMainPanelPlots
+Gathers the the plots to be used within the main panel.
 }
 \examples{
     x <- getMainPanelPlots()

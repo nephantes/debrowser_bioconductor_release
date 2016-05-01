@@ -10,7 +10,7 @@ showObj(btns = NULL)
 \item{btns, }{show group of objects with shinyjs}
 }
 \description{
-showObj
+Displays a shiny object.
 }
 \examples{
     x <- showObj()

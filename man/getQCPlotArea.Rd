@@ -12,7 +12,8 @@ getQCPlotArea(input = NULL, flag = FALSE)
 \item{flag, }{flag to show the element in the ui}
 }
 \description{
-getQCPlotArea
+Displays the QC plot output area to the user within the
+DEBrowser.
 }
 \examples{
     x <- getQCPlotArea()

@@ -1,3 +1,5 @@
+#' getSampleNames
+#'
 #' Prepares initial samples to fill condition boxes.  
 #' it reads the sample names from the data and splits into two. 
 #'
@@ -9,7 +11,6 @@
 #'     x<-getSampleNames()
 #' @export
 #'
-
 getSampleNames <- function(cnames = NULL, part = 1) {
     if (is.null(cnames)) return(NULL)
       

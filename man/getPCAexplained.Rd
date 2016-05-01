@@ -17,7 +17,8 @@ getPCAexplained(datasetInput = NULL, cols = NULL, input = NULL)
 explained plot
 }
 \description{
-getPCAexplained
+Creates a more detailed plot using the PCA results from
+the selected dataset.
 }
 \examples{
     x <- getPCAexplained()

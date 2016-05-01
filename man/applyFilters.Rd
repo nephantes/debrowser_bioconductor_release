@@ -17,7 +17,8 @@ applyFilters(filt_data = NULL, cols = NULL, input = NULL)
 data
 }
 \description{
-applyFilters
+Applies filters based on user selected parameters to be
+displayed within the DEBrowser.
 }
 \examples{
     x <- applyFilters()

@@ -2,7 +2,7 @@
 % Please edit documentation in R/funcs.R
 \name{push}
 \alias{push}
-\title{Common functions}
+\title{push}
 \usage{
 push(l, ...)
 }
@@ -15,7 +15,7 @@ push(l, ...)
 combined list
 }
 \description{
-push an object to the list
+Push an object to the list.
 }
 \examples{
     mylist <- list()

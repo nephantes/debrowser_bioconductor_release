@@ -2,7 +2,7 @@
 % Please edit documentation in R/all2all.R
 \name{panel.cor}
 \alias{panel.cor}
-\title{Prepares the correlations for the all2all plot.}
+\title{panel.cor}
 \usage{
 panel.cor(x, y, prefix = "rho=", cex.cor = 2, ...)
 }

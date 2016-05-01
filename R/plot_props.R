@@ -1,3 +1,5 @@
+#' add_title_pos
+#'
 #' Adds a title with extra axis to ggvis plot and sets the positions
 #'
 #' @param vis, a ggvis plot
@@ -31,6 +33,8 @@ add_title_pos <- function(vis, ..., title = "Plot Title",
                 title = list(fontSize = 16)), ...)
 }
 
+#' getToolTipText
+#'
 #' Prepares tooltiptext for the second scatter plot in the plots page 
 #'
 #' @param dat, data need to have following columns; padj, average,
@@ -56,6 +60,8 @@ getToolTipText <- function(dat=NULL){
             "<br>", sep = " ")
 }
 
+#' getHoverPlots
+#'
 #' Prepares the plots going to be shown when a gene hovered
 #' in the main plots 
 #'

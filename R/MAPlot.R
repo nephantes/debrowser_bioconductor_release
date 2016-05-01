@@ -1,4 +1,6 @@
-#' Prepares volcano plot
+#' MAPlot
+#'
+#' Prepares MA plot to be used within the main plot panel.
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param lb, the linked brush
@@ -12,7 +14,6 @@
 #'
 #' @export
 #'
-
 MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL,
                 domains = NULL, colors = NULL) {
     if ( is.null(dat) ) return(NULL)
@@ -29,7 +30,10 @@ MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL,
         set_options(width = 400, height = 350)
 }
 
-#' MA Zoom
+#' MAZoom
+#'
+#' Prepares the zoomed in version of the MA plot to be used within
+#' the main panel.
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param data_tooltip, toolstip specific to this plot

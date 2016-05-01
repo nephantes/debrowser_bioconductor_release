@@ -2,7 +2,7 @@
 % Please edit documentation in R/QCSection.R
 \name{saveQCPlot}
 \alias{saveQCPlot}
-\title{saveQCPlot, save to pdf}
+\title{saveQCPlot}
 \usage{
 saveQCPlot(filename = NULL, input = NULL, datasetInput = NULL,
   cols = NULL, conds = NULL, inputQCPlot = NULL)
@@ -21,7 +21,7 @@ saveQCPlot(filename = NULL, input = NULL, datasetInput = NULL,
 \item{inputQCPlot, }{clustering method and distance method}
 }
 \description{
-saveQCPlot, save to pdf
+Saves the current QC plot selection to the users local disk.
 }
 \note{
 \code{saveQCPlot}

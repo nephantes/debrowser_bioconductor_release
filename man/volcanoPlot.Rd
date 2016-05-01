@@ -2,7 +2,7 @@
 % Please edit documentation in R/volcano.R
 \name{volcanoPlot}
 \alias{volcanoPlot}
-\title{Prepares volcano plot}
+\title{volcanoPlot}
 \usage{
 volcanoPlot(dat = NULL, lb = NULL, data_tooltip = NULL, domains = NULL,
   colors = NULL)
@@ -22,7 +22,7 @@ volcanoPlot(dat = NULL, lb = NULL, data_tooltip = NULL, domains = NULL,
 volcano plot
 }
 \description{
-Prepares volcano plot
+Prepares volcano plot to be used within the DEBrowser.
 }
 \examples{
     x <- volcanoPlot()

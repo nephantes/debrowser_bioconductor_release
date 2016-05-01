@@ -1,5 +1,8 @@
-#' getDownloadSection, download section button and dataset selection
-#'     box in the menu
+#' getDownloadSection
+#'
+#' download section button and dataset selection box in the
+#' menu for user to download selected data.
+#'
 #' @param flag, to show the download selection
 #' @param type, main vs. QC section
 #'
@@ -16,21 +19,20 @@ getDownloadSection <- function(flag = FALSE, type = "main") {
     if (flag){
         if (type == "main")
             choices <- c("up+down", "up", "down", "selected",
-                "comparisons", "alldetected", "geneset", "most-varied")
+                "comparisons", "alldetected", "most-varied")
         else 
-            choices <- c("alldetected", "geneset", "most-varied")
+            choices <- c("most-varied", "alldetected", "selected")
         a <- list(selectInput("dataset", "Choose a dataset:",
             choices = choices), 
             downloadButton("downloadData", "Download Data"),
             conditionalPanel(condition = "input.dataset=='most-varied'",
             textInput("topn", "top-n", value = "500" ), 
             textInput("mincount", "total min count", value = "10" )),
-            conditionalPanel(condition = "input.dataset=='geneset'",
-            textareaInput("genesetarea","Gene Set", 
-                          "Fgf21", rows = 5, cols = 35),
+            textareaInput("genesetarea","Search", 
+                          "", rows = 5, cols = 35),
             helpText("Regular expressions can be used<br>
                      Ex: ^Al => Al.., Al$ => ...al")
-            ))
+            )
     }
     a
 }

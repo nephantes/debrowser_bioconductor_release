@@ -2,7 +2,7 @@
 % Please edit documentation in R/pca.R
 \name{plot_pca}
 \alias{plot_pca}
-\title{Plot PCA results.}
+\title{plot_pca}
 \usage{
 plot_pca(x = NULL, pcx = 1, pcy = 2, explained = NULL,
   metadata = NULL, color = NULL, shape = NULL, size = NULL,
@@ -31,7 +31,7 @@ plot_pca(x = NULL, pcx = 1, pcy = 2, explained = NULL,
 pca list
 }
 \description{
-Plot PCA results.
+Plots the PCA results for the selected dataset.
 }
 \examples{
     load(system.file("extdata", "demo", "demodata.Rda",

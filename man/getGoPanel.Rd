@@ -2,7 +2,7 @@
 % Please edit documentation in R/gopanel.R
 \name{getGoPanel}
 \alias{getGoPanel}
-\title{getGoPanel, go term analysis panel}
+\title{getGoPanel}
 \usage{
 getGoPanel(flag = FALSE)
 }
@@ -13,7 +13,8 @@ getGoPanel(flag = FALSE)
 the panel for go term analysis;
 }
 \description{
-getGoPanel, go term analysis panel
+Creates go term analysis panel within the shiny
+display.
 }
 \note{
 \code{getGoPanel}

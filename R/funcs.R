@@ -1,6 +1,6 @@
-#' Common functions
+#' push
 #'
-#' push an object to the list
+#' Push an object to the list.
 #'
 #' @param l, that are going to push to the list
 #' @param ..., list object
@@ -11,23 +11,27 @@
 #' @examples
 #'     mylist <- list()
 #'     newlist <- push ( 1, mylist )
-
 push <- function(l, ...) c(l, list(...))
 
+#' round_vals
+#'
 #' Plot PCA results.
+#'
 #' @param l, the value
 #' @return round value
 #' @export
 #'
 #' @examples
 #'     x<-round_vals(5.1323223)
-
 round_vals <- function(l) {
     l <- round(as.numeric(l), digits = 2)
     parse(text = l)
 }
 
-#' get domains for the main plots
+#' getDomains
+#'
+#' Get domains for the main plots.
+#'
 #' @param filt_data, data to get the domains
 #' @return domains
 #' @export
@@ -67,7 +71,7 @@ getColors <- function(domains = NULL){
     else if (domains[dn] == "MV")
         colors <- c(colors, "orange")
     else if (domains[dn] == "GS")
-        colors <- c(colors, "tomato")
+        colors <- c(colors, "blue")
     } 
     colors
 }

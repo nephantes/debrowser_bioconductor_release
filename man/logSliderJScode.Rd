@@ -13,7 +13,8 @@ logSliderJScode(slidername = NULL)
 returns the slider values in log10 scale
 }
 \description{
-logSliderJScode
+Generates the log based slider to be used by the user within
+DEBrowser.
 }
 \note{
 \code{logSliderJScode}

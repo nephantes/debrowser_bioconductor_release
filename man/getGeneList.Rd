@@ -2,7 +2,7 @@
 % Please edit documentation in R/GOterm.R
 \name{getGeneList}
 \alias{getGeneList}
-\title{GOTerm analysis functions}
+\title{getGeneList}
 \usage{
 getGeneList(genes)
 }
@@ -13,7 +13,7 @@ getGeneList(genes)
 ENTREZ ID list
 }
 \description{
-GOTerm analysis functions
+Gathers the gene list to use for GOTerm analysis.
 }
 \note{
 \code{GOTerm}

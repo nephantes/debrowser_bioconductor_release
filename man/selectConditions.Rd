@@ -2,7 +2,7 @@
 % Please edit documentation in R/condSelect.R
 \name{selectConditions}
 \alias{selectConditions}
-\title{selectConditions, multiple condition selection}
+\title{selectConditions}
 \usage{
 selectConditions(Dataset = NULL, choicecounter, input = NULL)
 }
@@ -17,7 +17,8 @@ selectConditions(Dataset = NULL, choicecounter, input = NULL)
 the panel for go plots;
 }
 \description{
-selectConditions, multiple condition selection
+Selects user input conditions, multiple if present, to be
+used in DESeq.
 }
 \note{
 \code{selectConditions}

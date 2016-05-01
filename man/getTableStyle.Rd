@@ -17,7 +17,8 @@ getTableStyle(dat = NULL, input = NULL, padj = c("padj"),
 \item{foldChange, }{the name of the foldChange column in the dataset}
 }
 \description{
-getTableStyle
+User defined selection that selects the style of table to display
+within the DEBrowser.
 }
 \note{
 \code{getTableStyle}

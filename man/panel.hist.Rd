@@ -2,7 +2,7 @@
 % Please edit documentation in R/all2all.R
 \name{panel.hist}
 \alias{panel.hist}
-\title{Prepares the historgram for the all2all plot.}
+\title{panel.hist}
 \usage{
 panel.hist(x, ...)
 }

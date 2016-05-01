@@ -2,7 +2,7 @@
 % Please edit documentation in R/server.R
 \name{deServer}
 \alias{deServer}
-\title{shinyServer to be able to run interactively}
+\title{deServer}
 \usage{
 deServer(input, output, session)
 }
@@ -17,7 +17,7 @@ deServer(input, output, session)
 the panel for main plots;
 }
 \description{
-shinyServer to be able to run interactively
+Sets up shinyServer to be able to run DEBrowser interactively.
 }
 \note{
 \code{deServer}

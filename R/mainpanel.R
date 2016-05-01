@@ -1,5 +1,8 @@
-#' getMainPanel, main panel for volcano, scatter and maplot.  
-#' Barplot and box plots are in this page too
+#' getMainPanel
+#'
+#' main panel for volcano, scatter and maplot.  
+#' Barplot and box plots are in this page as well.
+#'
 #' @param randstr, random string for the plot containers
 #' @note \code{getMainPanel}
 #' @return the panel for main plots;
@@ -22,6 +25,9 @@ getMainPanel <- function(randstr = NULL) {
 }
 
 #' getMainPanelPlots
+#'
+#' Gathers the the plots to be used within the main panel.
+#'
 #' @param filt_data, filtered data
 #' @param cols, selected columns
 #' @param conds, seleced conditions

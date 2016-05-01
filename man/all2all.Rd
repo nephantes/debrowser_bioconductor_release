@@ -2,7 +2,7 @@
 % Please edit documentation in R/all2all.R
 \name{all2all}
 \alias{all2all}
-\title{Prepares all2all scatter plots for given datasets.}
+\title{all2all}
 \usage{
 all2all(data, cex = 2)
 }

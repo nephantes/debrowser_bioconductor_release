@@ -2,7 +2,7 @@
 % Please edit documentation in R/MAPlot.R
 \name{MAPlot}
 \alias{MAPlot}
-\title{Prepares volcano plot}
+\title{MAPlot}
 \usage{
 MAPlot(dat = NULL, lb = NULL, data_tooltip = NULL, domains = NULL,
   colors = NULL)
@@ -22,7 +22,7 @@ MAPlot(dat = NULL, lb = NULL, data_tooltip = NULL, domains = NULL,
 MA plot
 }
 \description{
-Prepares volcano plot
+Prepares MA plot to be used within the main plot panel.
 }
 \examples{
     x <- MAPlot()

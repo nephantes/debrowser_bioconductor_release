@@ -2,7 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getCutOffSelection}
 \alias{getCutOffSelection}
-\title{getCutOffSelection Cut off selection for DE analysis}
+\title{getCutOffSelection}
 \usage{
 getCutOffSelection(flag = TRUE, nc = 1)
 }
@@ -15,7 +15,7 @@ getCutOffSelection(flag = TRUE, nc = 1)
 returns the left menu according to the selected tab;
 }
 \description{
-getCutOffSelection Cut off selection for DE analysis
+Gathers the cut off selection for DE analysis
 }
 \note{
 \code{getCutOffSelection}

@@ -1,5 +1,7 @@
-#' getNormalized matrix
-#' it requires edgeR package
+#' getNormalizedMatrix
+#'
+#' Normalizes the matrix passed to be used within various methods
+#' within DEBrowser.  Requires edgeR package
 #'
 #' @note \code{getGoPanel}
 #' @param M, numeric matrix

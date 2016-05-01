@@ -15,7 +15,8 @@ getGeneSetData(data = NULL, geneset = NULL)
 data
 }
 \description{
-getGeneSetData
+Gathers the specified gene set list to be used within the
+DEBrowser.
 }
 \examples{
     x <- getGeneSetData()

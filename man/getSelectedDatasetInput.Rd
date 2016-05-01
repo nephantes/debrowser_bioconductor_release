@@ -5,7 +5,7 @@
 \title{getSelectedDatasetInput}
 \usage{
 getSelectedDatasetInput(rdata = NULL, getSelected = NULL,
-  getMostVaried = NULL, getGeneSet = NULL, getMergedComparison = NULL,
+  getMostVaried = NULL, getGeneSet = NULL, getSelectedDatasetInput = NULL,
   input = NULL)
 }
 \arguments{
@@ -17,7 +17,7 @@ getSelectedDatasetInput(rdata = NULL, getSelected = NULL,
 
 \item{getGeneSet, }{given gene set}
 
-\item{getMergedComparison, }{merged comparison data}
+\item{getSelectedDatasetInput, }{merged comparison data}
 
 \item{input, }{input parameters}
 }
@@ -25,7 +25,7 @@ getSelectedDatasetInput(rdata = NULL, getSelected = NULL,
 data
 }
 \description{
-getSelectedDatasetInput
+Gathers the user selected dataset output to be displayed.
 }
 \examples{
     x <- getSelectedDatasetInput()

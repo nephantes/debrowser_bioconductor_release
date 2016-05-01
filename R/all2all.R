@@ -1,3 +1,5 @@
+#' all2all
+#'
 #' Prepares all2all scatter plots for given datasets. 
 #'
 #' @param data, data that have the sample names in the header.
@@ -8,7 +10,6 @@
 #'
 #' @export
 #'
-
 all2all <- function(data, cex=2) {
     pcor <- function(x, y, ...) panel.cor(x, y, cex.cor = cex)
     nr <- nrow(data)
@@ -18,6 +19,8 @@ all2all <- function(data, cex=2) {
             diag.panel = panel.hist, lower.panel = pcor)
 }
 
+#' panel.hist
+#'
 #' Prepares the historgram for the all2all plot. 
 #'
 #' @param x, a vector of values for which the histogram is desired
@@ -40,6 +43,8 @@ panel.hist <- function(x, ...) {
     rect(breaks[-nb], 0, breaks[-1], y, col = "red", ...)
 }
 
+#' panel.cor
+#'
 #' Prepares the correlations for the all2all plot. 
 #'
 #' @param x, numeric vector x

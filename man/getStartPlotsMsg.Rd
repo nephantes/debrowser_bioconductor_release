@@ -10,7 +10,8 @@ getStartPlotsMsg()
 return start plot msg
 }
 \description{
-getStartPlotsMsg
+Generates and displays the starting messgae to be shown once
+the user has first seen the main plots page within DEBrowser.
 }
 \note{
 \code{getStartPlotsMsg}

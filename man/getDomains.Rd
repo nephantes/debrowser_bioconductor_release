@@ -2,7 +2,7 @@
 % Please edit documentation in R/funcs.R
 \name{getDomains}
 \alias{getDomains}
-\title{get domains for the main plots}
+\title{getDomains}
 \usage{
 getDomains(filt_data = NULL)
 }
@@ -13,7 +13,7 @@ getDomains(filt_data = NULL)
 domains
 }
 \description{
-get domains for the main plots
+Get domains for the main plots.
 }
 \examples{
     x<-getDomains()

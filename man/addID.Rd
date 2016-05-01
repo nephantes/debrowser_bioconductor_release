@@ -13,7 +13,7 @@ addID(data = NULL)
 data
 }
 \description{
-addID
+Adds an id to the data frame being used.
 }
 \examples{
     x <- addID()

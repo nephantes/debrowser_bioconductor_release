@@ -20,7 +20,8 @@ getMostVariedList(datavar = NULL, cols = NULL, topn = 500,
 data
 }
 \description{
-getMostVariedList
+Calculates the most varied genes to be used for specific plots
+within the DEBrowser.
 }
 \examples{
     x <- getMostVariedList()

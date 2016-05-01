@@ -1,4 +1,7 @@
-#' Load data.
+#' load_data.
+#'
+#' Loads user selected data to be used for DESeq
+#'
 #' @param input, input values
 #' @param session, if data is going to be loaded from json
 #' @return data
@@ -6,7 +9,6 @@
 #'
 #' @examples
 #'     x<-load_data ()
-
 load_data <- function (input = NULL, session = NULL) {
     if (is.null(input)) return(NULL)
     loaddemo <- reactiveValues(demo = NULL, demodata = NULL)
@@ -38,5 +40,6 @@ load_data <- function (input = NULL, session = NULL) {
     inFile <- input$file1
     try(m <- read.table(inFile$datapath, sep = "\t",
         header = TRUE, row.names = 1))
+    
     m
 }

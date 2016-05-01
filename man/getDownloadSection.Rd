@@ -2,8 +2,7 @@
 % Please edit documentation in R/downloadSection.R
 \name{getDownloadSection}
 \alias{getDownloadSection}
-\title{getDownloadSection, download section button and dataset selection
-    box in the menu}
+\title{getDownloadSection}
 \usage{
 getDownloadSection(flag = FALSE, type = "main")
 }
@@ -16,8 +15,8 @@ getDownloadSection(flag = FALSE, type = "main")
 the panel for download section in the menu;
 }
 \description{
-getDownloadSection, download section button and dataset selection
-    box in the menu
+download section button and dataset selection box in the
+menu for user to download selected data.
 }
 \note{
 \code{getDownloadSection}

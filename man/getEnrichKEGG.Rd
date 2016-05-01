@@ -15,7 +15,8 @@ getEnrichKEGG(genelist, pvalueCutoff = 0.01)
 Enriched KEGG
 }
 \description{
-getEnrichKEGG
+Gathers the Enriched KEGG analysis data to be used within the
+GO Term plots.
 }
 \note{
 \code{getEnrichKEGG}

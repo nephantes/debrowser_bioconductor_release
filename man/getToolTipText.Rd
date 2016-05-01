@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_props.R
 \name{getToolTipText}
 \alias{getToolTipText}
-\title{Prepares tooltiptext for the second scatter plot in the plots page}
+\title{getToolTipText}
 \usage{
 getToolTipText(dat = NULL)
 }

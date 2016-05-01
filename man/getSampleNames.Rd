@@ -2,8 +2,7 @@
 % Please edit documentation in R/sampleNames.R
 \name{getSampleNames}
 \alias{getSampleNames}
-\title{Prepares initial samples to fill condition boxes.  
-it reads the sample names from the data and splits into two.}
+\title{getSampleNames}
 \usage{
 getSampleNames(cnames = NULL, part = 1)
 }

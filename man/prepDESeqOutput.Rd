@@ -22,7 +22,8 @@ prepDESeqOutput(data = NULL, cols = NULL, conds = NULL,
 data
 }
 \description{
-prepDESeqOutput
+Prepares the output data from DESeq to be used within
+DEBrowser
 }
 \examples{
     x <- prepDESeqOutput()

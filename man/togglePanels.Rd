@@ -14,7 +14,8 @@ togglePanels(num = NULL, nums = NULL, session = NULL)
 \item{session, }{session info}
 }
 \description{
-togglePanels
+User defined toggle to display which panels are to be shown within
+DEBrowser.
 }
 \note{
 \code{togglePanels}

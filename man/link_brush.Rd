@@ -2,7 +2,7 @@
 % Please edit documentation in R/link_brush.R
 \name{link_brush}
 \alias{link_brush}
-\title{Modified linked brush object.}
+\title{link_brush}
 \usage{
 link_brush()
 }
@@ -14,6 +14,7 @@ A list with components:
     which points are under the brush}
 }
 \description{
+Modified linked brush object.
 A link brush function modified to be able to create non-reactive
 linked brush object for ggvis plots
 }

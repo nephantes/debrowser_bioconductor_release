@@ -1,4 +1,6 @@
-#' startDEBrowser to be able to run interactively
+#' startDEBrowser
+#'
+#' Starts the DEBrowser to be able to run interactively.
 #'
 #' @note \code{startDEBrowser}
 #' @return the app
@@ -8,7 +10,6 @@
 #'
 #' @export
 #'
-
 startDEBrowser <- function(){
     if (interactive()) {
         #the upload file size limit is 30MB

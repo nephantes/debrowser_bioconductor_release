@@ -2,8 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getProgramTitle}
 \alias{getProgramTitle}
-\title{getProgramTitle If it is called in a program, the 
-program title will be hidden}
+\title{getProgramTitle}
 \usage{
 getProgramTitle(session = NULL)
 }
@@ -14,8 +13,8 @@ getProgramTitle(session = NULL)
 program title
 }
 \description{
-getProgramTitle If it is called in a program, the 
-program title will be hidden
+Generates the title of the program to be displayed within DEBrowser.
+If it is called in a program, the program title will be hidden
 }
 \note{
 \code{getProgramTitle}

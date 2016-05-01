@@ -10,7 +10,8 @@ getCompSelection(count = NULL)
 \item{count, }{comparison count}
 }
 \description{
-getCompSelection
+Gathers the user selected comparison set to be used within the
+DEBrowser.
 }
 \note{
 \code{getCompSelection}

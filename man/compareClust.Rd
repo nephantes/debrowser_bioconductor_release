@@ -25,7 +25,8 @@ compareClust(dat = NULL, ont = "CC", org = "org.Hs.eg.db",
 compared cluster
 }
 \description{
-compareClust
+Compares the clustered data to be displayed within the GO Term
+plots.
 }
 \note{
 \code{compareClust}

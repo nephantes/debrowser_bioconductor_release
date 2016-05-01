@@ -2,7 +2,7 @@
 % Please edit documentation in R/volcano.R
 \name{volcanoZoom}
 \alias{volcanoZoom}
-\title{Prepares volcano plot}
+\title{volcanoZoom}
 \usage{
 volcanoZoom(dat = NULL, data_tooltip = NULL, domains = NULL,
   colors = NULL)
@@ -20,7 +20,8 @@ volcanoZoom(dat = NULL, data_tooltip = NULL, domains = NULL,
 zoomed volcano plot
 }
 \description{
-Prepares volcano plot
+Prepares the zoomed in version of the volcano plot to be used
+within the Debrowser.
 }
 \examples{
     x <- volcanoZoom()

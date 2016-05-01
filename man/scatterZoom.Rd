@@ -2,7 +2,7 @@
 % Please edit documentation in R/mainScatter.R
 \name{scatterZoom}
 \alias{scatterZoom}
-\title{scatter zoom}
+\title{scatterZoom}
 \usage{
 scatterZoom(dat = NULL, data_tooltip = NULL, x = NULL, y = NULL,
   domains = NULL, colors = NULL)
@@ -24,7 +24,8 @@ scatterZoom(dat = NULL, data_tooltip = NULL, x = NULL, y = NULL,
 zoomed scatter plot
 }
 \description{
-scatter zoom
+Displays the zoomed in version of the plot to be viewed within
+the main panel.
 }
 \examples{
     x <- scatterZoom()

@@ -14,7 +14,7 @@ getConditionSelector(num = 0, choices = NULL, selected = NULL)
 \item{selected, }{selected smaple list}
 }
 \description{
-getConditionSelector
+Selects user input conditions to run in DESeq.
 }
 \examples{
     x <- getConditionSelector()

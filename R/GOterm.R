@@ -1,5 +1,7 @@
-#' GOTerm analysis functions
+#' getGeneList
 #'
+#' Gathers the gene list to use for GOTerm analysis.
+#"
 #' @note \code{GOTerm}
 #'
 #' @export
@@ -23,6 +25,9 @@ getGeneList <- function(genes) {
 }
 
 #' getEnrichGO
+#'
+#' Gathers the Enriched GO Term analysis data to be used within the
+#' GO Term plots.
 #'
 #' @note \code{getEnrichGO}
 #' @param genelist, gene list
@@ -54,6 +59,9 @@ getEnrichGO <- function(genelist = NULL, pvalueCutoff = 0.01,
 
 #' getEnrichKEGG
 #'
+#' Gathers the Enriched KEGG analysis data to be used within the
+#' GO Term plots.
+#'
 #' @note \code{getEnrichKEGG}
 #' @param genelist, gene list
 #' @param pvalueCutoff, the p value cutoff
@@ -78,6 +86,9 @@ getEnrichKEGG <- function(genelist, pvalueCutoff = 0.01) {
 }
 
 #' clusterData
+#'
+#' Gathers the Cluster analysis data to be used within the
+#' GO Term plots.
 #'
 #' @note \code{clusterData}
 #' @param dat, the data to cluster
@@ -122,6 +133,9 @@ clusterData <- function(dat) {
 
 #' compareClust
 #'
+#' Compares the clustered data to be displayed within the GO Term
+#' plots.
+#'
 #' @note \code{compareClust}
 #' @param dat, data to compare clusters
 #' @param ont, the ontology to use
@@ -158,8 +172,8 @@ compareClust <- function(dat = NULL, ont = "CC", org = "org.Hs.eg.db",
                     pvalueCutoff = pvalueCutoff)
             else if (fun == "enrichDO")
                  xx <- compareCluster(genecluster, fun = fun,
-                     OrgDb = org, pvalueCutoff = pvalueCutoff) 
-                     #organism = "human", pvalueCutoff = pvalueCutoff) 
+                     pvalueCutoff = pvalueCutoff) 
+                     #pvalueCutoff = pvalueCutoff) 
             else 
                 xx <- compareCluster(genecluster, fun = fun,
                         ont = ont, OrgDb = org, pvalueCutoff = pvalueCutoff)
@@ -175,6 +189,10 @@ compareClust <- function(dat = NULL, ont = "CC", org = "org.Hs.eg.db",
         res
 }
 #' getEnrichDO
+#'
+#' Gathers the Enriched DO Term analysis data to be used within the
+#' GO Term plots.
+#'
 #' @note \code{getEnrichDO}
 #' @param genelist, gene list
 #' @param pvalueCutoff, the p value cutoff

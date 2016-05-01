@@ -1,4 +1,7 @@
-#' Main scatter plot
+#' mainScatter
+#'
+#' Creates the main scatter plot to be displayed within the main
+#' panel.
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param lb, the linked brush
@@ -14,7 +17,6 @@
 #'
 #' @export
 #'
-
 mainScatter <- function(dat = NULL, lb = NULL,
     data_tooltip = NULL, x = NULL, y = NULL, 
     domains = NULL, colors = NULL) {
@@ -37,7 +39,10 @@ mainScatter <- function(dat = NULL, lb = NULL,
         add_axis("y", title = y)
 }
 
-#' scatter zoom
+#' scatterZoom
+#'
+#' Displays the zoomed in version of the plot to be viewed within
+#' the main panel.
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param data_tooltip, toolstip specific to this plot

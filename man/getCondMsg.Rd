@@ -15,7 +15,8 @@ getCondMsg(cols = NULL, conds = NULL)
 return conditions
 }
 \description{
-getCondMsg
+Generates and displays the current conditions and their samples
+within the DEBrowser.
 }
 \note{
 \code{getCondMsg}

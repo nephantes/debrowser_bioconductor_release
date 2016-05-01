@@ -15,7 +15,7 @@ getSamples(cnames = NULL, index = 2)
 choices
 }
 \description{
-getSamples
+Gathers the sample names to be used within DEBrowser.
 }
 \examples{
     x <- getSamples()

@@ -13,7 +13,8 @@ clusterData(dat)
 clustered data
 }
 \description{
-clusterData
+Gathers the Cluster analysis data to be used within the
+GO Term plots.
 }
 \note{
 \code{clusterData}

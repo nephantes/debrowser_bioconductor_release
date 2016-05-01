@@ -2,7 +2,7 @@
 % Please edit documentation in R/heatmap.R
 \name{runHeatmap}
 \alias{runHeatmap}
-\title{It creates a heatmap}
+\title{runHeatmap}
 \usage{
 runHeatmap(data, title = "Title", dend = "both", names = FALSE,
   clustering_method = c("ward.D2", "complete", "single", "average",
@@ -28,7 +28,7 @@ runHeatmap(data, title = "Title", dend = "both", names = FALSE,
 heatmap.2 plot
 }
 \description{
-It creates a heatmap
+Creates a heatmap based on the user selected parameters within shiny.
 }
 \examples{
     x <- runHeatmap(mtcars)

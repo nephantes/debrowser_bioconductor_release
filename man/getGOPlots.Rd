@@ -2,7 +2,7 @@
 % Please edit documentation in R/gopanel.R
 \name{getGOPlots}
 \alias{getGOPlots}
-\title{getGOPlots, go term analysis panel}
+\title{getGOPlots}
 \usage{
 getGOPlots(dataset, input = NULL, table = FALSE)
 }
@@ -17,7 +17,8 @@ getGOPlots(dataset, input = NULL, table = FALSE)
 the panel for go plots;
 }
 \description{
-getGOPlots, go term analysis panel
+Go term analysis panel.  Generates appropriate GO plot
+based on user selection.
 }
 \note{
 \code{getGOPlots}

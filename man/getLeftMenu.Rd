@@ -2,7 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getLeftMenu}
 \alias{getLeftMenu}
-\title{getLeftMenu Left menu for plots}
+\title{getLeftMenu}
 \usage{
 getLeftMenu(flag = TRUE)
 }
@@ -13,7 +13,7 @@ getLeftMenu(flag = TRUE)
 returns the left menu according to the selected tab;
 }
 \description{
-getLeftMenu Left menu for plots
+Generates the left menu for for plots within the DEBrowser.
 }
 \note{
 \code{getLeftMenu}

@@ -10,7 +10,7 @@ hideObj(btns = NULL)
 \item{btns, }{hide group of objects with shinyjs}
 }
 \description{
-hideObj
+Hides a shiny object.
 }
 \examples{
     x <- hideObj()

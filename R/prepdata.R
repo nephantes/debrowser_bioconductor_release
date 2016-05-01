@@ -1,4 +1,7 @@
 #' getSamples
+#'
+#' Gathers the sample names to be used within DEBrowser.
+#'
 #' @param cnames, names of the  samples
 #' @param index, starting column in a tab separated file
 #' @return choices
@@ -20,6 +23,9 @@ getSamples <- function (cnames = NULL, index = 2) {
 }
 
 #' prepDataContainer
+#'
+#' Prepares the data container that stores values used within DESeq.
+#'
 #' @param data, loaded dataset
 #' @param counter, the number of comparisons
 #' @param input, input parameters
@@ -46,6 +52,7 @@ prepDataContainer <- function(data = NULL, counter=NULL,
     {
         m$conds[cnt] <- list(input[[paste0("condition",cnt)]])
     }
+    shinyjs::disable("resetsamples")
     m$fittype <- input$fittype
     shinyjs::disable("goButton")
     m
@@ -68,6 +75,9 @@ prepDataContainer <- function(data = NULL, counter=NULL,
 }
 
 #' getMean
+#'
+#' Gathers the mean for selected condition.
+#'
 #' @param norm_data, loaded dataset
 #' @param de_res, de results
 #' @param inputconds, input parameters
@@ -91,7 +101,50 @@ getMean<-function(norm_data = NULL, de_res = NULL,
     mean_cond
 }
 
+#' setFilterParams
+#'
+#' It sets the filter parameters 
+#'
+#' @param session, session variable
+#' @param input, input parameters
+#' @export
+#'
+#' @examples
+#'     x <- setFilterParams()
+#'
+setFilterParams <- function(session = NULL, input = NULL) {
+    if (!is.null(input$padj)){
+        if (input$padj %% 2)
+            valpadj = (10 ^ (-1*as.integer(
+                (10-input$padj)/2 )) ) /2
+        else
+            valpadj = (10 ^ (-1*(10-input$padj)/2))
+        if(input$padj == 0) valpadj = 0
+        updateTextInput(session, "padjtxt",
+            value = valpadj ) 
+    }
+    if (!is.null(input$gopvalue)){
+      if (input$gopvalue%%2)
+        gopval = (10 ^ (-1*as.integer(
+          (10-input$gopvalue)/2 )) ) /2
+      else
+        gopval = (10 ^ (-1*(10-input$gopvalue)/2))
+      if(input$gopvalue==0) gopval = 0
+      updateTextInput(session, "pvaluetxt",
+                      value = gopval ) 
+    }
+    if (!is.null(input$foldChange)){
+      valpadjfoldChange = input$foldChange
+      updateTextInput(session, "foldChangetxt",
+                      value = valpadjfoldChange)
+    }
+}
+
 #' prepDESeqOutput
+#'
+#' Prepares the output data from DESeq to be used within
+#' DEBrowser
+#'
 #' @param data, loaded dataset
 #' @param cols, columns
 #' @param conds, conds
@@ -133,6 +186,10 @@ prepDESeqOutput <- function(data = NULL, cols = NULL,
 }
 
 #' applyFilters
+#'
+#' Applies filters based on user selected parameters to be
+#' displayed within the DEBrowser.
+#'
 #' @param filt_data, loaded dataset
 #' @param cols, selected samples
 #' @param input, input parameters
@@ -146,7 +203,6 @@ applyFilters <- function(filt_data = NULL, cols = NULL,
     input = NULL){
     if (is.null(input$padjtxt) || is.null(input$foldChangetxt) 
         || is.null(filt_data)) return(NULL)
-
     padj_cutoff <- as.numeric(input$padjtxt)
     foldChange_cutoff <- as.numeric(input$foldChangetxt)
     m <- filt_data
@@ -154,35 +210,37 @@ applyFilters <- function(filt_data = NULL, cols = NULL,
     m$Legend <- character(nrow(m))
     m$Size <- character(nrow(m))
     m[, "Size"] <- "40"
-    m$Legend[abs(m$log2FoldChange) <= log2(foldChange_cutoff)] <- "NS"
-    m$Legend[is.null(m$log10padj) ||  m$Legend==""] <- "NS"
+    m$Legend <- "NS"
+    if (input$dataset == "up" || input$dataset == "up+down") 
+        m$Legend[m$foldChange >= foldChange_cutoff &
+               m$padj <= padj_cutoff] <- "Up"
+    if (input$dataset == "down" || input$dataset == "up+down")
+        m$Legend[m$foldChange <= (1 / foldChange_cutoff) &
+               m$padj <= padj_cutoff] <- "Down"
     if (input$dataset == "most-varied" && !is.null(cols)) {
-        m[, "Legend"] <- "NA"
         most_varied <- getMostVariedList(m, cols, input$topn, input$mincount)
         m[rownames(most_varied), c("Legend")] <- "MV"
     }
-    else if (input$dataset == "geneset") {
+    
+    if (!is.null(input$genesetarea) && input$genesetarea != ""
+        && input$methodtabs == "panel1") {
         genelist <- getGeneSetData(m, c(input$genesetarea))
-        m[, "Legend"] <- "NA"
         m[rownames(genelist), "Legend"] <- "GS"
         m[rownames(genelist), "Size"] <- "100"
         m <- m[rev(order(m$Legend)),]
-    }
-    else{
-        m$Legend[m$log2FoldChange > log2(foldChange_cutoff) &
-            m$padj < padj_cutoff] <- "Up"
-        m$Legend[m$log2FoldChange < log2(1 / foldChange_cutoff) &
-            m$padj < padj_cutoff] <- "Down"
     }
     m
 }
 
 #' getSelectedDatasetInput
+#'
+#' Gathers the user selected dataset output to be displayed.
+#'
 #' @param rdata, filtered dataset
 #' @param getSelected, selected data
 #' @param getMostVaried, most varied data
 #' @param getGeneSet, given gene set
-#' @param getMergedComparison, merged comparison data
+#' @param getSelectedDatasetInput, merged comparison data
 #' @param input, input parameters
 #' @return data
 #' @export
@@ -191,23 +249,20 @@ applyFilters <- function(filt_data = NULL, cols = NULL,
 #'     x <- getSelectedDatasetInput()
 #'
 getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL, 
-    getMostVaried = NULL, getGeneSet = NULL, getMergedComparison = NULL, 
+    getMostVaried = NULL, getGeneSet = NULL, getSelectedDatasetInput = NULL, 
     input = NULL) {
     if (is.null(rdata)) return (NULL)
     m <- rdata
     if (input$dataset == "up") {
-        m <- rdata[rdata[, "Legend"] == "Up", ]
+        m <- getUp(rdata)
     } else if (input$dataset == "down") {
-        m <- rdata[rdata[, "Legend"] == "Down", ]
+        m <- getDown(rdata)
     } else if (input$dataset == "up+down") {
-        m <- rdata[which(rdata[, "Legend"] == "Down" |
-            rdata[, "Legend"] == "Up"), ]
+        m <- getUpDown(rdata)
     } else if (input$dataset == "alldetected") {
         m <- rdata
     } else if (input$dataset == "selected") {
         m <- getSelected
-    } else if (input$dataset == "geneset") {
-      m <- getGeneSet
     } else if (input$dataset == "most-varied") {
         m <- getMostVaried
     } else if (input$dataset == "comparisons") {
@@ -215,7 +270,11 @@ getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL,
     }
     m
 }
+
 #' prepDataForQC
+#'
+#' Prepares selected data for QC plots.
+#'
 #' @param dataset, loaded dataset
 #' @return data
 #' @export
@@ -230,13 +289,17 @@ prepDataForQC<-function(dataset = NULL){
     dataset[, columns] <- apply(dataset[, columns], 2,
         function(x) as.integer(x))
     dataset1 <- rowSums(dataset[,1:ncol(dataset)])
-    filtd <- subset(dataset, rowSums(dataset[,1:ncol(dataset)]) > 10)
-
+    filtd <- data.frame(subset(dataset, 
+        rowSums(dataset[,1:ncol(dataset)]) > 10))
     norm_data <- getNormalizedMatrix(filtd)
     return(norm_data)
 }
 
 #' getMostVariedList
+#'
+#' Calculates the most varied genes to be used for specific plots
+#' within the DEBrowser.
+#'
 #' @param datavar, loaded dataset
 #' @param cols, selected columns
 #' @param topn, most varied records
@@ -263,7 +326,34 @@ getMostVariedList <- function(datavar = NULL, cols = NULL,
     cvsort_top <- head(cvsort, topindex)
     selected_var <- data.frame(datavar[rownames(cvsort_top),])
 }
+
+
+#' getSearchData
+#'
+#' search the geneset in the tables and return it
+#'
+#' @param dat, table data
+#' @param input, input params
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x <- getSearchData()
+#'
+getSearchData <- function(dat = NULL, input = NULL)
+{
+  if (is.null(dat)) return(NULL)
+  if (input$genesetarea != ""){
+    dat <- getGeneSetData(dat, c(input$genesetarea))
+  }
+  dat
+}
+
 #' getGeneSetData
+#'
+#' Gathers the specified gene set list to be used within the
+#' DEBrowser.
+#'
 #' @param data, loaded dataset
 #' @param geneset, given gene set
 #' @return data
@@ -274,21 +364,130 @@ getMostVariedList <- function(datavar = NULL, cols = NULL,
 #'
 getGeneSetData <- function(data = NULL, geneset = NULL) {
     if (is.null(data)) return (NULL)
-    geneset <- unique(unlist(strsplit(geneset, split="[:;, \t\n\t]")))
-    geneset <- geneset[geneset != ""]
+    geneset1 <- unique(unlist(strsplit(geneset, split="[:;, \t\n\t]")))
+    geneset2 <- geneset1[geneset1 != ""]
     dat1 <- data.frame(data)
     if(!("ID" %in% names(dat1)))
-        dat1 <- addID(data)
+        dat2 <- addID(dat1)
+    else
+        dat2 <- dat1
 
-    rownames(dat1) <- toupper(dat1$ID)
-    geneset
-    #geneset<-toupper(geneset[(toupper(geneset) %in% toupper(data$ID))])
-    geneset <- unique(as.vector(unlist(lapply(toupper(geneset), 
-        function(x){ dat1$ID[(grepl(x, toupper(dat1$ID)))] }))))
-    retset <- data[geneset, ]
+    geneset4 <- unique(as.vector(unlist(lapply(toupper(geneset2), 
+        function(x){ dat2[(grepl(x, toupper(dat2[,"ID"]))), "ID"] }))))
+    retset <- data.frame(dat2[geneset4, ])
     retset
 }
+
+#' getUp
+#' get up regulated data
+#'
+#' @param filt_data, filt_data
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x <- getUp()
+#'
+getUp <- function(filt_data = NULL){
+    if(is.null(filt_data)) return(NULL)
+    filt_data[
+        filt_data[, "Legend"] == "Up" | 
+        filt_data[, "Legend"] == "GS", ]
+}
+#' getDown
+#' get down regulated data
+#'
+#' @param filt_data, filt_data
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x <- getDown()
+#'
+getDown <- function(filt_data = NULL){
+    if(is.null(filt_data)) return(NULL)
+    filt_data[
+        filt_data[, "Legend"] == "Down"|
+        filt_data[, "Legend"] == "GS", ]
+}
+
+#' getUpDown
+#' get up+down regulated data
+#'
+#' @param filt_data, filt_data
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x <- getUpDown()
+#'
+getUpDown <- function(filt_data = NULL){
+    if(is.null(filt_data)) return(NULL)
+    filt_data[
+        filt_data[, "Legend"] == "Up" | 
+        filt_data[, "Legend"] == "Down"|
+        filt_data[, "Legend"] == "GS", ]
+}
+
+#' getDataForTables
+#' get data to fill up tables tab
+#'
+
+#' @param input, input parameters
+#' @param init_data, initial dataset
+#' @param filt_data, filt_data
+#' @param selected, selected genes
+#' @param getMostVaried, most varied genes
+#' @param mergedComp, merged comparison set
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x <- getDataForTables()
+#'
+getDataForTables <- function(input = NULL, init_data = NULL,
+    filt_data = NULL, selected = NULL,
+    getMostVaried = NULL,  mergedComp = NULL){
+    if (is.null(filt_data )) return(NULL)
+    pastr <- "padj"
+    fcstr <- "foldChange"
+    dat <- NULL
+    if (input$dataset == "alldetected"){
+        if (!is.null(init_data))
+            dat <- getSearchData(init_data, input)
+    }
+    else if (input$dataset == "up+down"){
+        if (!is.null(filt_data))
+            dat <- getSearchData(getUpDown(filt_data), input)
+    }
+    else if (input$dataset == "up"){
+        if (!is.null(filt_data))
+            dat <- getSearchData(getUp(filt_data), input)
+    }
+    else if (input$dataset == "down"){
+        if (!is.null(filt_data))
+            dat <- getSearchData(getDown(filt_data), input)
+    }
+    else if (input$dataset == "selected"){
+        if (is.null(isolate(selected$data))) return(NULL)
+        dat <- getSearchData(selected$data$getSelected(), input)
+    }
+    else if (input$dataset == "most-varied"){
+        dat <- getSearchData(getMostVaried, input)
+    }
+    else if (input$dataset == "comparisons"){
+        if (is.null(mergedComp)) return(NULL)
+        fcstr<-colnames(mergedComp)[grepl("foldChange", colnames(mergedComp))]
+        pastr<-colnames(mergedComp)[grepl("padj", colnames(mergedComp))]
+        dat <- getSearchData(mergedComp, input)
+    }
+    list(dat, pastr, fcstr)
+}
+
 #' addID
+#'
+#' Adds an id to the data frame being used.
+#'
 #' @param data, loaded dataset
 #' @return data
 #' @export
@@ -303,31 +502,72 @@ addID <- function(data = NULL) {
     colnames(dat1) <- c("ID", colnames(data))
     dat1
 }
+
 #' getMergedComparison
+#'
+#' Gathers the merged comparison data to be used within the
+#' DEBrowser.
+#'
 #' @param dc, data container
 #' @param nc, the number of comparisons
+#' @param input, input params
 #' @return data
 #' @export
 #'
 #' @examples
 #'     x <- getMergedComparison()
 #'
-getMergedComparison <- function(dc = NULL, nc = NULL){
+getMergedComparison <- function(dc = NULL, nc = NULL, input = NULL){
     merged <- c()
     if (is.null(dc)) return (NULL)
+    padj_cutoff <- as.numeric(input$padjtxt)
+    foldChange_cutoff <- as.numeric(input$foldChangetxt)
     for ( ni in seq(1:nc)) {
-        tmp <- dc[[ni]]$init_data[,c("foldChange", "pvalue", "padj")]
+        tmp <- dc[[ni]]$init_data[,c("foldChange", "padj")]
         tt <- paste0("C", (2*ni-1),".vs.C",(2*ni))
         colnames(tmp) <- c(paste0("foldChange.", tt),  
-            paste0("pvalue", tt), paste0("padj", tt))
+            paste0("padj", tt))
         if (ni==1){
             merged <- tmp
         }
         else{
-            merged <- merge(merged, tmp, by="row.names")
-            row.names(merged) <- merged$Row.names
-            merged[,c("Row.names")] <- NULL
+            merged <- merge(merged, tmp, all = TRUE, by=0)
+            rownames(merged) <- merged$Row.names
+            merged$Row.names <- NULL
         }
+        if (is.null(merged$Legend)){
+          merged$Legend <- character(nrow(merged))
+          merged$Legend <- "NS"
+        }
+        merged[which(merged[,c(paste0("foldChange.", tt))] >= 
+            foldChange_cutoff & merged[,c(paste0("padj", tt))] <= 
+            padj_cutoff), "Legend"] <- "Sig"
+        merged[which(merged[,c(paste0("foldChange.", tt))] <= 
+            1/foldChange_cutoff & merged[,c(paste0("padj", tt))] <= 
+            padj_cutoff), "Legend"] <- "Sig"
     }
+    merged <- merged[merged$Legend == "Sig", ]
+    merged[,c("Legend")]<- NULL
     merged
+}
+
+#' removeCols
+#'
+#' remove unnecessary columns
+#'
+#' @param cols, columns that are going to be removed from data frame
+#' @param dat, data
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x <- removeCols()
+#'
+removeCols <- function( cols = NULL, dat = NULL) {
+    if (is.null(dat)) return (NULL)
+    for (colnum in seq(1:length(cols))){
+         if (cols[colnum] %in% colnames(dat) )
+              dat[, cols[colnum]]<- NULL
+    }
+    dat
 }

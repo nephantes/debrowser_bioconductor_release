@@ -1,4 +1,6 @@
-#' Prepares volcano plot
+#' volcanoPlot
+#'
+#' Prepares volcano plot to be used within the DEBrowser.
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param lb, the linked brush
@@ -28,7 +30,10 @@ volcanoPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL,
         set_options(width = 400, height = 350)
 }
 
-#' Prepares volcano plot
+#' volcanoZoom
+#'
+#' Prepares the zoomed in version of the volcano plot to be used
+#' within the Debrowser.
 #'
 #' @param dat, dataframe that has log2FoldChange and log10padj values
 #' @param data_tooltip, toolstip specific to this plot
@@ -40,7 +45,6 @@ volcanoPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL,
 #'     x <- volcanoZoom()
 #'
 #' @export
-
 volcanoZoom <- function(dat = NULL, data_tooltip = NULL,
     domains = NULL, colors = NULL) {
     if ( is.null(dat) ) return(NULL)

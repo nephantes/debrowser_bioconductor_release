@@ -2,7 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getGOLeftMenu}
 \alias{getGOLeftMenu}
-\title{getGOLeftMenu GO Left menu}
+\title{getGOLeftMenu}
 \usage{
 getGOLeftMenu()
 }
@@ -10,7 +10,7 @@ getGOLeftMenu()
 returns the left menu according to the selected tab;
 }
 \description{
-getGOLeftMenu GO Left menu
+Generates the GO Left menu to be displayed within the DEBrowser.
 }
 \note{
 \code{getGOLeftMenu}

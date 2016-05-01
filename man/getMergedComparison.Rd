@@ -4,18 +4,21 @@
 \alias{getMergedComparison}
 \title{getMergedComparison}
 \usage{
-getMergedComparison(dc = NULL, nc = NULL)
+getMergedComparison(dc = NULL, nc = NULL, input = NULL)
 }
 \arguments{
 \item{dc, }{data container}
 
 \item{nc, }{the number of comparisons}
+
+\item{input, }{input params}
 }
 \value{
 data
 }
 \description{
-getMergedComparison
+Gathers the merged comparison data to be used within the
+DEBrowser.
 }
 \examples{
     x <- getMergedComparison()

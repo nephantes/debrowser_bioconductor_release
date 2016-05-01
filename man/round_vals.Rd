@@ -2,7 +2,7 @@
 % Please edit documentation in R/funcs.R
 \name{round_vals}
 \alias{round_vals}
-\title{Plot PCA results.}
+\title{round_vals}
 \usage{
 round_vals(l)
 }

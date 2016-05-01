@@ -21,7 +21,8 @@ textareaInput(id, label, value, rows = 20, cols = 35,
 \item{class, }{css class}
 }
 \description{
-textareaInput
+Generates a text area input to be used for gene selection within
+the DEBrowser.
 }
 \examples{
     x <- textareaInput("genesetarea", "Gene Set",

@@ -2,8 +2,7 @@
 % Please edit documentation in R/mainpanel.R
 \name{getMainPanel}
 \alias{getMainPanel}
-\title{getMainPanel, main panel for volcano, scatter and maplot.  
-Barplot and box plots are in this page too}
+\title{getMainPanel}
 \usage{
 getMainPanel(randstr = NULL)
 }
@@ -14,8 +13,8 @@ getMainPanel(randstr = NULL)
 the panel for main plots;
 }
 \description{
-getMainPanel, main panel for volcano, scatter and maplot.  
-Barplot and box plots are in this page too
+main panel for volcano, scatter and maplot.  
+Barplot and box plots are in this page as well.
 }
 \note{
 \code{getMainPanel}

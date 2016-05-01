@@ -15,7 +15,8 @@ getEnrichDO(genelist = NULL, pvalueCutoff = 0.01)
 enriched DO
 }
 \description{
-getEnrichDO
+Gathers the Enriched DO Term analysis data to be used within the
+GO Term plots.
 }
 \note{
 \code{getEnrichDO}

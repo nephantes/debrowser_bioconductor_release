@@ -10,7 +10,7 @@ getStartupMsg()
 return startup msg
 }
 \description{
-getStartupMsg
+Generates and displays the starting message within DEBrowser.
 }
 \note{
 \code{getStartupMsg}

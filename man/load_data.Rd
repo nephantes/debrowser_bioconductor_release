@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_data.R
 \name{load_data}
 \alias{load_data}
-\title{Load data.}
+\title{load_data.}
 \usage{
 load_data(input = NULL, session = NULL)
 }
@@ -15,7 +15,7 @@ load_data(input = NULL, session = NULL)
 data
 }
 \description{
-Load data.
+Loads user selected data to be used for DESeq
 }
 \examples{
     x<-load_data ()

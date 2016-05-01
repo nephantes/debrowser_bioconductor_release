@@ -2,7 +2,7 @@
 % Please edit documentation in R/MAPlot.R
 \name{MAZoom}
 \alias{MAZoom}
-\title{MA Zoom}
+\title{MAZoom}
 \usage{
 MAZoom(dat = NULL, data_tooltip = NULL, domains = NULL, colors = NULL)
 }
@@ -19,7 +19,8 @@ MAZoom(dat = NULL, data_tooltip = NULL, domains = NULL, colors = NULL)
 zoomed MA plot
 }
 \description{
-MA Zoom
+Prepares the zoomed in version of the MA plot to be used within
+the main panel.
 }
 \examples{
     x <- MAZoom()

@@ -20,7 +20,8 @@ getEnrichGO(genelist = NULL, pvalueCutoff = 0.01, org = "org.Hs.eg.db",
 Enriched GO
 }
 \description{
-getEnrichGO
+Gathers the Enriched GO Term analysis data to be used within the
+GO Term plots.
 }
 \note{
 \code{getEnrichGO}

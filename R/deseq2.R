@@ -1,4 +1,7 @@
-#' Run DESeq2 algorithm.
+#' runDESeq
+#'
+#' Run DESeq2 algorithm on the selected conditions.  Output is
+#' to be used for the interactive display.
 #'
 #' @param data, A matrix that includes all the expression raw counts,
 #'     rownames has to be the gene, isoform or region names/IDs
@@ -17,7 +20,6 @@
 #' @examples
 #'     x <- runDESeq(data<-NULL, columns<-c())
 #'
-
 runDESeq <- function(data, columns, conds,
     fitType = c("parametric", "local", "mean"),
     non_expressed_cutoff = 10) {

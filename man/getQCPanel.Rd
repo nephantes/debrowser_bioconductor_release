@@ -2,18 +2,18 @@
 % Please edit documentation in R/QCSection.R
 \name{getQCPanel}
 \alias{getQCPanel}
-\title{getQCPanel, conditional panel for QC plots}
+\title{getQCPanel}
 \usage{
-getQCPanel(flag = FALSE)
+getQCPanel(randstr = NULL)
 }
 \arguments{
-\item{flag, }{to show the section}
+\item{randstr, }{randstr}
 }
 \value{
 the panel for QC plots;
 }
 \description{
-getQCPanel, conditional panel for QC plots
+Gathers the conditional panel for QC plots
 }
 \note{
 \code{getQCSection}

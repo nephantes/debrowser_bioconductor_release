@@ -10,7 +10,8 @@ getQCLeftMenu()
 QC left menu
 }
 \description{
-getQCLeftMenu
+Generates the left menu to be used for QC plots within the
+DEBrowser.
 }
 \note{
 \code{getQCLeftMenu}

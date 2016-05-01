@@ -2,7 +2,7 @@
 % Please edit documentation in R/mainScatter.R
 \name{mainScatter}
 \alias{mainScatter}
-\title{Main scatter plot}
+\title{mainScatter}
 \usage{
 mainScatter(dat = NULL, lb = NULL, data_tooltip = NULL, x = NULL,
   y = NULL, domains = NULL, colors = NULL)
@@ -26,7 +26,8 @@ mainScatter(dat = NULL, lb = NULL, data_tooltip = NULL, x = NULL,
 volcano plot
 }
 \description{
-Main scatter plot
+Creates the main scatter plot to be displayed within the main
+panel.
 }
 \examples{
     x <- mainScatter()

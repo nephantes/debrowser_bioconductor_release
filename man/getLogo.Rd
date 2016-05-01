@@ -10,7 +10,7 @@ getLogo()
 return logo
 }
 \description{
-getLogo
+Generates and displays the logo to be shown within DEBrowser.
 }
 \note{
 \code{getLogo}

@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot_props.R
 \name{getHoverPlots}
 \alias{getHoverPlots}
-\title{Prepares the plots going to be shown when a gene hovered
-in the main plots}
+\title{getHoverPlots}
 \usage{
 getHoverPlots(bardata = NULL, genename = NULL)
 }

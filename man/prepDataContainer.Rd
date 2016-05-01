@@ -20,7 +20,7 @@ prepDataContainer(data = NULL, counter = NULL, input = NULL,
 data
 }
 \description{
-prepDataContainer
+Prepares the data container that stores values used within DESeq.
 }
 \examples{
     x <- prepDataContainer()

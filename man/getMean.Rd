@@ -20,7 +20,7 @@ getMean(norm_data = NULL, de_res = NULL, inputconds = NULL,
 data
 }
 \description{
-getMean
+Gathers the mean for selected condition.
 }
 \examples{
     x <- getMean()

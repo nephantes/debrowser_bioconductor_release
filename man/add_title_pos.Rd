@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_props.R
 \name{add_title_pos}
 \alias{add_title_pos}
-\title{Adds a title with extra axis to ggvis plot and sets the positions}
+\title{add_title_pos}
 \usage{
 add_title_pos(vis, ..., title = "Plot Title", align = "left", angle = 0,
   dx = 0, dy = 0)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/uifuncs.R
 \name{getInitialMenu}
 \alias{getInitialMenu}
-\title{getInitialMenu Initial menu}
+\title{getInitialMenu}
 \usage{
 getInitialMenu(input = NULL, output = NULL, session = NULL)
 }
@@ -17,7 +17,7 @@ getInitialMenu(input = NULL, output = NULL, session = NULL)
 returns the initial menu
 }
 \description{
-getInitialMenu Initial menu
+Displays the initial menu within DEBrowser.
 }
 \note{
 \code{getInitialMenu}
