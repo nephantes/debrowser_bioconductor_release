@@ -4,13 +4,13 @@
 \alias{getQCPanel}
 \title{getQCPanel}
 \usage{
-getQCPanel(randstr = NULL)
+getQCPanel(input = NULL)
 }
 \arguments{
-\item{randstr, }{randstr}
+\item{input, }{user input}
 }
 \value{
-the panel for QC plots;
+the panel for QC plots
 }
 \description{
 Gathers the conditional panel for QC plots

@@ -35,17 +35,17 @@
 #'             bind_shiny create_broker ggvis ggvisOutput handle_brush
 #'             hide_legend layer_bars layer_boxplots layer_points
 #'             scale_nominal set_options %>% group_by layer_rects
-#'             band
+#'             band scale_numeric hide_axis
 #' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
 #' @importFrom grDevices dev.off pdf
 #' @importFrom graphics barplot hist pairs par rect text
 #' @importFrom stats aggregate as.dist cor cor.test dist
 #'             hclust kmeans na.omit prcomp var sd
-#' @importFrom utils read.table write.table
+#' @importFrom utils read.table write.table update.packages
 #' @importFrom DOSE enrichDO enrichMap gseaplot
 #' @importMethodsFrom AnnotationDbi as.data.frame as.list colnames
-#'             head mappedkeys ncol nrow subset
+#'             head mappedkeys ncol nrow subset keys mapIds
 #' @importMethodsFrom GenomicRanges as.factor
 #' @importMethodsFrom IRanges as.matrix "colnames<-" mean
 #'             nchar paste rownames toupper unique which
@@ -57,28 +57,19 @@
 #' @importFrom ReactomePA enrichPathway
 #' @importFrom edgeR calcNormFactors equalizeLibSizes DGEList
 #' @importFrom DESeq2 DESeq results DESeqDataSetFromMatrix
-#' @importFrom org.Hs.eg.db org.Hs.egSYMBOL2EG
 #' @importFrom annotate geneSymbols
 #' @importFrom reshape2 melt
-#' @import     V8
-#'
+#' @import org.Hs.eg.db
+#' @import org.Mm.eg.db
 deServer <- function(input, output, session) {
     tryCatch(
     {
         if (!interactive()) {
-            ctx <- v8();
             options( shiny.maxRequestSize = 30 * 1024 ^ 2,
                 shiny.fullstacktrace = TRUE, shiny.trace=TRUE, 
                 shiny.autoreload=TRUE)
             #library(debrowser)
         }
-        observeEvent(input$refresh, {
-            js$refresh();
-        })
-        #observeEvent(input$stopapp, {
-        #    stopApp();
-        #})
-
         observeEvent(input$stopApp, {
             stopApp(returnValue = invisible())
         })
@@ -93,10 +84,10 @@ deServer <- function(input, output, session) {
             a
         })
         output$qcpanel <- renderUI({
-            getQCPanel(randstr())
+            getQCPanel(input)
         })
-        output$plotarea <- renderUI({
-            getQCPlotArea(input, !is.null(init_data()))
+        output$intheatmap <- renderUI({
+            getIntHeatmapVis(randstr())
         })
         output$gopanel <- renderUI({
             getGoPanel(!is.null(init_data()))
@@ -156,7 +147,7 @@ deServer <- function(input, output, session) {
             return(!is.null(filt_data()))
         })
         outputOptions(output, "definished", 
-                      suspendWhenHidden = FALSE)
+            suspendWhenHidden = FALSE)
         Dataset <- reactive({
             load_data(input, session)
         })
@@ -176,7 +167,7 @@ deServer <- function(input, output, session) {
             hideObj(c("goQCplots", "startDESeq"))
             showObj(c("add_btn","rm_btn","goButton", "fittype"))
         })
-   
+
         observeEvent(input$resetsamples, {
             updateTextInput(session, "samples",value = "" )
             session$sendCustomMessage("startDESeq", NULL)
@@ -260,7 +251,9 @@ deServer <- function(input, output, session) {
             prepDataForQC(Dataset()[,input$samples])
         })
         heatdat <- reactive({
-            if (is.null(heatmapVals$data)) getQCReplot()
+            if (is.null(heatmapVals$data))
+                heatmapVals$data <- getQCReplot(cols(), conds(), 
+                    datasetInput(), input, inputQCPlot())
             dat <- heatmapVals$data
             if (is.null(dat)) return (NULL)
             count = nrow(t(dat$carpet))
@@ -272,33 +265,18 @@ deServer <- function(input, output, session) {
             list(dat, count)
         })
         observe({
-            if (inputQCPlot()$interactive==1 && input$qcplot == "heatmap")
+            if (inputQCPlot()$interactive == 1 && input$qcplot == "heatmap")
                 selected$data <- 
                     getSelHeat(isolate(init_data()), isolate(heatdat()[[1]]),
-                               isolate(heatdat()[[2]])) 
+                        isolate(heatdat()[[2]])) 
         })
 
         heatmapVals <- reactiveValues(data = NULL)
-        getQCReplot <- reactive({
-          a <- NULL
-          if (!is.null(input$qcplot)) {
-              if (!is.null(cols()) && !input$dataset == "comparisons"){
-                  dataset <- datasetInput()[, cols()]
-                  metadata <- cbind(cols(), conds())
-              }else{
-                  dataset <- datasetInput()[,c(input$samples)]
-                  metadata <- cbind(colnames(dataset), "Conds")
-              }
-              if (nrow(dataset)<3) return(NULL)
-              a <- getQCPlots(dataset, input, metadata,
-                  inputQCPlot = inputQCPlot(),
-                  cex = input$cex)
-          }
-          heatmapVals$data <- a
-          a
-        })      
+   
         output$qcplotout <- renderPlot({
-              getQCReplot()
+            heatmapVals$data <- getQCReplot(cols(), conds(), 
+                 datasetInput(), input, inputQCPlot())
+            return( heatmapVals$data )
         })
 
         output$pcaexplained <- renderPlot({
@@ -311,12 +289,14 @@ deServer <- function(input, output, session) {
         })
 
         inputQCPlot <- reactiveValues(clustering_method = "ward.D2",
-            distance_method = "cor", interactive = FALSE)
+            distance_method = "cor", interactive = FALSE, width = 700, height = 500)
         inputQCPlot <- eventReactive(input$startQCPlot, {
             m <- c()
             m$clustering_method <- input$clustering_method
             m$distance_method <- input$distance_method
             m$interactive <- input$interactive
+            m$width <- input$width
+            m$height <- input$height
             return(m)
         })
         inputGOstart <- eventReactive(input$startGO, {
@@ -330,7 +310,7 @@ deServer <- function(input, output, session) {
         output$tables <- DT::renderDataTable({
             dat <- getDataForTables(input, init_data(),
                   filt_data(), selected,
-                  getMostVaried(),  mergedComp())
+                  getMostVaried(),  isolate(mergedComp()))
             dat2 <- removeCols(c("ID", "x", "y","Legend", "Size"), dat[[1]])
             m <- DT::datatable(dat2,
             options = list(lengthMenu = list(c(10, 25, 50, 100),
@@ -370,12 +350,18 @@ deServer <- function(input, output, session) {
                     pageLength = 25, paging = TRUE, searching = TRUE))
             }
         })
+
         mergedComp <- reactive({
-            merged <- isolate(getMergedComparison(
-                isolate(dc()), choicecounter$nc, input))
-            merged <- merge(Dataset()[,input$samples], merged, by=0)
-            rownames(merged) <- merged$Row.names
-            merged$Row.names <- NULL
+            dat <- applyFiltersToMergedComparison(
+                isolate(mergedCompInit()), choicecounter$nc, input)
+            ret <- dat[dat$Legend == "Sig", ]
+            #ret[ret$Legend == "Sig", ] <- NULL
+            ret
+        })
+        
+        mergedCompInit <- reactive({
+            merged <- getMergedComparison(
+                isolate(Dataset()), isolate(dc()), choicecounter$nc, input)
             merged
         })
         datasetInput <- function(addIdFlag = FALSE){
@@ -383,8 +369,7 @@ deServer <- function(input, output, session) {
             if (!input$goQCplots ) {
                 mergedCompDat <- NULL
                 if (input$dataset == "comparisons")
-                    mergedCompDat <- getNormalizedMatrix(isolate(
-                      mergedComp()[, input$samples]))
+                    mergedCompDat <- isolate(mergedComp())
                 m <- getSelectedDatasetInput(filt_data(), 
                     selected$data$getSelected(), getMostVaried(),
                     mergedCompDat, input)

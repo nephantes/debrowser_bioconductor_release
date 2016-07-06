@@ -12,8 +12,6 @@ getSelHeat(init_data = NULL, heatdat = NULL, count = NULL)
 \item{heatdat, }{heatData}
 
 \item{count, }{selected gene count}
-
-\item{input, }{input params}
 }
 \value{
 plot

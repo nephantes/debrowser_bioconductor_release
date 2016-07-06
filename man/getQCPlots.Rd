@@ -5,7 +5,7 @@
 \title{getQCPlots}
 \usage{
 getQCPlots(dataset = NULL, input = NULL, metadata = NULL,
-  inputQCPlot = NULL, cex = 2)
+  inputQCPlot = NULL)
 }
 \arguments{
 \item{dataset, }{the dataset to use}
@@ -15,11 +15,9 @@ getQCPlots(dataset = NULL, input = NULL, metadata = NULL,
 \item{metadata, }{coupled samples and conditions}
 
 \item{inputQCPlot, }{input QC params}
-
-\item{cex, }{font size}
 }
 \value{
-the panel for QC plots;
+the panel for QC plots
 }
 \description{
 Gathers the plot data to be displayed within the

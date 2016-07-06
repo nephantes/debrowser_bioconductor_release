@@ -9,19 +9,28 @@
 #' @note \code{getGeneList}
 #' symobol to ENTREZ ID conversion
 #' @param genes, gene list
+#' @param org, orgranism for gene symbol entrez ID conversion
 #' @return ENTREZ ID list
 #'
 #' @examples
 #'     x <- getGeneList(c('OCLN', 'ABCC2'))
 #'
-getGeneList <- function(genes) {
-    ll <- org.Hs.egSYMBOL2EG
+getGeneList <- function(genes = NULL, org = "org.Hs.eg.db") {
     # Get the entrez gene identifiers that are mapped to a gene symbol
-    mapped_genes <- mappedkeys(ll)
-    upg <- unique(mapped_genes[toupper(mapped_genes) %in% 
-        toupper(genes)])
-    # Convert to a list
-    genelist <- rapply(cbind(as.list(ll[upg])), c)
+    if (is.null(org)) 
+        organism <- "org.Hs.eg.db"
+    else
+        organism <- org
+    installpack(organism)
+    allkeys <- AnnotationDbi::keys(eval(parse(text = organism)), 
+        keytype="SYMBOL")
+    existinggenes <- unique(as.vector(unlist(lapply(toupper(genes), 
+        function(x){ allkeys[x == toupper(allkeys)] }))))
+    mapped_genes <- mapIds(eval(parse(text = organism)), keys = existinggenes, 
+        column="ENTREZID", keytype="SYMBOL",
+        multiVals = "first")
+    genelist <- unique(as.vector(unlist(mapped_genes)))
+    genelist
 }
 
 #' getEnrichGO
@@ -44,7 +53,8 @@ getEnrichGO <- function(genelist = NULL, pvalueCutoff = 0.01,
     org = "org.Hs.eg.db", ont="CC") {
     if (is.null(genelist)) return(NULL)
     res <- c()
-        res$enrich_p <- enrichGO(gene = genelist, OrgDb = org,
+    installpack(org)
+    res$enrich_p <- clusterProfiler::enrichGO(gene = genelist, OrgDb = org,
     # res$enrich_p <- enrichGO(gene = genelist, organism = "human",
             ont = ont, pvalueCutoff = pvalueCutoff)
                              
@@ -64,6 +74,7 @@ getEnrichGO <- function(genelist = NULL, pvalueCutoff = 0.01,
 #'
 #' @note \code{getEnrichKEGG}
 #' @param genelist, gene list
+#' @param org, the organism used
 #' @param pvalueCutoff, the p value cutoff
 #' @return Enriched KEGG
 #' @examples
@@ -71,11 +82,12 @@ getEnrichGO <- function(genelist = NULL, pvalueCutoff = 0.01,
 #'     x <- getEnrichKEGG(genelist,NULL)
 #' @export
 #'
-getEnrichKEGG <- function(genelist, pvalueCutoff = 0.01) {
+getEnrichKEGG <- function(genelist, pvalueCutoff = 0.01,
+    org = "org.Hs.eg.db") {
     if (is.null(pvalueCutoff)) return(NULL)
     res <- c()
-    res$enrich_p <- enrichKEGG(gene = genelist,
-        pvalueCutoff = pvalueCutoff, use_internal_data = TRUE)
+    res$enrich_p <- enrichKEGG(gene = genelist, organism = getOrganism(org),
+        pvalueCutoff = pvalueCutoff)
     res$p <- barplot(res$enrich_p, title =
         paste("KEGG Enrichment: p-value=", pvalueCutoff))
     res$table <- NULL
@@ -153,12 +165,13 @@ compareClust <- function(dat = NULL, ont = "CC", org = "org.Hs.eg.db",
     fun = "enrichGO", title = "Ontology Distribution Comparison",
     pvalueCutoff = 0.01) {
         if (is.null(dat)) return(NULL)
+        installpack(org)
         res <- c()
         genecluster <- list()
         k <- max(dat$fit.cluster)
         for (i in 1:k) {
             clgenes <- rownames(dat[dat$fit.cluster == i, ])
-            genelist <- getGeneList(clgenes)
+            genelist <- getGeneList(clgenes, org)
             genecl <- list()
             genecl <- push(genecl, genelist)
             genecluster[c(paste("X", i, sep = ""))] <- genecl
@@ -167,19 +180,25 @@ compareClust <- function(dat = NULL, ont = "CC", org = "org.Hs.eg.db",
         p <- tryCatch({
             title <- paste(fun, title)
             xx <- c()
-            if (fun == "enrichKEGG" || fun == "enrichPathway")
-                xx <- compareCluster(genecluster, fun = fun,
+            if (fun == "enrichKEGG"){
+                xx <- compareCluster(genecluster, fun = fun, 
+                    organism = getOrganism(org),
                     pvalueCutoff = pvalueCutoff)
-            else if (fun == "enrichDO")
+            } else if (fun == "enrichPathway"){
+                installpack("ReactomePA")
+                xx <- compareCluster(genecluster, fun = fun, 
+                    organism = getOrganismPathway(org),
+                    pvalueCutoff = pvalueCutoff)
+            } else if (fun == "enrichDO") {
+                 installpack("DOSE")
                  xx <- compareCluster(genecluster, fun = fun,
                      pvalueCutoff = pvalueCutoff) 
-                     #pvalueCutoff = pvalueCutoff) 
-            else 
+            } else {
+                title <- paste(ont, title)
                 xx <- compareCluster(genecluster, fun = fun,
-                        ont = ont, OrgDb = org, pvalueCutoff = pvalueCutoff)
+                    ont = ont, OrgDb = org, pvalueCutoff = pvalueCutoff)
                 #ont = ont, organism = "human", pvalueCutoff = pvalueCutoff)
-            title <- paste(ont, title)
-            
+            }
             if (!is.null(xx@compareClusterResult) )
                 res$table <- xx@compareClusterResult[,
                 c("Cluster", "ID", "Description", "GeneRatio", "BgRatio", 

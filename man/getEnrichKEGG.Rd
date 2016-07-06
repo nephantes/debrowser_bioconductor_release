@@ -4,12 +4,14 @@
 \alias{getEnrichKEGG}
 \title{getEnrichKEGG}
 \usage{
-getEnrichKEGG(genelist, pvalueCutoff = 0.01)
+getEnrichKEGG(genelist, pvalueCutoff = 0.01, org = "org.Hs.eg.db")
 }
 \arguments{
 \item{genelist, }{gene list}
 
 \item{pvalueCutoff, }{the p value cutoff}
+
+\item{org, }{the organism used}
 }
 \value{
 Enriched KEGG

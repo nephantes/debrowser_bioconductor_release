@@ -157,7 +157,7 @@ calculate differential expression by clicking on the 'Submit!' button.
 
 **Figure 6:** *Menus after loading in a sample.*
 
-# Analyzing the Results
+#	Analyzing the Results
 
 After clicking on the 'Submit!' button, DESeq2 will analyze your comparisons
 and store the results into seperate data tables.  Shiny will then allow you

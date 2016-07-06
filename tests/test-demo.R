@@ -1,4 +1,5 @@
 require(shiny)
+library(debrowser)
 library(testthat)
 
 test_that("demo data can be loaded", {
