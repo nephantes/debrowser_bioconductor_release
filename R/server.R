@@ -41,7 +41,8 @@
 #' @importFrom grDevices dev.off pdf
 #' @importFrom graphics barplot hist pairs par rect text
 #' @importFrom stats aggregate as.dist cor cor.test dist
-#'             hclust kmeans na.omit prcomp var sd
+#'             hclust kmeans na.omit prcomp var sd model.matrix 
+#'             p.adjust
 #' @importFrom utils read.table write.table update.packages
 #' @importFrom DOSE enrichDO enrichMap gseaplot
 #' @importMethodsFrom AnnotationDbi as.data.frame as.list colnames
@@ -59,6 +60,8 @@
 #' @importFrom DESeq2 DESeq results DESeqDataSetFromMatrix
 #' @importFrom annotate geneSymbols
 #' @importFrom reshape2 melt
+#' @importFrom limma eBayes lmFit topTable
+#' @importFrom baySeq nbinomDensity
 #' @import org.Hs.eg.db
 #' @import org.Mm.eg.db
 deServer <- function(input, output, session) {
@@ -385,7 +388,14 @@ deServer <- function(input, output, session) {
         output$downloadData <- downloadHandler(filename = function() {
             paste(input$dataset, "csv", sep = ".")
         }, content = function(file) {
-            write.table(datasetInput(TRUE), file, sep = ",", row.names = FALSE)
+            dat <- getDataForTables(input, init_data(),
+                                    filt_data(), selected,
+                                    getMostVaried(),  isolate(mergedComp()))
+            dat2 <- removeCols(c("x", "y","Legend", "Size"), dat[[1]])
+            if(!("ID" %in% names(dat2)))
+                dat2 <- addID(dat2)
+            
+            write.table(dat2, file, sep = ",", row.names = FALSE)
         })
 
         output$downloadPlot <- downloadHandler(filename = function() {
