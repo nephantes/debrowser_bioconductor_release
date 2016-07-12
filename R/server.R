@@ -41,8 +41,7 @@
 #' @importFrom grDevices dev.off pdf
 #' @importFrom graphics barplot hist pairs par rect text
 #' @importFrom stats aggregate as.dist cor cor.test dist
-#'             hclust kmeans na.omit prcomp var sd model.matrix 
-#'             p.adjust
+#'             hclust kmeans na.omit prcomp var sd
 #' @importFrom utils read.table write.table update.packages
 #' @importFrom DOSE enrichDO enrichMap gseaplot
 #' @importMethodsFrom AnnotationDbi as.data.frame as.list colnames
@@ -60,8 +59,6 @@
 #' @importFrom DESeq2 DESeq results DESeqDataSetFromMatrix
 #' @importFrom annotate geneSymbols
 #' @importFrom reshape2 melt
-#' @importFrom limma eBayes lmFit topTable
-#' @importFrom baySeq nbinomDensity
 #' @import org.Hs.eg.db
 #' @import org.Mm.eg.db
 deServer <- function(input, output, session) {
@@ -302,12 +299,19 @@ deServer <- function(input, output, session) {
             m$height <- input$height
             return(m)
         })
+        goplots <- reactive({
+            dat <- getDataForTables(input, init_data(),
+                                    filt_data(), selected,
+                                    getMostVaried(),  isolate(mergedComp()))
+            getGOPlots(dat[[1]][, isolate(cols())], input)
+        })
         inputGOstart <- eventReactive(input$startGO, {
-            return(getGOPlots(isolate(datasetInput())[, isolate(cols())],
-                input, table = FALSE))
+            return(goplots())
         })
         output$GOPlots1 <- renderPlot({
-            inputGOstart()
+            if (!is.null(inputGOstart()$p) && input$startGO){
+                return(inputGOstart()$p)
+            }
         })
       
         output$tables <- DT::renderDataTable({
@@ -322,16 +326,6 @@ deServer <- function(input, output, session) {
             getTableStyle(input, dat[[2]], dat[[3]])
             m
         })
-
-        getGeneSet <- reactive({
-            a <- NULL
-            if (!input$goQCplots)
-                a <- filt_data()[filt_data()$Legend=="GS", ]
-            else
-                a <- getGeneSetData(data.frame(init_data()), 
-                    c(input$genesetarea))
-            a
-        })
         getMostVaried <- reactive({
             a <- NULL
             if (!input$goQCplots)
@@ -344,13 +338,11 @@ deServer <- function(input, output, session) {
         })
       
         output$gotable <- DT::renderDataTable({
-            if (!is.null(datasetInput()) && input$startGO){
-                gorestable <- getGOPlots(datasetInput()[, cols()],
-                    input, table = TRUE)
-                DT::datatable(gorestable,
-                    list(lengthMenu = list(c(10, 25, 50, 100),
-                    c("10", "25", "50", "100")),
-                    pageLength = 25, paging = TRUE, searching = TRUE))
+            if (!is.null(inputGOstart()$table)){
+                DT::datatable(inputGOstart()$table,
+                list(lengthMenu = list(c(10, 25, 50, 100),
+                c("10", "25", "50", "100")),
+                pageLength = 25, paging = TRUE, searching = TRUE))
             }
         })
 
@@ -389,12 +381,11 @@ deServer <- function(input, output, session) {
             paste(input$dataset, "csv", sep = ".")
         }, content = function(file) {
             dat <- getDataForTables(input, init_data(),
-                                    filt_data(), selected,
-                                    getMostVaried(),  isolate(mergedComp()))
+                 filt_data(), selected,
+                 getMostVaried(),  isolate(mergedComp()))
             dat2 <- removeCols(c("x", "y","Legend", "Size"), dat[[1]])
             if(!("ID" %in% names(dat2)))
                 dat2 <- addID(dat2)
-            
             write.table(dat2, file, sep = ",", row.names = FALSE)
         })
 
@@ -413,7 +404,7 @@ deServer <- function(input, output, session) {
             paste(input$goplot, ".pdf", sep = "")
         }, content = function(file) {
             pdf(file)
-            print( getGOPlots(datasetInput()[, cols()], input, table = FALSE) )
+            print( goplots()$p )
             dev.off()
         })
     },

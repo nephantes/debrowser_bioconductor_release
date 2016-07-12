@@ -36,7 +36,6 @@ getGoPanel <- function(flag = FALSE){
 #'
 #' @param dataset, the dataset used
 #' @param input, input params
-#' @param table, table flag to return dataset to show in a datatable
 #' @note \code{getGOPlots}
 #' @return the panel for go plots;
 #'
@@ -44,53 +43,38 @@ getGoPanel <- function(flag = FALSE){
 #'     x<- getGOPlots(mtcars)
 #' @export
 #' 
-getGOPlots <- function(dataset, input = NULL, table = FALSE){
+getGOPlots <- function(dataset, input = NULL){
     if (is.null(dataset) || is.null(input)) return(NULL)
     a <- NULL
     org <- input$organism
     if (input$goplot == "disease")
         org <- "org.Hs.eg.db"
-    genelist <- reactive({getGeneList(rownames(dataset), org)})
+    genelist <- getGeneList(rownames(dataset), org)
     if (input$goplot == "enrichGO"){
-        res <- reactive({getEnrichGO(genelist(), ont = input$ontology,
-            pvalueCutoff = input$gopvalue, org = input$organism)})
-        if (table)
-            a<-res()$table
-        else{
-        a <- res()$p
+        res <- getEnrichGO(genelist, ont = input$ontology,
+            pvalueCutoff = input$gopvalue, org = input$organism)
+        a<-res
         if (input$goextplot == "Dotplot")
-            a <- dotplot(res()$enrich_p, showCategory=30)
-        }
+            a$p <- dotplot(res$enrich_p, showCategory=30)
     }
     else if (input$goplot == "enrichKEGG"){
-        res <- getEnrichKEGG(genelist(), pvalueCutoff=
+        res <- getEnrichKEGG(genelist, pvalueCutoff=
             as.numeric(input$pvaluetxt), org = input$organism)
-        if (table)
-            a<-res$table
-        else{
-            a <- res$p
-            if (input$goextplot == "Dotplot")
-                a <- dotplot(res$enrich_p, showCategory=30)
-        }
+        a<-res
+        if (input$goextplot == "Dotplot")
+            a$p <- dotplot(res$enrich_p, showCategory=30)
     }
     else if (input$goplot == "compare"){
         cl <- clusterData(dataset)
         res <- compareClust(cl, fun=input$gofunc, input$ontology,
             org = input$organism)
-        if (table)
-            a<-res$table
-        else
-            a<-res$p
+        a<-res
     }
     else if (input$goplot == "disease"){
-        res <- getEnrichDO(genelist(), pvalueCutoff=as.numeric(input$pvaluetxt) )
-        if (table)
-            a<-res$table
-        else{
-            a <- res$p
-            if (input$goextplot == "Dotplot")
-                a <- dotplot(res$enrich_p, showCategory=30)
-        }
+        res <- getEnrichDO(genelist, pvalueCutoff=as.numeric(input$pvaluetxt) )
+        a<-res
+        if (input$goextplot == "Dotplot")
+            a$p <- dotplot(res$enrich_p, showCategory=30)
     }
     a
 }
