@@ -38,22 +38,47 @@ getSamples <- function (cnames = NULL, index = 2) {
 #'
 prepDataContainer <- function(data = NULL, counter=NULL, 
     input = NULL, session=NULL) {
-    if (is.null(input$goButton)) return(NULL)
-    if (input$goButton[1]==0) return(NULL)
-    inputconds <- reactiveValues(fittype=NULL, conds = list())
+
+    if (is.null(input$goButton) || input$goButton[1]==0 ||
+         is.null(data) || counter == 0)
+        return(NULL)
+
+    inputconds <- reactiveValues(demethod_params = list(), conds = list())
     inputconds <- eventReactive(input$goButton, {
     m <- c()
     updateTabsetPanel(session, "methodtabs", selected = "panel1")
     hide(selector = "#methodtabs li a[data-value=panel0]")
-    shiny::validate(need(input$condition1, "Condition1 has to be selected"),
-        need(input$condition2, "Condition2 has to be selected"))
+    
     m$conds <- list()
-    for (cnt in seq(1:(2*counter)))
-    {
+    for (cnt in seq(1:(2*counter))){
         m$conds[cnt] <- list(input[[paste0("condition",cnt)]])
     }
+    #Get parameters for each method
+    m$demethod_params <- NULL
+    for (cnt in seq(1:counter)){
+        if (input[[paste0("demethod",cnt)]] == "DESeq2"){
+            m$demethod_params[cnt] <- paste(input[[paste0("demethod",cnt)]],
+                input[[paste0("fitType",cnt)]],
+                input[[paste0("betaPrior",cnt)]],
+                input[[paste0("testType",cnt)]],
+                input[[paste0("rowsumfilter",cnt)]], sep=",")
+        }
+        else if (input[[paste0("demethod",cnt)]] == "EdgeR"){
+            m$demethod_params[cnt]<- paste(input[[paste0("demethod",cnt)]],
+                input[[paste0("edgeR_normfact",cnt)]],
+                input[[paste0("dispersion",cnt)]],
+                input[[paste0("edgeR_testType",cnt)]],
+                input[[paste0("rowsumfilter",cnt)]], sep=",")
+        }
+        else if (input[[paste0("demethod",cnt)]] == "Limma"){
+            m$demethod_params[cnt] <- paste(input[[paste0("demethod",cnt)]],
+                input[[paste0("limma_normfact",cnt)]],
+                input[[paste0("limma_fitType",cnt)]],
+                input[[paste0("normBetween",cnt)]],
+                input[[paste0("rowsumfilter",cnt)]], sep=",")
+        }
+    }
     shinyjs::disable("resetsamples")
-    m$fittype <- input$fittype
     shinyjs::disable("goButton")
     m
     })
@@ -66,11 +91,11 @@ prepDataContainer <- function(data = NULL, counter=NULL,
         rep(paste0("Cond", 2*i), length(inputconds()$conds[[2*i]])))
         cols <- c(paste(inputconds()$conds[[2*i-1]]), 
         paste(inputconds()$conds[[2*i]]))
-        m<-prepDESeqOutput(data, cols, conds, inputconds(), i)
+        m<-prepDEOutput(data, cols, conds, inputconds(), i)
         m<-list(conds = conds, cols = cols, init_data=m)
         dclist[[i]] <- m
     }
-    togglePanels(1, c(1:10), session)
+    togglePanels(1, c(1:4), session)
     return(dclist)
 }
 
@@ -140,9 +165,9 @@ setFilterParams <- function(session = NULL, input = NULL) {
     }
 }
 
-#' prepDESeqOutput
+#' prepDEOutput
 #'
-#' Prepares the output data from DESeq to be used within
+#' Prepares the output data from DE analysis to be used within
 #' DEBrowser
 #'
 #' @param data, loaded dataset
@@ -154,14 +179,14 @@ setFilterParams <- function(session = NULL, input = NULL) {
 #' @export
 #'
 #' @examples
-#'     x <- prepDESeqOutput()
+#'     x <- prepDEOutput()
 #'
-prepDESeqOutput <- function(data = NULL, cols = NULL, 
+prepDEOutput <- function(data = NULL, cols = NULL, 
     conds = NULL, inputconds=NULL, i=NULL) {
     if (is.null(data)) return (NULL)
-    if (length(cols) == length(conds))
-        de_res <- runDESeq(data, cols, conds, inputconds$fittype,
-            non_expressed_cutoff = 10)
+    if (length(cols) != length(conds)) return(NULL)
+    params <- inputconds$demethod_params[i]
+    de_res <- runDE(data, cols, conds, params)
     de_res <- data.frame(de_res)
     norm_data <- getNormalizedMatrix(data[, cols])
     mean_cond <- c()
@@ -221,7 +246,11 @@ applyFilters <- function(filt_data = NULL, cols = NULL,
         most_varied <- getMostVariedList(m, cols, input$topn, input$mincount)
         m[rownames(most_varied), c("Legend")] <- "MV"
     }
-    
+    #if (input$dataset == "selected" && !is.null(cols) &&
+    #    !is.null(input$genenames)) {
+    #    selectedGenes <- unlist(strsplit(input$genenames, ","))
+    #    m[selectedGenes, c("Legend")] <- "GS"
+    #}
     if (!is.null(input$genesetarea) && input$genesetarea != ""
         && input$methodtabs == "panel1") {
         genelist <- getGeneSetData(m, c(input$genesetarea))
@@ -264,6 +293,8 @@ getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL,
         m <- getMostVaried
     } else if (input$dataset == "comparisons") {
         m <- mergedComparison
+    } else if (input$dataset == "searched") {
+        m <- searched
     }
     m
 }
@@ -472,7 +503,12 @@ getDataForTables <- function(input = NULL, init_data = NULL,
             dat <- getSearchData(getDown(filt_data), input)
     }
     else if (input$dataset == "selected"){
-        if (is.null(isolate(selected$data))) return(NULL)
+        if (!is.null(input$genenames) && input$interactive == TRUE){
+            if (!is.null(filt_data))
+                selected$data <- getSelHeat(filt_data, input)
+            else
+                selected$data <- getSelHeat(init_data, input)
+        }
         dat <- getSearchData(selected$data$getSelected(), input)
     }
     else if (input$dataset == "most-varied"){

@@ -75,3 +75,4 @@ getColors <- function(domains = NULL){
     } 
     colors
 }
+

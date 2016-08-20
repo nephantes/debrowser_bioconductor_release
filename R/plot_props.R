@@ -89,7 +89,7 @@ getHoverPlots <- function(bardata=NULL, genename=NULL){
     group_by(conds) %>% layer_bars() %>%
     add_title_pos(title = title3, angle = 310,
                     dy = ypos, dx = 0) %>%
-    set_options(width = 400, height = 350)
+        set_options(width = "auto", height = 350, resizable=FALSE)
     vis3 %>% bind_shiny("plot3")
 
     vis4 <- bardata %>%
@@ -97,6 +97,10 @@ getHoverPlots <- function(bardata=NULL, genename=NULL){
             fill = ~conds) %>%
         group_by(conds) %>% layer_boxplots() %>%
         add_title_pos(title = title4, align = "middle") %>%
-            set_options(width = 400, height = 350)
+        set_options(width = "auto", height = 350, resizable=FALSE)
     vis4 %>% bind_shiny("plot4")
 }
+
+
+
+

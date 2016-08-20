@@ -4,14 +4,12 @@
 \alias{getPCAexplained}
 \title{getPCAexplained}
 \usage{
-getPCAexplained(datasetInput = NULL, cols = NULL, input = NULL)
+getPCAexplained(datasetInput = NULL, input = NULL)
 }
 \arguments{
 \item{datasetInput, }{selected data}
 
-\item{cols, }{columns}
-
-\item{input, }{from usern)}
+\item{input, }{from user}
 }
 \value{
 explained plot

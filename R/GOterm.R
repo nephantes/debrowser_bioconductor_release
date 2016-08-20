@@ -17,16 +17,12 @@
 #'
 getGeneList <- function(genes = NULL, org = "org.Hs.eg.db") {
     # Get the entrez gene identifiers that are mapped to a gene symbol
-    if (is.null(org)) 
-        organism <- "org.Hs.eg.db"
-    else
-        organism <- org
-    installpack(organism)
-    allkeys <- AnnotationDbi::keys(eval(parse(text = organism)), 
+    installpack(org)
+    allkeys <- AnnotationDbi::keys(eval(parse(text = org)), 
         keytype="SYMBOL")
     existinggenes <- unique(as.vector(unlist(lapply(toupper(genes), 
         function(x){ allkeys[x == toupper(allkeys)] }))))
-    mapped_genes <- mapIds(eval(parse(text = organism)), keys = existinggenes, 
+    mapped_genes <- mapIds(eval(parse(text = org)), keys = existinggenes, 
         column="ENTREZID", keytype="SYMBOL",
         multiVals = "first")
     genelist <- unique(as.vector(unlist(mapped_genes)))
@@ -78,13 +74,12 @@ getEnrichGO <- function(genelist = NULL, pvalueCutoff = 0.01,
 #' @param pvalueCutoff, the p value cutoff
 #' @return Enriched KEGG
 #' @examples
-#'     genelist<-getGeneList(c('OCLN', 'ABCC2'))
-#'     x <- getEnrichKEGG(genelist,NULL)
+#'     x <- getEnrichKEGG()
 #' @export
 #'
-getEnrichKEGG <- function(genelist, pvalueCutoff = 0.01,
+getEnrichKEGG <- function(genelist = NULL, pvalueCutoff = 0.01,
     org = "org.Hs.eg.db") {
-    if (is.null(pvalueCutoff)) return(NULL)
+    if (is.null(genelist)) return(NULL)
     res <- c()
     res$enrich_p <- enrichKEGG(gene = genelist, organism = getOrganism(org),
         pvalueCutoff = pvalueCutoff)
@@ -106,11 +101,12 @@ getEnrichKEGG <- function(genelist, pvalueCutoff = 0.01,
 #' @param dat, the data to cluster
 #' @return clustered data
 #' @examples
-#'     mycluster <- clusterData(mtcars)
+#'     mycluster <- clusterData()
 #'
 #' @export
 #'
-clusterData <- function(dat) {
+clusterData <- function(dat = NULL) {
+    if (is.null(dat)) return(NULL)
     ret <- list()
     itemlabels <- rownames(dat)
     norm_data <- getNormalizedMatrix(dat)

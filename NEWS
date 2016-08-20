@@ -1,15 +1,8 @@
 ************************************
-Version 1.0.5 Release
+Version 1.1.7 Release
 ***********************************
-
-- Comparison table faster load
-- Comparison table download fix
-- Gene list search fix
-
-
-************************************
-Version 1.0.0 Release
-***********************************
-
-- First installation of debrowser
+- Limma, EdgeR and DESeq2 support
+- Interactive Heatmap
+- Interactive PCA
+- IQR and Density plots
 

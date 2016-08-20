@@ -22,18 +22,13 @@ getDataPrepPanel <- function(flag = FALSE){
         actionButton("goQCplots", "Go to QC plots!"),
         actionButton("resetsamples", "Reset Samples!"),
         conditionalPanel(condition = "input.startDESeq",
-            helpText( "Please add  new comparisons for DE analysis!" ),
+            helpText( "Please add new comparisons for DE analysis!" ),
             uiOutput("conditionSelector"),
-            actionButton("add_btn", "Add New Comparison"),
+            column(12,actionButton("add_btn", "Add New Comparison"),
             actionButton("rm_btn", "Remove"),
-            selectInput("fittype",
-                label = "Fit Type:",
-                choices = list ("parametric" = "parametric",
-                "local" = "local", "mean" = "mean"),
-                selected = 1,
-                multiple = FALSE
-            ),
-        actionButton("goButton", "Submit!")))),
+            getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/deseq.html#id1")),
+            actionButton("goButton", "Submit!"),
+           tags$style(type='text/css', "#goButton { margin-top: 10px;}")  ))),
         conditionalPanel(condition = "!input.demo &&
             !output.fileUploaded",
             uiOutput("startup"))
@@ -62,7 +57,8 @@ a <- list( conditionalPanel( (condition <- "input.methodtabs=='panel1'"),
         conditionalPanel( (condition <- "input.methodtabs=='panel2'"),
             wellPanel(radioButtons("qcplot",
                 paste("QC Plots:", sep = ""),
-                c(All2All = "all2all", Heatmap = "heatmap", PCA = "pca"))),
+                c(All2All = "all2all", Heatmap = "heatmap", PCA = "pca", IQR = "IQR", 
+                  Density = "Density"))),
             getQCLeftMenu()),
         conditionalPanel( (condition <- "input.methodtabs=='panel3'"),
             wellPanel(radioButtons("goplot", paste("Go Plots:", sep = ""),
@@ -84,7 +80,7 @@ a
 #' @export
 #'
 getGOLeftMenu <- function() {
-    a <- list(
+    a <- list(actionButton("startGO", "Submit!"),
     tags$head(tags$script(HTML(logSliderJScode("gopvalue")))),
     sliderInput("gopvalue", "p.adjust cut off",
         min=0, max=10, value=6, sep = "", 
@@ -106,7 +102,6 @@ getGOLeftMenu <- function() {
                 choices =  c( "enrichGO", "enrichDO", "enrichPathway",
                 "enrichKEGG"))
             ),
-            actionButton("startGO", "Submit"),
             downloadButton("downloadGOPlot", "Download Plots"))
 }
 
@@ -139,9 +134,13 @@ getPCselection <- function(num = 1, xy = "x" ) {
 #' @export
 #'
 getQCLeftMenu <- function() {
-    a <- list(conditionalPanel( (condition <- "input.qcplot=='all2all' ||
+    a <- list(selectInput("norm_method", "Normalization Method:",
+                          choices <- c("TMM", "RLE", "upperquartile", "none")),
+            uiOutput("columnSelForHeatmap"),
+            conditionalPanel( (condition <- "input.qcplot=='all2all' ||
             input.qcplot=='heatmap' ||
             input.qcplot=='pca'"),
+            actionButton("startQCPlot", "Submit!"),
             sliderInput("width", "width",
             min = 100, max = 2000, step = 10, value = 700),
             sliderInput("height", "height",
@@ -158,7 +157,6 @@ getQCLeftMenu <- function() {
                 selectInput("distance_method", "Distance Method:",
                 choices <- c("cor", "euclidean", "maximum", "manhattan",
                 "canberra", "binary", "minkowski"))),
-        actionButton("startQCPlot", "Submit"),
         conditionalPanel( (condition <- "input.qcplot=='pca'"),
             getPCselection(1, "x"),
             getPCselection(2, "y")
@@ -252,11 +250,12 @@ getInitialMenu <- function(input = NULL, output = NULL, session = NULL) {
             conditionalPanel(condition = "!input.demo &&
                 !output.dataready",
                 actionLink("demo", "Load Demo!"),
+                getHelpButton("method", " http://debrowser.readthedocs.io/en/develop/quickstart.html"),
                 fileInput("file1", "Choose TSV File",
                     accept = c("text/tsv",
                         "text/comma-separated-values,text/plain",
-                        ".tsv")))
-        )
+                        ".tsv"))        
+                ))
     }
     a
 }
@@ -356,8 +355,9 @@ a <- list( column( 12, wellPanel(
 helpText("Please select a file or load the demo data!"),
 helpText( "For more information;" ),
 helpText(   a("Quick Start Guide",
-href = "http://dolphin.readthedocs.org/en/master/debrowser/quickstart.html",
-target = "_blank")) ) ))
+href = "http://debrowser.readthedocs.org",
+target = "_blank"), 
+getHelpButton("method", "http://debrowser.readthedocs.org")) ) ))
 }
 
 #' getAfterLoadMsg
@@ -396,7 +396,8 @@ getStartPlotsMsg <- function() {
 a <- list( conditionalPanel(condition <- "!input.startPlots",
     column( 12, wellPanel(
     helpText( "Please choose the appropriate parameters and 
-            press submit button to draw the plots!" )))))
+            press submit button to draw the plots!" ),
+    getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart.html#the-main-plots")))))
 }
 
 #' getCondMsg
@@ -423,7 +424,9 @@ getCondMsg <- function(cols = NULL, conds = NULL) {
                 collapse =","), 
                 paste0(" vs. ","<b>",unique(conds)[2], ":", "</b>"),
                 paste(cnd[cnd$conds == unique(conds)[2], "cols"], 
-                collapse =",")) ))))
+                collapse =",")),
+            getHelpButton("method", 
+    "http://debrowser.readthedocs.io/en/develop/quickstart.html#the-main-plots")))))
     }
     a
 }
@@ -570,3 +573,65 @@ hideObj <- function(btns = NULL) {
         shinyjs::hide(btns[btn])
 }
 
+#' Buttons including Action Buttons and Event Buttons
+#' 
+#' Creates an action button whose value is initially zero, and increments by one
+#' each time it is pressed.
+#' 
+#' @param inputId Specifies the input slot that will be used to access the 
+#'   value.
+#' @param label The contents of the button--usually a text label, but you could 
+#'   also use any other HTML, like an image.
+#' @param styleclass The Bootstrap styling class of the button--options are 
+#'   primary, info, success, warning, danger, inverse, link or blank
+#' @param size The size of the button--options are large, small, mini
+#' @param block Whehter the button should fill the block
+#' @param icon Display an icon for the button
+#' @param css.class Any additional CSS class one wishes to add to the action 
+#'   button
+#' @param ... Other argument to feed into shiny::actionButton
+#'
+#' @export
+actionButton <- function(inputId, label, styleclass = "", size = "", 
+                         block = FALSE, icon = NULL, css.class = "", ...) {
+    if (styleclass %in% c("primary", "info", "success", "warning", 
+                          "danger", "inverse", "link")) {
+        btn.css.class <- paste("btn", styleclass, sep = "-")
+    } else btn.css.class = ""
+    
+    if (size %in% c("large", "small", "mini")) {
+        btn.size.class <- paste("btn", size, sep = "-")
+    } else btn.size.class = ""
+    
+    if (block) {
+        btn.block = "btn-block"
+    } else btn.block = ""
+    
+    if (!is.null(icon)) {
+        icon.code <- HTML(paste0("<i class='fa fa-", icon, "'></i>"))
+    } else icon.code = ""
+    tags$button(id = inputId, type = "button", class = paste("btn action-button", 
+        btn.css.class, btn.size.class, btn.block, css.class, collapse = " "), 
+        icon.code, label, ...)
+} 
+
+#' getHelpButton
+#' prepares a helpbutton for to go to a specific site in the documentation
+#'
+#' @param name, name that are going to come after info
+#' @param link, link of the help
+#' @return the info button
+#'
+#' @examples
+#'     x<- getHelpButton()
+#'
+#' @export
+getHelpButton<-function(name = NULL, link = NULL){
+if (is.null(name)) return(NULL)
+btn <- actionButton(paste0("info_",name),"",icon="info",
+                  styleclass="info", size="small")
+
+a <- HTML(paste0("<a id=\"info_",name,"\" href=\"",link,"\" target=\"_blank\">",
+                 btn,"</a>"))
+
+}

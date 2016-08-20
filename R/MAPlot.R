@@ -27,7 +27,7 @@ MAPlot <- function(dat = NULL, lb = NULL, data_tooltip = NULL,
             values = c(domains) ) %>%
         scale_nominal("stroke", domain = c(domains),
             range = c(colors) ) %>%
-        set_options(width = 400, height = 350)
+        set_options(width = "auto", height = 350, resizable=FALSE)
 }
 
 #' MAZoom
@@ -58,5 +58,5 @@ MAZoom <- function(dat = NULL, data_tooltip = NULL,
         scale_nominal("stroke", domain = c(domains),
             range = c(colors) ) %>%
         hide_legend("fill") %>%
-        set_options(width = 400, height = 350, duration = 0)
+        set_options(width = "auto", height = 350, resizable=FALSE) 
 }

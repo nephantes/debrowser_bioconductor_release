@@ -4,7 +4,7 @@
 \alias{getEnrichKEGG}
 \title{getEnrichKEGG}
 \usage{
-getEnrichKEGG(genelist, pvalueCutoff = 0.01, org = "org.Hs.eg.db")
+getEnrichKEGG(genelist = NULL, pvalueCutoff = 0.01, org = "org.Hs.eg.db")
 }
 \arguments{
 \item{genelist, }{gene list}
@@ -24,7 +24,6 @@ GO Term plots.
 \code{getEnrichKEGG}
 }
 \examples{
-    genelist<-getGeneList(c('OCLN', 'ABCC2'))
-    x <- getEnrichKEGG(genelist,NULL)
+    x <- getEnrichKEGG()
 }
 

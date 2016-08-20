@@ -4,7 +4,7 @@
 \alias{clusterData}
 \title{clusterData}
 \usage{
-clusterData(dat)
+clusterData(dat = NULL)
 }
 \arguments{
 \item{dat, }{the data to cluster}
@@ -20,7 +20,7 @@ GO Term plots.
 \code{clusterData}
 }
 \examples{
-    mycluster <- clusterData(mtcars)
+    mycluster <- clusterData()
 
 }
 

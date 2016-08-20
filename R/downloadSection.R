@@ -30,7 +30,7 @@ getDownloadSection <- function(flag = FALSE, type = "main") {
             textInput("mincount", "total min count", value = "10" )),
             textareaInput("genesetarea","Search", 
                           "", rows = 5, cols = 35),
-            helpText("Regular expressions can be used<br>
+            helpText("Regular expressions can be used\n
                      Ex: ^Al => Al.., Al$ => ...al")
             )
     }

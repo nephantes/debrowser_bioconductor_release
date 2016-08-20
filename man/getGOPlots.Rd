@@ -4,14 +4,12 @@
 \alias{getGOPlots}
 \title{getGOPlots}
 \usage{
-getGOPlots(dataset, input = NULL, table = FALSE)
+getGOPlots(dataset = NULL, input = NULL)
 }
 \arguments{
 \item{dataset, }{the dataset used}
 
 \item{input, }{input params}
-
-\item{table, }{table flag to return dataset to show in a datatable}
 }
 \value{
 the panel for go plots;
@@ -24,6 +22,6 @@ based on user selection.
 \code{getGOPlots}
 }
 \examples{
-    x<- getGOPlots(mtcars)
+    x<- getGOPlots()
 }
 

@@ -4,18 +4,15 @@
 \alias{plot_pca}
 \title{plot_pca}
 \usage{
-plot_pca(x = NULL, pcx = 1, pcy = 2, explained = NULL,
-  metadata = NULL, color = NULL, shape = NULL, size = NULL,
-  factors = NULL)
+plot_pca(dat = NULL, pcx = 1, pcy = 2, metadata = NULL, color = NULL,
+  shape = NULL, size = NULL, factors = NULL)
 }
 \arguments{
-\item{x, }{dataframe with data}
+\item{dat, }{data}
 
 \item{pcx, }{x axis label}
 
 \item{pcy, }{y axis label}
-
-\item{explained, }{additional axis data}
 
 \item{metadata, }{additional data}
 
@@ -36,13 +33,12 @@ Plots the PCA results for the selected dataset.
 \examples{
     load(system.file("extdata", "demo", "demodata.Rda",
             package="debrowser"))
-    pca_data<-run_pca(getNormalizedMatrix(
-            demodata[rowSums(demodata[,2:7])>10,2:7]))
     metadata<-cbind(colnames(demodata[,2:7]), 
             c(rep("Cond1",3), rep("Cond2",3)))
     colnames(metadata)<-c("samples", "conditions")
 
-    a <- plot_pca(pca_data$PCs, explained = pca_data$explained,
+    a <- plot_pca(getNormalizedMatrix(
+            demodata[rowSums(demodata[,2:7])>10,2:7]),
             metadata = metadata, color = "samples",
             size = 5, shape = "conditions",
             factors = c("samples", "conditions"))

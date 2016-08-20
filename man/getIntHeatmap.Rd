@@ -4,14 +4,14 @@
 \alias{getIntHeatmap}
 \title{getIntHeatmap}
 \usage{
-getIntHeatmap(heatdat = NULL, count = NULL, lbheat = NULL)
+getIntHeatmap(data = NULL, input = NULL, inputQCPlot = NULL)
 }
 \arguments{
-\item{heatdat, }{heatData}
+\item{data, }{heatData}
 
-\item{count, }{count}
+\item{input, }{all input params}
 
-\item{lbheat, }{linked brush object}
+\item{inputQCPlot, }{input poarams for QC}
 }
 \value{
 plot

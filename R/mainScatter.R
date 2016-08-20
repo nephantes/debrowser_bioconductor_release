@@ -34,7 +34,7 @@ mainScatter <- function(dat = NULL, lb = NULL,
             scale_nominal("stroke", domain = c(domains),
                 range = c(colors) ) %>%
         hide_legend("fill") %>%
-        set_options(width = 400, height = 350) %>%
+        set_options(width = "auto", height = 350, resizable=FALSE) %>%
         add_axis("x", title = x) %>%
         add_axis("y", title = y)
 }
@@ -69,7 +69,7 @@ scatterZoom <- function(dat = NULL, data_tooltip = NULL,
         add_legend("stroke", title = "Scatter Plot",
             values = c(domains)) %>%
         hide_legend("fill") %>%
-        set_options(width = 400, height = 350, duration = 0) %>%
+        set_options(width = "auto", height = 350, resizable=FALSE) %>%
         add_axis("x", title = x) %>%
         add_axis("y", title = y)
 }

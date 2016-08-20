@@ -19,17 +19,32 @@ getQCPanel <- function(input = NULL) {
         width = input$width
     }
     a <- list(
-        helpText( "Please select the parameters and press the 
-        submit button in the left menu
-        for the plots" ),
+        wellPanel(helpText( "Please select the parameters and press the 
+        submit button in the left menu for the plots" ),
+        getHelpButton("method", 
+        "http://debrowser.readthedocs.io/en/develop/quickstart.html#quality-control-plots")),
+        conditionalPanel(condition = "input.qcplot == 'IQR' 
+                         || input.qcplot == 'Density'
+                         || input.qcplot == 'pca'",
+            column(12, ggvisOutput("ggvisQC1")),
+            column(12, ggvisOutput("ggvisQC2"))
+        ),
         conditionalPanel(condition = 
             "(!(input.interactive && input.qcplot == 'heatmap'))",
             column(12, plotOutput("qcplotout",
             height = height, width = width))),
         conditionalPanel(condition = "input.qcplot == 'pca'",
             column(12, plotOutput("pcaexplained",
-            height = height, width = width))),
-        uiOutput("intheatmap")
+            height = height, width = width))),    
+        conditionalPanel(condition = "(input.interactive && input.qcplot == 'heatmap')",
+            d3heatmapOutput("intheatmap", width = width, height=height),
+            tags$script('
+                $(document).ready(function() {
+                    $("#heatmap").on("shiny:recalculating", function(event) {
+                    $(".d3heatmap-tip").remove();
+                    });
+                });
+        '))
        )
     return(a)
 }
@@ -76,22 +91,22 @@ getQCPlots <- function(dataset = NULL, input = NULL,
     if (is.null(dataset)) return(NULL)
     a <- NULL
     if (nrow(dataset) > 0) {
+        dat <- getNormalizedMatrix(dataset, input$norm_method)
         if (input$qcplot == "all2all") {
-            a <- all2all(dataset, input$cex)
+            a <- all2all(dat, input$cex)
         } else if (input$qcplot == "heatmap") {
-            a <- runHeatmap(dataset, title = paste("Dataset:", input$dataset),
+            a <- runHeatmap(dat, title = paste("Dataset:", input$dataset),
                 clustering_method = inputQCPlot$clustering_method,
-                distance_method = inputQCPlot$distance_method)
+                distance_method = inputQCPlot$distance_method,  interactive = FALSE)
         } else if (input$qcplot == "pca") {
             if (!is.null(metadata)){
                 colnames(metadata) <- c("samples", "conditions")
             }
-            pca_data <- run_pca(getNormalizedMatrix(dataset))
-            a <- plot_pca(pca_data$PCs, input$pcselx, input$pcsely,
-                explained = pca_data$explained,
+            pcaplot <- plot_pca(dat, input$pcselx, input$pcsely,
                 metadata = metadata, color = "samples",
                 size = 5, shape = "conditions",
                 factors = c("samples", "conditions"))
+            pcaplot %>% bind_shiny("ggvisQC1")
         }
     }
     a
@@ -116,10 +131,12 @@ getQCReplot <- function(cols = NULL, conds = NULL,
     datasetInput = NULL, input = NULL, inputQCPlot = NULL){
     if (is.null(datasetInput)) return(NULL)
     if (!is.null(cols) && !input$dataset == "comparisons"){
-        dataset <- datasetInput[, cols]
-        metadata <- cbind(cols, conds)
+        new_cols <- cols[which(cols %in% input$col_list)]
+        new_conds <- conds[which(cols %in% input$col_list)]
+        dataset <- datasetInput[, new_cols]
+        metadata <- cbind(new_cols, new_conds)
     }else{
-        dataset <- datasetInput[,c(input$samples)]
+        dataset <- datasetInput[,c(input$col_list)]
         metadata <- cbind(colnames(dataset), "Conds")
     }
     if (nrow(dataset)<3) return(NULL)
@@ -148,16 +165,151 @@ saveQCPlot <- function(filename = NULL, input = NULL, datasetInput = NULL,
     pdf(filename, height = input$height * 0.010370,
         width = input$width * 0.010370)
     if (!is.null(cols)){
-        dataset <- datasetInput[, cols]
-        metadata <- cbind(cols, conds)
+        dataset <- datasetInput[, input$col_list]
+        new_cols <- cols[which(cols %in% input$col_list)]
+        new_conds <- conds[which(cols %in% input$col_list)]
+        metadata <- cbind(new_cols, new_conds)
     }else{
-        dataset <- datasetInput[,c(input$samples)]
+        dataset <- datasetInput[,c(input$col_list)]
         metadata <- cbind(colnames(dataset), "Conds")
     }
     if (nrow(dataset)>2){
-        print(getQCPlots(dataset, input, metadata,
-            inputQCPlot = inputQCPlot))
-        print(getPCAexplained(datasetInput, cols, input))
+        getQCPlots(dataset, input, metadata,
+            inputQCPlot = inputQCPlot)
+        print(getPCAexplained(datasetInput, input))
     }
     dev.off()
+}
+
+
+#' getIQRPlot
+#'
+#' Makes IQR boxplot plot
+#'
+#' @param data, count or normalized data
+#' @param cols, columns
+#' @param title, title
+#'
+#' @export
+#'
+#' @examples
+#'     getIQRPlot()
+#'
+getIQRPlot <- function(data=NULL, cols=NULL, title = ""){
+    if (is.null(data)) return(NULL)
+    data <- as.data.frame(data)
+    data[, cols] <- apply(data[, cols], 2,
+        function(x) log10(as.integer(x) + 1))
+    
+    data <- addID(data)
+    mdata <- melt(as.data.frame(data[,c("ID", cols)]),"ID")
+    colnames(mdata)<-c("ID", "samples", "logcount")
+    ypos <- -5 * max(nchar(as.vector(mdata$samples)))
+    visIQR <- mdata %>%
+        ggvis(x = ~samples, y = ~logcount, fill := "green") %>%
+        layer_boxplots() %>% 
+        set_options(width = "auto", height = 350, resizable=TRUE) %>%
+        add_title_pos(title = "", angle = 310,
+            dy = ypos, dx = 0) %>%
+        add_tooltip(getToolTipPCA, "hover") %>%
+        add_axis("y", title = "logcount")
+}
+
+#' getDensityPlot
+#'
+#' Makes Density plots
+#'
+#' @param data, count or normalized data
+#' @param cols, columns
+#' @param title, title
+#'
+#' @export
+#'
+#' @examples
+#'     getDensityPlot()
+#'
+getDensityPlot <- function(data=NULL, cols=NULL, title = ""){
+    if (is.null(data)) return(NULL)
+    data <- as.data.frame(data)
+    data[, cols] <- apply(data[, cols], 2,
+          function(x) log10(as.integer(x) + 1))
+    
+    data <- addID(data)
+    mdata <- melt(as.data.frame(data[,c("ID", cols)]),"ID")
+    colnames(mdata)<-c("ID", "samples", "density")
+    ypos <- -5 * max(nchar(as.vector(mdata$samples)))
+    visDensity <- mdata %>%
+        ggvis(~density, fill = ~samples) %>%
+        group_by(samples) %>%
+        set_options(width = "auto", height = 350, resizable=TRUE) %>%
+        layer_densities() %>% 
+        add_axis("x", title = "logcount") %>%
+        add_tooltip(getToolTipPCA, "hover") %>%
+        add_axis("y", title = "density")
+}
+
+#' prepAddQCPlots
+#'
+#' prepares IQR and density plots
+#'
+#' @param data, barplot data
+#' @param input, user input params 
+#'
+#' @export
+#'
+#' @examples
+#'     prepAddQCPlots()
+#'
+#'
+prepAddQCPlots <- function(data=NULL, input=NULL){
+    if(is.null(data)) return(NULL)
+    if(!is.null(input$qcplot)){
+        if (input$qcplot == "IQR"){
+            getIQRPlot(data, colnames(data), 
+                "IQR Plot(Before Normalization)") %>% 
+                bind_shiny("ggvisQC1")
+            getIQRPlot(getNormalizedMatrix(data, input$norm_method), 
+                colnames(data), "IQR Plot(After Normalization)") %>% 
+                bind_shiny("ggvisQC2")
+        }
+        else if (input$qcplot == "Density"){
+            getDensityPlot(data, colnames(data), 
+                "Density Plot(Before Normalization)") %>% 
+                bind_shiny("ggvisQC1")
+            getDensityPlot(getNormalizedMatrix(data, input$norm_method), 
+                colnames(data), "Density Plot(After Normalization)") %>% 
+                bind_shiny("ggvisQC2")    
+        }
+    }
+}
+
+#' getSelectedCols
+#'
+#' gets selected columns
+#'
+#' @param data, all loaded data
+#' @param datasetInput, selected dataset
+#' @param input, user input params 
+#'
+#' @export
+#'
+#' @examples
+#'     getSelectedCols()
+#'
+#'
+getSelectedCols <- function(data = NULL, datasetInput = NULL, input=NULL){
+    if(is.null(data)) return(NULL)
+    m <- NULL
+    if (input$dataset != "selected"){
+        all <- input$samples
+        selection <- input$col_list
+        if("All" %in% input$col_list || length(input$col_list) == 0){
+            selection <- all
+        }else{
+            selection <- input$col_list
+        }
+        if (!is.null(selection))
+            m <- data[rownames(datasetInput), selection]
+    }
+    m
 }

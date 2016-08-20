@@ -17,9 +17,10 @@ getGoPanel <- function(flag = FALSE){
     if (flag)
         a <- list(
             conditionalPanel(condition = "!input.startGO",
-                helpText( "Please select parameters and press the 
-                    submit button in the left menu
-                    for the plots" )),
+                wellPanel(helpText( "Please select parameters and press the 
+                    submit button in the left menu for the plots"),
+            getHelpButton("method", 
+            "http://debrowser.readthedocs.io/en/develop/quickstart.html#go-term-plots"))),
             tabsetPanel(id = "gotabs", type = "tabs",
                 tabPanel(title = "Plot", value = "gopanel1", id = "gopanel1",
                      column(12, wellPanel( plotOutput("GOPlots1")))),
@@ -40,11 +41,11 @@ getGoPanel <- function(flag = FALSE){
 #' @return the panel for go plots;
 #'
 #' @examples
-#'     x<- getGOPlots(mtcars)
+#'     x<- getGOPlots()
 #' @export
 #' 
-getGOPlots <- function(dataset, input = NULL){
-    if (is.null(dataset) || is.null(input)) return(NULL)
+getGOPlots <- function(dataset = NULL, input = NULL){
+    if (is.null(dataset)) return(NULL)
     a <- NULL
     org <- input$organism
     if (input$goplot == "disease")

@@ -3,15 +3,15 @@ library(debrowser)
 library(testthat)
 
 test_that("able to create the basic UI", {
-    expect_silent( ui <- deUI() )
-    expect_true(exists("ui"))
-    expect_equal(ui[[3]][[1]][[2]][[1]], "container-fluid")
+    expect_silent( getDataPrep <- getDataPrepPanel(TRUE) )
+    expect_true(exists("getDataPrep"))
+    expect_equal(getDataPrep[[1]][[1]],"div")
 })
 
 test_that("able to create panel UI", {
     expect_silent( QCPanel <- getQCPanel() )
     expect_true(exists("QCPanel"))
-    expect_equal(QCPanel[[1]][[1]], "span")
+    expect_equal(QCPanel[[1]][[1]], "div")
 
     expect_silent( leftMenu <- getLeftMenu() )
     expect_true(exists("leftMenu"))

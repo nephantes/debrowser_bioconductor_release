@@ -15,8 +15,9 @@
 #'
 getNormalizedMatrix <- function(M = NULL, method = "TMM") {
     if (is.null(M) ) return (NULL)
-    M[, colnames(M)] <- apply(M[, colnames(M)], 2,
-        function(x) as.integer(x))
+    M[is.na(M)] <- 0
+    M <- subset(M, 
+         rowSums(M[,1:ncol(M)]) > 0)
     norm.factors <- calcNormFactors(M, method = method)
     return(equalizeLibSizes(DGEList(M,
         norm.factors = norm.factors))$pseudo.counts)

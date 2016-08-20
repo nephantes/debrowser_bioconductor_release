@@ -12,11 +12,29 @@
 #'
 
 deUI <- function() {
+    heatmapJScode <- 
+        "shinyjs.getNames = function(){
+        var count = document.getElementsByClassName('tick').length; 
+        var start = 0;  
+        while(document.getElementsByClassName('tick')[start].getElementsByTagName('line')[0].getAttribute('x2') == 0){
+        start += 1;
+        }  
+        var out = ''; 
+        for (i = start; i < count; i++) 
+        { 
+        if('opacity: 1;' == document.getElementsByClassName('tick')[i].getAttribute('style')){ 
+        out += document.getElementsByClassName('tick')[i].getElementsByTagName('text')[0].innerHTML + ',';
+        }
+        } 
+        //document.getElementById('genenames').innerHTML = out;
+        Shiny.onInputChange('genenames', out);
+    };"
     addResourcePath(prefix = "www", directoryPath =
         system.file("extdata", "www", 
         package = "debrowser"))
     shinyUI(fluidPage(
     shinyjs::useShinyjs(),
+    shinyjs::extendShinyjs(text = heatmapJScode, functions = c("getNames")),
     shinyjs::inlineCSS("
         #loading-debrowser {
         position: absolute;
@@ -42,12 +60,12 @@ deUI <- function() {
         uiOutput("initialmenu"),
         conditionalPanel(condition = "((output.definished | 
             input.goQCplots) & output.dataready)",
-            uiOutput("downloadSection")),
-        conditionalPanel(condition = "(input.goButton & output.dataready)",
-            uiOutput('cutoffSelection')),
+                         uiOutput("leftMenu")),
         conditionalPanel(condition = "((output.definished | 
             input.goQCplots) & output.dataready)",
-            uiOutput("leftMenu"))
+            uiOutput("downloadSection")),
+        conditionalPanel(condition = "(input.goButton & output.dataready)",
+            uiOutput('cutoffSelection'))
     ),
     mainPanel(
     tags$head(
@@ -69,3 +87,5 @@ deUI <- function() {
         ))
     ))
 }
+
+

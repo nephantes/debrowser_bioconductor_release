@@ -1,5 +1,6 @@
 library(debrowser)
 library(DESeq2)
+library(edgeR)
 library(testthat)
 
 load(system.file("extdata", "demo", "demodata.Rda",
@@ -57,6 +58,8 @@ rdata[, "Size"] <- "40"
 dat <- rdata
 dat$M <- rdata$Cond1 - rdata$Cond2
 dat$A <- (rdata$Cond1 + rdata$Cond2) / 2
+
+updown <- rdata[rdata$Legend=="Up" | rdata$Legend=="Down",columns]
 ##################################################
 
 test_that("Check the QC plots", {

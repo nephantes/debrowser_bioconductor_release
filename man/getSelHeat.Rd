@@ -4,14 +4,12 @@
 \alias{getSelHeat}
 \title{getSelHeat}
 \usage{
-getSelHeat(init_data = NULL, heatdat = NULL, count = NULL)
+getSelHeat(data = NULL, input = NULL)
 }
 \arguments{
-\item{init_data, }{initial data}
+\item{data, }{selected genes}
 
-\item{heatdat, }{heatData}
-
-\item{count, }{selected gene count}
+\item{input, }{input params}
 }
 \value{
 plot

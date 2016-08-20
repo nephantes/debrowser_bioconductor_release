@@ -1,7 +1,7 @@
 Package: debrowser
 Type: Package
 Title: debrowser: Interactive Differential Expresion Analysis Browser
-Version: 1.1.6
+Version: 1.1.7
 Date: 2016-07-05
 Author: Alper Kucukural <alper.kucukural@umassmed.edu>,
         Nicholas Merowsky <nicholas.merowsky@umassmed.edu>,
@@ -21,12 +21,10 @@ Depends:
     shiny,
     ggvis,
     jsonlite,
-    edgeR,
     shinyjs
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports:
-    clusterProfiler,
     DT,
     ReactomePA,
     ggplot2,
@@ -47,12 +45,19 @@ Imports:
     SummarizedExperiment,
     stringi,
     reshape2,
+    baySeq,
+    d3heatmap,
     org.Hs.eg.db,
-    org.Mm.eg.db
+    org.Mm.eg.db,
+    limma,
+    edgeR,  
+    clusterProfiler,
+    V8,
+    methods
 RoxygenNote: 5.0.1
 Suggests: testthat,
     rmarkdown,
-    knitr,  
+    knitr,
     R.rsp
 VignetteBuilder: knitr,  R.rsp
 URL: https://github.com/UMMS-Biocore/debrowser

@@ -29,10 +29,9 @@ run_pca <- function(x=NULL, retx = TRUE,
 #'
 #' Plots the PCA results for the selected dataset.
 #'
-#' @param x, dataframe with data
+#' @param dat, data
 #' @param pcx, x axis label
 #' @param pcy, y axis label
-#' @param explained, additional axis data
 #' @param metadata, additional data
 #' @param color, color for plot
 #' @param shape, shape for plot
@@ -42,52 +41,68 @@ run_pca <- function(x=NULL, retx = TRUE,
 #' @examples
 #'     load(system.file("extdata", "demo", "demodata.Rda",
 #'             package="debrowser"))
-#'     pca_data<-run_pca(getNormalizedMatrix(
-#'             demodata[rowSums(demodata[,2:7])>10,2:7]))
 #'     metadata<-cbind(colnames(demodata[,2:7]), 
 #'             c(rep("Cond1",3), rep("Cond2",3)))
 #'     colnames(metadata)<-c("samples", "conditions")
 #'
-#'     a <- plot_pca(pca_data$PCs, explained = pca_data$explained,
+#'     a <- plot_pca(getNormalizedMatrix(
+#'             demodata[rowSums(demodata[,2:7])>10,2:7]),
 #'             metadata = metadata, color = "samples",
 #'             size = 5, shape = "conditions",
 #'             factors = c("samples", "conditions"))
 #'
 #' @export
 #'
-plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
+plot_pca <- function(dat = NULL, pcx = 1, pcy = 2,
     metadata = NULL, color = NULL, shape = NULL,
     size = NULL, factors = NULL) {
-        if ( is.null(x) ) return(NULL)
-
+        if ( is.null(dat) ) return(NULL)
+    
+        pca_data <- run_pca(dat)
+        x <- pca_data$PCs
+        explained <- pca_data$explained
+        plot_data <- data.frame(x)
         # Prepare data frame to pass to ggplot
         if (!is.null(metadata)) {
-            plot_data <- cbind(x, metadata)
-            plot_data <- as.data.frame(plot_data)
-            # Convert numeric factors to class 'factor'
-            for (f in factors) {
-                plot_data[, f] <- as.factor(plot_data[, f])
-            }
-        } else {
-            plot_data <- as.data.frame(x)
-        }
+            plot_data <- cbind(plot_data, metadata)
+        } 
+        xaxis <- paste0("PC", pcx)
+        yaxis <- paste0("PC", pcy)
+        p_data <- plot_data[,c(xaxis, yaxis, "samples", "conditions")]
+        colnames(p_data) <- c("x", "y", "samples", "conditions")
         # Prepare axis labels
-        if (!is.null(explained)) {
-            xaxis <- sprintf("PC%d (%.2f%%)", pcx,
-                round(explained[pcx] * 100, 2))
-            yaxis <- sprintf("PC%d (%.2f%%)", pcy,
-                round(explained[pcy] * 100, 2))
-        } else {
-            xaxis <- paste0("PC", pcx)
-            yaxis <- paste0("PC", pcy)
-        }
-        # Plot
-        p <- ggplot(plot_data, aes_string(x = paste0("PC", pcx),
-            y = paste0("PC", pcy))) + geom_point(aes_string(color = color,
-            shape = shape), size = size) + labs(x = xaxis, y = yaxis) +
-            scale_x_discrete(labels = round_vals) +
-            scale_y_discrete(labels = round_vals)
-        p
+        xaxis <- sprintf("PC%d (%.2f%%)", pcx,
+            round(explained[pcx] * 100, 2))
+        yaxis <- sprintf("PC%d (%.2f%%)", pcy,
+            round(explained[pcy] * 100, 2))
+
+        p_data %>% ggvis(x = ~x, y = ~y) %>% 
+            layer_points(size := 100, 
+                fill = ~samples, shape =~ conditions) %>%
+            add_tooltip(getToolTipPCA, "hover") %>%
+            add_axis("x", title = xaxis) %>%
+            add_axis("y", title = yaxis) %>%
+            hide_legend("shape") %>%
+            set_options(duration = 0, width = "auto", height = "auto", 
+                resizable = TRUE)
+}
+
+#' getToolTipPCA
+#'
+#' Prepares tooltiptext for PCA plot
+#'
+#' @param dat, data
+#' @return tooltip text
+#'
+#' @export
+#'
+#' @examples
+#' x <- getToolTipPCA()
+#'
+getToolTipPCA <- function(dat=NULL){
+    if (is.null(dat)) return(NULL)
+    
+    paste0("<b>", dat$samples, "</b>")
 }
 
 #' getPCAexplained
@@ -96,8 +111,7 @@ plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
 #' the selected dataset.
 #'
 #' @param datasetInput, selected data
-#' @param cols, columns
-#' @param input, from usern)
+#' @param input, from user
 #' @return explained plot
 #' @examples
 #'     x <- getPCAexplained()
@@ -105,26 +119,22 @@ plot_pca <- function(x = NULL, pcx = 1, pcy = 2, explained = NULL,
 #' @export
 #'
 getPCAexplained <- function(datasetInput = NULL, 
-    cols = NULL, input = NULL) {
+    input = NULL) {
     if (is.null(datasetInput)) return(NULL)
     a <- NULL
     if (input$qcplot == "pca"){
-        if (!is.null(cols))
-            dataset <- datasetInput[, cols]
-        else
-            dataset <- datasetInput[,c(input$samples)]
-        pca_data <- run_pca(getNormalizedMatrix(dataset))
+        dataset <- datasetInput[,c(input$col_list)]
+        pca_data <- run_pca(getNormalizedMatrix(dataset, input$norm_method))
         datexp <- data.frame(cbind(unlist(lapply(
             c(1:length(pca_data$explained)), 
             function(x){paste0("PC", x)})), 
             round(pca_data$explained * 100, 2)))
         colnames(datexp) <- c("PCs", "explained")
         datexp$explained <- as.numeric( as.character(datexp$explained) )
-        a <- ggplot(datexp, aes(x = PCs, y = explained)) +
-            geom_bar(stat="identity") + ylab("% variance explained")
-        colourfield = NULL
-        if ("Legend" %in% colnames(datasetInput))
-            colourfield = 'Legend'
+        datexp %>% ggvis(x = ~PCs, y = ~explained) %>% 
+            layer_bars() %>%
+            set_options(width = "auto", height = "auto", resizable = TRUE ) %>%
+            bind_shiny("ggvisQC2")
     }
     a
 }
