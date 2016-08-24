@@ -78,8 +78,8 @@ deServer <- function(input, output, session) {
                 shiny.fullstacktrace = FALSE, shiny.trace=FALSE, 
                 shiny.autoreload=TRUE)
             library(debrowser)
-            library(d3heatmap)
-            library(edgeR)
+            #library(d3heatmap)
+            #library(edgeR)
         }
         observeEvent(input$stopApp, {
             stopApp(returnValue = invisible())
@@ -280,7 +280,7 @@ deServer <- function(input, output, session) {
         })
         
         v <- c()
-        output$intheatmap <- renderD3heatmap({
+        output$intheatmap <- d3heatmap::renderD3heatmap({
             shinyjs::onclick("intheatmap", js$getNames(v))
             getIntHeatmap(isolate(df_select()), input, inputQCPlot())
         })

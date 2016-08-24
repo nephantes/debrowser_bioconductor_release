@@ -1,4 +1,10 @@
 ************************************
+Version 1.1.9 Release
+***********************************
+- edgeR and d3heatmap dependancy fix
+- undocumented functions fix
+
+************************************
 Version 1.1.8 Release
 ***********************************
 - Various bug fixes
@@ -11,3 +17,4 @@ Version 1.1.7 Release
 - Interactive Heatmap
 - Interactive PCA
 - IQR and Density plots
+

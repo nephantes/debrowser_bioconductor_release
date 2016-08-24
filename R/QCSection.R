@@ -37,7 +37,7 @@ getQCPanel <- function(input = NULL) {
             column(12, plotOutput("pcaexplained",
             height = height, width = width))),    
         conditionalPanel(condition = "(input.interactive && input.qcplot == 'heatmap')",
-            d3heatmapOutput("intheatmap", width = width, height=height),
+            d3heatmap::d3heatmapOutput("intheatmap", width = width, height=height),
             tags$script('
                 $(document).ready(function() {
                     $("#heatmap").on("shiny:recalculating", function(event) {

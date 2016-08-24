@@ -141,16 +141,16 @@ runEdgeR<- function(data = NULL, columns = NULL, conds = NULL,
     
     filtd <- subset(data, rowSums(data) > rowsum.filter)
     
-    d<- DGEList(counts = filtd, group=conds)
-    d <- calcNormFactors(d, method = normfact)
+    d<- edgeR::DGEList(counts = filtd, group=conds)
+    d <- edgeR::calcNormFactors(d, method = normfact)
     # If dispersion is 0, it will estimate the dispersions.
     de.com <- c() 
     if (testType == "exactTest"){
         if (dispersion == 0){
-            d <- estimateCommonDisp(d)
-            de.com <- exactTest(d)
+            d <- edgeR::estimateCommonDisp(d)
+            de.com <- edgeR::exactTest(d)
         }else{
-            de.com <- exactTest(d, dispersion=dispersion)
+            de.com <- edgeR::exactTest(d, dispersion=dispersion)
         }
     }else if (testType == "glmLRT"){
         cnum = summary(conds)[levels(conds)[1]]
@@ -158,12 +158,12 @@ runEdgeR<- function(data = NULL, columns = NULL, conds = NULL,
         des <- c(rep(1, cnum),rep(2, tnum))
         design <- model.matrix(~des)
         if (dispersion == 0){
-            d <- estimateCommonDisp(d)
-            fit <- glmFit(d, design)
+            d <- edgeR::estimateCommonDisp(d)
+            fit <- edgeR::glmFit(d, design)
         }else{
-            fit <- glmFit(d, design, dispersion=dispersion)
+            fit <- edgeR::glmFit(d, design, dispersion=dispersion)
         }   
-        de.com <- glmLRT(fit)
+        de.com <- edgeR::glmLRT(fit)
     }
 
     options(digits=4)

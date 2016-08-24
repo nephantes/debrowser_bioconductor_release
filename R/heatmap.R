@@ -48,7 +48,7 @@ runHeatmap <- function(data, title="Title", dend = "both",
         trace = "none", margins = c(10, 10))
     }
     else {
-        m <- d3heatmap(cld,
+        m <- d3heatmap::d3heatmap(cld,
                   colors = redblue(256),
                   RowV = TRUE,
                   ColV = TRUE,
