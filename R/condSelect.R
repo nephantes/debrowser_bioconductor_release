@@ -14,21 +14,23 @@ getMethodDetails <- function(num = 0, input = NULL) {
         a <- list(
             conditionalPanel(
                (condition <- paste0("input.demethod",num," == 'DESeq2'")),
-                       getSelectInputBox("fitType", "Fit Type", num, 
-                       c("parametric", "local", "mean"), 
-                       selectedInput("testType", num, "parametric", input)),
+                   getSelectInputBox("fitType", "Fit Type", num, 
+                   c("parametric", "local", "mean"), 
+                   selectedInput("testType", num, "parametric", input)),
                column(2, textInput(paste0("betaPrior", num), "Beta Prior", 
-                       value = selectedInput("betaPrior", num, "0", input) )),
+                    value = isolate(selectedInput(
+                    "betaPrior", num, "0", input)) )),
                getSelectInputBox("testType", "Test Type", num, 
-                              c("Wald", "LRT"),  
-                              selectedInput("testType", num, "Wald", input))),
+                    c("Wald", "LRT"),  
+                    selectedInput("testType", num, "Wald", input))),
             conditionalPanel(
                (condition <- paste0("input.demethod",num," == 'EdgeR'")),
                    getSelectInputBox("edgeR_normfact", "Normalization", num, 
                        c("TMM","RLE","upperquartile","none"), 
                        selectedInput("edgeR_normfact", num, "TMM", input)),
                column(2,textInput(paste0("dispersion", num), "Dispersion", 
-                       value = selectedInput("dispersion", num, "0", input) )),
+                        value = isolate(selectedInput("dispersion", 
+                        num, "0", input) ))),
                getSelectInputBox("edgeR_testType", "Test Type", num, 
                        c("exactTest", "glmLRT"), 
                        selectedInput("edgeR_testType", num, "exactTest", input))),
@@ -44,8 +46,9 @@ getMethodDetails <- function(num = 0, input = NULL) {
                        c("none", "scale", "quantile", "cyclicloess",
                            "Aquantile", "Gquantile", "Rquantile","Tquantile"),
                            selectedInput("normBetween", num, "none", input))),
-            column(2,textInput(paste0("rowsumfilter", num), "row.sum filter", value = 
-                           selectedInput("rowsumfilter", num, "10", input) )),
+            column(2,textInput(paste0("rowsumfilter", num), "row.sum filter", 
+                value = isolate(selectedInput("rowsumfilter", num,
+                    "10", input) ))),
             br())
 
 }

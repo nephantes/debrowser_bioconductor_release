@@ -1,8 +1,13 @@
 ************************************
+Version 1.1.8 Release
+***********************************
+- Various bug fixes
+- Data preperation is reachable from everywhere 
+
+************************************
 Version 1.1.7 Release
 ***********************************
 - Limma, EdgeR and DESeq2 support
 - Interactive Heatmap
 - Interactive PCA
 - IQR and Density plots
-

@@ -4,10 +4,7 @@
 \alias{getLeftMenu}
 \title{getLeftMenu}
 \usage{
-getLeftMenu(flag = TRUE)
-}
-\arguments{
-\item{flag, }{flag to show the element in the ui}
+getLeftMenu()
 }
 \value{
 returns the left menu according to the selected tab;

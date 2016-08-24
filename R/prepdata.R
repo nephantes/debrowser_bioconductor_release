@@ -29,7 +29,6 @@ getSamples <- function (cnames = NULL, index = 2) {
 #' @param data, loaded dataset
 #' @param counter, the number of comparisons
 #' @param input, input parameters
-#' @param session, session var
 #' @return data
 #' @export
 #'
@@ -37,52 +36,48 @@ getSamples <- function (cnames = NULL, index = 2) {
 #'     x <- prepDataContainer()
 #'
 prepDataContainer <- function(data = NULL, counter=NULL, 
-    input = NULL, session=NULL) {
-
-    if (is.null(input$goButton) || input$goButton[1]==0 ||
-         is.null(data) || counter == 0)
-        return(NULL)
+    input = NULL) {
+    if (is.null(data)) return(NULL)
 
     inputconds <- reactiveValues(demethod_params = list(), conds = list())
-    inputconds <- eventReactive(input$goButton, {
+    inputconds <- eventReactive(input$startDE, {
     m <- c()
-    updateTabsetPanel(session, "methodtabs", selected = "panel1")
-    hide(selector = "#methodtabs li a[data-value=panel0]")
-    
+
     m$conds <- list()
     for (cnt in seq(1:(2*counter))){
-        m$conds[cnt] <- list(input[[paste0("condition",cnt)]])
+        m$conds[cnt] <- list(isolate(input[[paste0("condition",cnt)]]))
     }
     #Get parameters for each method
     m$demethod_params <- NULL
     for (cnt in seq(1:counter)){
-        if (input[[paste0("demethod",cnt)]] == "DESeq2"){
-            m$demethod_params[cnt] <- paste(input[[paste0("demethod",cnt)]],
-                input[[paste0("fitType",cnt)]],
-                input[[paste0("betaPrior",cnt)]],
-                input[[paste0("testType",cnt)]],
-                input[[paste0("rowsumfilter",cnt)]], sep=",")
+        if (isolate(input[[paste0("demethod",cnt)]]) == "DESeq2"){
+            m$demethod_params[cnt] <- paste(
+                isolate(input[[paste0("demethod",cnt)]]),
+                isolate(input[[paste0("fitType",cnt)]]),
+                isolate(input[[paste0("betaPrior",cnt)]]),
+                isolate(input[[paste0("testType",cnt)]]),
+                isolate(input[[paste0("rowsumfilter",cnt)]]), sep=",")
         }
-        else if (input[[paste0("demethod",cnt)]] == "EdgeR"){
-            m$demethod_params[cnt]<- paste(input[[paste0("demethod",cnt)]],
-                input[[paste0("edgeR_normfact",cnt)]],
-                input[[paste0("dispersion",cnt)]],
-                input[[paste0("edgeR_testType",cnt)]],
-                input[[paste0("rowsumfilter",cnt)]], sep=",")
+        else if (isolate(input[[paste0("demethod",cnt)]]) == "EdgeR"){
+            m$demethod_params[cnt]<- paste(
+                isolate(input[[paste0("demethod",cnt)]]),
+                isolate(input[[paste0("edgeR_normfact",cnt)]]),
+                isolate(input[[paste0("dispersion",cnt)]]),
+                isolate(input[[paste0("edgeR_testType",cnt)]]),
+                isolate(input[[paste0("rowsumfilter",cnt)]]), sep=",")
         }
-        else if (input[[paste0("demethod",cnt)]] == "Limma"){
-            m$demethod_params[cnt] <- paste(input[[paste0("demethod",cnt)]],
-                input[[paste0("limma_normfact",cnt)]],
-                input[[paste0("limma_fitType",cnt)]],
-                input[[paste0("normBetween",cnt)]],
-                input[[paste0("rowsumfilter",cnt)]], sep=",")
+        else if (isolate(input[[paste0("demethod",cnt)]]) == "Limma"){
+            m$demethod_params[cnt] <- paste(
+                isolate(input[[paste0("demethod",cnt)]]),
+                isolate(input[[paste0("limma_normfact",cnt)]]),
+                isolate(input[[paste0("limma_fitType",cnt)]]),
+                isolate(input[[paste0("normBetween",cnt)]]),
+                isolate(input[[paste0("rowsumfilter",cnt)]]), sep=",")
         }
     }
-    shinyjs::disable("resetsamples")
-    shinyjs::disable("goButton")
     m
     })
-    if (is.null(input$condition1)) return(NULL)
+    if (is.null(isolate(input$condition1))) return(NULL)
     dclist<-list()
     for (i in seq(1:counter))
     {
@@ -95,7 +90,6 @@ prepDataContainer <- function(data = NULL, counter=NULL,
         m<-list(conds = conds, cols = cols, init_data=m)
         dclist[[i]] <- m
     }
-    togglePanels(1, c(1:4), session)
     return(dclist)
 }
 
@@ -612,7 +606,6 @@ applyFiltersToMergedComparison <- function (merged = NULL,
             1/foldChange_cutoff & as.numeric(merged[,c(paste0("padj.", tt))]) <= 
             padj_cutoff), "Legend"] <- "Sig"
     }
-
     merged 
 }
 

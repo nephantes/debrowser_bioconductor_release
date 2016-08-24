@@ -4,11 +4,9 @@
 \alias{getCutOffSelection}
 \title{getCutOffSelection}
 \usage{
-getCutOffSelection(flag = TRUE, nc = 1)
+getCutOffSelection(nc = 1)
 }
 \arguments{
-\item{flag, }{flag to show the element in the ui}
-
 \item{nc, }{total number of comparisons}
 }
 \value{

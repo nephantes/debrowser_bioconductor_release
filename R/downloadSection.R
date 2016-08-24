@@ -22,7 +22,8 @@ getDownloadSection <- function(flag = FALSE, type = "main") {
                 "comparisons", "alldetected", "most-varied")
         else 
             choices <- c("most-varied", "alldetected", "selected")
-        a <- list(selectInput("dataset", "Choose a dataset:",
+        a <- list(conditionalPanel( (condition <- "input.methodtabs!='panel0'"),
+            selectInput("dataset", "Choose a dataset:",
             choices = choices), 
             downloadButton("downloadData", "Download Data"),
             conditionalPanel(condition = "input.dataset=='most-varied'",
@@ -32,7 +33,7 @@ getDownloadSection <- function(flag = FALSE, type = "main") {
                           "", rows = 5, cols = 35),
             helpText("Regular expressions can be used\n
                      Ex: ^Al => Al.., Al$ => ...al")
-            )
+            ))
     }
     a
 }

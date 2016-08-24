@@ -4,8 +4,7 @@
 \alias{prepDataContainer}
 \title{prepDataContainer}
 \usage{
-prepDataContainer(data = NULL, counter = NULL, input = NULL,
-  session = NULL)
+prepDataContainer(data = NULL, counter = NULL, input = NULL)
 }
 \arguments{
 \item{data, }{loaded dataset}
@@ -13,8 +12,6 @@ prepDataContainer(data = NULL, counter = NULL, input = NULL,
 \item{counter, }{the number of comparisons}
 
 \item{input, }{input parameters}
-
-\item{session, }{session var}
 }
 \value{
 data

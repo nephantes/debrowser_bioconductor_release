@@ -5,7 +5,7 @@
 \title{getTableStyle}
 \usage{
 getTableStyle(dat = NULL, input = NULL, padj = c("padj"),
-  foldChange = c("foldChange"))
+  foldChange = c("foldChange"), DEsection = TRUE)
 }
 \arguments{
 \item{dat, }{dataset}
@@ -15,6 +15,8 @@ getTableStyle(dat = NULL, input = NULL, padj = c("padj"),
 \item{padj, }{the name of the padj value column in the dataset}
 
 \item{foldChange, }{the name of the foldChange column in the dataset}
+
+\item{DEsection, }{if it is in DESection or not}
 }
 \description{
 User defined selection that selects the style of table to display

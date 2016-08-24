@@ -58,13 +58,11 @@ deUI <- function() {
         uiOutput("loading"),
         width = 2,
         uiOutput("initialmenu"),
-        conditionalPanel(condition = "((output.definished | 
-            input.goQCplots) & output.dataready)",
-                         uiOutput("leftMenu")),
-        conditionalPanel(condition = "((output.definished | 
-            input.goQCplots) & output.dataready)",
+        conditionalPanel(condition = "(output.dataready)",
+            uiOutput("leftMenu")),
+        conditionalPanel(condition = "(output.dataready)",
             uiOutput("downloadSection")),
-        conditionalPanel(condition = "(input.goButton & output.dataready)",
+        conditionalPanel(condition = "(output.dataready)",
             uiOutput('cutoffSelection'))
     ),
     mainPanel(

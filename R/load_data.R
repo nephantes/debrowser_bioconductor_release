@@ -25,9 +25,12 @@ load_data <- function (input = NULL, session = NULL) {
     jsonobj<-query$jsonobject
     if (!is.null(jsonobj))
     {
-        jsondata<-fromJSON(jsonobj, simplifyDataFrame = TRUE)
+        jsondata<-data.frame(fromJSON(jsonobj, simplifyDataFrame = TRUE),
+                             stringsAsFactors = TRUE)
         rownames(jsondata)<-jsondata[, 1]
         jsondata<-jsondata[,c(2:ncol(jsondata))]
+        jsondata[,c(2:ncol(jsondata))] <- sapply(
+            jsondata[,c(2:ncol(jsondata))], as.numeric)
         return(jsondata)
     }
     if (is.null(input$file1) && is.null(loaddemo()$demo)) {
