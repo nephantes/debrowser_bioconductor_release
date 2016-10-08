@@ -26,7 +26,7 @@ getDataPrepPanel <- function(flag = FALSE){
             uiOutput("conditionSelector"),
             column(12,actionButton("add_btn", "Add New Comparison"),
             actionButton("rm_btn", "Remove"),
-            getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/deseq.html#id1")),
+            getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/deseq/deseq.html")),
             actionButton("startDE", "Submit!"),
            tags$style(type='text/css', "#startDE { margin-top: 10px;}")  ))),
         conditionalPanel(condition = "!input.demo &&
@@ -50,7 +50,8 @@ getLeftMenu <- function() {
 a <- list( conditionalPanel( (condition <- "input.methodtabs=='panel1'"),
         wellPanel(radioButtons("mainplot", paste("Main Plots:", sep = ""),
             c(Scatter = "scatter", VolcanoPlot = "volcano",
-            MAPlot = "maplot"))), actionButton("startPlots", "Submit!")),
+            MAPlot = "maplot"))),
+                actionButton("startPlots", "Submit!")),
         conditionalPanel( (condition <- "input.methodtabs=='panel2'"),
             wellPanel(radioButtons("qcplot",
                 paste("QC Plots:", sep = ""),
@@ -130,8 +131,7 @@ getPCselection <- function(num = 1, xy = "x" ) {
 #' @export
 #'
 getQCLeftMenu <- function() {
-    a <- list(selectInput("norm_method", "Normalization Method:",
-                          choices <- c("TMM", "RLE", "upperquartile", "none")),
+    a <- list(
             uiOutput("columnSelForHeatmap"),
             conditionalPanel( (condition <- "input.qcplot=='all2all' ||
             input.qcplot=='heatmap' ||
@@ -152,7 +152,10 @@ getQCLeftMenu <- function() {
                 "mcquitty", "median", "centroid")),
                 selectInput("distance_method", "Distance Method:",
                 choices <- c("cor", "euclidean", "maximum", "manhattan",
-                "canberra", "binary", "minkowski"))),
+                "canberra", "binary", "minkowski")),
+                getHelpButton("method", 
+                              "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#heat-maps")
+            ),
         conditionalPanel( (condition <- "input.qcplot=='pca'"),
             getPCselection(1, "x"),
             getPCselection(2, "y")
@@ -242,12 +245,19 @@ getInitialMenu <- function(input = NULL, output = NULL, session = NULL) {
             conditionalPanel(condition = "!input.demo &&
                 !output.dataready",
                 actionLink("demo", "Load Demo!"),
-                getHelpButton("method", " http://debrowser.readthedocs.io/en/develop/quickstart.html"),
+                getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html"),
                 fileInput("file1", "Choose TSV File",
                     accept = c("text/tsv",
                         "text/comma-separated-values,text/plain",
-                        ".tsv"))        
-                ))
+                        ".tsv")),
+                fileInput("file2", "Choose Meta Data File (Optional)",
+                          accept = c("text/tsv",
+                                     "text/comma-separated-values,text/plain",
+                        ".tsv"))
+                ,
+                uiOutput("batchEffect"),
+                actionButton("gotoanalysis", "Go to Analysis!"))
+            )
     }
     a
 }
@@ -389,7 +399,7 @@ a <- list( conditionalPanel(condition <- "!input.startPlots",
     column( 12, wellPanel(
     helpText( "Please choose the appropriate parameters and 
             press submit button to draw the plots!" ),
-    getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart.html#the-main-plots")))))
+    getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#the-main-plots")))))
 }
 
 #' getCondMsg
@@ -397,6 +407,8 @@ a <- list( conditionalPanel(condition <- "!input.startPlots",
 #' Generates and displays the current conditions and their samples
 #' within the DEBrowser.
 #'
+#' @param dc, columns
+#' @param num, selected comparison
 #' @param cols, columns
 #' @param conds, selected conditions
 #' @note \code{getCondMsg}
@@ -405,22 +417,23 @@ a <- list( conditionalPanel(condition <- "!input.startPlots",
 #'     x <- getCondMsg()
 #' @export
 #'
-getCondMsg <- function(cols = NULL, conds = NULL) {
-    a <- NULL
-    if (!is.null(cols) && !is.null(conds)) {
-        cnd <- data.frame(cbind(conds, cols))
-        a <-list( conditionalPanel(condition <- "input.startPlots",
-            column( 12, wellPanel(
-            HTML( paste0( "<b>",unique(conds)[1], ":</b>"), 
-                paste(cnd[cnd$conds == unique(conds)[1], "cols"], 
-                collapse =","), 
-                paste0(" vs. ","<b>",unique(conds)[2], ":", "</b>"),
-                paste(cnd[cnd$conds == unique(conds)[2], "cols"], 
-                collapse =",")),
-            getHelpButton("method", 
-    "http://debrowser.readthedocs.io/en/develop/quickstart.html#the-main-plots")))))
-    }
-    a
+getCondMsg <- function(dc = NULL, num = NULL, cols = NULL, conds = NULL) {
+    if (is.null(cols) || is.null(conds)) return (NULL)
+    if (is.null(num)) num <- 1
+    cnd <- data.frame(cbind(conds, cols))
+    params_str <- paste(dc[[num]]$demethod_params, collapse = ',')
+    a <-list( conditionalPanel(condition <- "input.startPlots",
+        column( 12, wellPanel(
+            style = "overflow-x:scroll",
+            HTML( paste0( "<b>Selected Parameters:</b> ", params_str,
+            "</br><b>",unique(conds)[1], ":</b> "), 
+            paste(cnd[cnd$conds == unique(conds)[1], "cols"], 
+            collapse =","),
+            paste0(" vs. ","<b>",unique(conds)[2], ":", "</b> "),
+            paste(cnd[cnd$conds == unique(conds)[2], "cols"], 
+            collapse =",")),
+        getHelpButton("method", 
+"http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#the-main-plots")))))
 }
 
 #' togglePanels
@@ -472,6 +485,27 @@ getCompSelection <- function(count = NULL) {
   a
 }
 
+#' selectBatchEffect
+#'
+#' Batch effect column selection
+#'
+#' @param input, input values
+#' @note \code{selectBatchEffect}
+#' @examples
+#'     x <- selectBatchEffect()
+#' @export
+#'
+selectBatchEffect <- function(input = NULL) {
+    if (is.null(input$file2)) return (NULL)
+    
+     metadata <- read.table(input$file2$datapath, sep = "\t",
+         header = TRUE, row.names = 1)
+     lst.choices <- as.list(c("None", colnames(metadata)))
+     selectInput("batchselect", label = h3("Batch effect correction column"), 
+            choices = lst.choices, 
+            selected = 1)
+}
+
 #' getTableStyle
 #'
 #' User defined selection that selects the style of table to display
@@ -490,7 +524,7 @@ getCompSelection <- function(count = NULL) {
 getTableStyle <- function(dat = NULL, input = NULL, 
     padj = c("padj"), foldChange=c("foldChange"), DEsection = TRUE){
     if (is.null(dat)) return (NULL)
-    a <- dat 
+    a <- dat
     if(!is.null(padj) && padj != "" && DEsection)
         a <- a %>% formatStyle(
             padj,
@@ -500,7 +534,8 @@ getTableStyle <- function(dat = NULL, input = NULL,
             input$padjtxt, c('green', 'white'))
         ) 
     if(!is.null(foldChange) && foldChange != "" && DEsection)
-        a <- a %>% formatStyle(
+        a <- a %>%
+            formatStyle(
             foldChange,
             color = styleInterval(c(1/as.numeric(input$foldChangetxt), 
             as.numeric(input$foldChangetxt)), c('white', 'black', 'white')),

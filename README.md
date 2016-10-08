@@ -12,15 +12,18 @@ Differential gene expression analysis has become an increasingly popular tool
 in determining and viewing up and/or down experssed genes between two sets of
 samples.  The goal of Differential gene expression analysis is to find genes
 or transcripts whose difference in expression, when accounting for the
-variance within condition, is higher than expected by chance.  DESeq2
-<https://bioconductor.org/packages/release/bioc/html/DESeq2.html> is an R
-package available via Bioconductor and is designed to normalize count data
-from high-throughput sequencing assays such as RNA-Seq and test for
+variance within condition, is higher than expected by chance.
+[DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) is
+an R package available via Bioconductor and is designed to normalize count
+data from high-throughput sequencing assays such as RNA-Seq and test for
 differential expression (Love et al. 2014).  With multiple parameters such as
 padjust values, log fold changes, plot styles, and so on, altering plots
 created with your DE data can be a hassle as well as time consuming. The
-Differential Expression Browser uses DESeq2 (Love et al., 2014), EdgeR 
-(Robinson et al., 2010), and Limma (Ritchie et al., 2015) coupled with 
+Differential Expression Browser uses DESeq2 (Love et al., 2014), 
+[EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
+(Robinson et al., 2010), and 
+[Limma](https://bioconductor.org/packages/release/bioc/html/limma.html)
+(Ritchie et al., 2015) coupled with 
 shiny (Chang, W. et al., 2016)  to produce real-time changes within your 
 plot queries and allows for interactive browsing of your DESeq results. 
 In addition to DESeq analysis, DEBrowser also offers a variety of other plots 
@@ -630,12 +633,6 @@ Comparing the HFD wild type and the normal chow wild type also shows significant
 Expanding on the analysis further, the upregulated genes analyzed are then compared to KEGG and Disease ontologies
 to show a variety of metabolism related correlations (Figures 38-39).
 
-![*Up and Down regulated genes volcano plot of HFD WT vs Chow WT.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_37.png "")
-
-![*HFD upregulated gene list used for DO enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_37.png "")
-
-![*HFD upregulated gene list used for KEGG enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_38.png "")
-
 Using the 'advanced demo' dataset we mentioned earlier, you too can
 recreate these tables using the same data.  Browsing, changing parameters,
 and creating unique plots to view and analyze data can be a creative way
@@ -645,51 +642,65 @@ interactive format!
 
 **DEBrowser vs other Differential Expression analysis software:**
 
-![*Comparison table of DEBrowser, MeV, Chipster, Galaxy, and CummeRBund*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_40.png "")
-
 The comparison table (Figure 40) displays multiple comparisons between debrowser and other various methods of viewing Differential Expression Analysis results.
 
 Some of the comparisons can be viewed either within the tool itself or within some of the figures provided. A multiple tool comparisons
 can be observed within figure 34, an interactive visualization of gene highlighting can be observed for figures 12-14, and an interactive
 visualization of biological variation or condition comparisons can also be observed for figure 34.
 
-For more information on MeV (Howe et al., 2011) please visit this link: http://www.tm4.org/mev.html
+For more information on MeV (Howe et al., 2011) please visit this link: [MeV](http://www.tm4.org/mev.html)
 
-For more information about Chipster (Kallio et al., 2011), please visit this link: http://chipster.csc.fi/manual/
+For more information about Chipster (Kallio et al., 2011), please visit this link: [Chipster](http://chipster.csc.fi/manual/)
 
-For more information about Galaxy (Giardine et al., 2005), please visit this link: https://usegalaxy.org/
+For more information about Galaxy (Giardine et al., 2005), please visit this link: [Galaxy](https://usegalaxy.org/)
 
-For more information about CummeRBund (Trapnell et al., 2012), please visit this link: http://compbio.mit.edu/cummeRbund/manual_2_0.html
+For more information about CummeRBund (Trapnell et al., 2012), please visit this link: [CummeRbund](http://compbio.mit.edu/cummeRbund/manual_2_0.html)
 
+#       Future Plan:
 
-**References:**
+Future plans will include the following:
 
-Anders,S. et al. (2014) HTSeq - A Python framework to work with high-throughput sequencing data.
+	* Venn Diagrams to compare overlapping differentially expressed genes in different condition comparison results.
+	* Increase in the number of used clustering methods.
+	* Batch effect correction method(s).
+	* GO term analysis gene lists will be added for found GO categories.
 
-Chang,W. et al. (2016) shiny: Web Application Framework for R.
+#       References
 
-Chang,W. and Wickham,H. (2015) ggvis: Interactive Grammar of Graphics.
+1. Anders,S. et al. (2014) HTSeq - A Python framework to work with high-throughput sequencing data.
 
-Giardine,B. et al. (2005) Galaxy: a platform for interactive large-scale genome analysis. Genome Res., 15, 1451–1455.
+2. Chang,W. et al. (2016) shiny: Web Application Framework for R.
 
-Howe,E.A. et al. (2011) RNA-Seq analysis in MeV. Bioinformatics, 27, 3209–3210.
+3. Chang,W. and Wickham,H. (2015) ggvis: Interactive Grammar of Graphics.
 
-Kallio,M.A. et al. (2011) Chipster: user-friendly analysis software for microarray and other high-throughput data. BMC Genomics, 12, 507.
+4. Giardine,B. et al. (2005) Galaxy: a platform for interactive large-scale genome analysis. Genome Res., 15, 1451–1455.
 
-Li,B. and Dewey,C.N. (2011) RSEM: accurate transcript quantification from RNA-Seq data with or without a reference genome. BMC Bioinformatics, 12, 323.
+5. Howe,E.A. et al. (2011) RNA-Seq analysis in MeV. Bioinformatics, 27, 3209–3210.
 
-Love,M.I. et al. (2014) Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biol., 15, 550.
+6. Kallio,M.A. et al. (2011) Chipster: user-friendly analysis software for microarray and other high-throughput data. BMC Genomics, 12, 507.
 
-Reese,S.E. et al. (2013) A new statistic for identifying batch effects in high-throughput genomic data that uses guided principal component analysis. Bioinformatics, 29, 2877–2883.
+7. Li,B. and Dewey,C.N. (2011) RSEM: accurate transcript quantification from RNA-Seq data with or without a reference genome. BMC Bioinformatics, 12, 323.
 
-Reich,M. et al. (2006) GenePattern 2.0. Nat. Genet., 38, 500–501.
+8. Love,M.I. et al. (2014) Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2. Genome Biol., 15, 550.
 
-Risso,D. et al. (2014) Normalization of RNA-seq data using factor analysis of control genes or samples. Nat. Biotechnol., 32, 896–902.
+9. Reese,S.E. et al. (2013) A new statistic for identifying batch effects in high-throughput genomic data that uses guided principal component analysis. Bioinformatics, 29, 2877–2883.
 
-Ritchie,M.E. et al. (2015) limma powers differential expression analyses for RNA-sequencing and microarray studies. Nucleic Acids Res., 43, e47–e47.
+10. Reich,M. et al. (2006) GenePattern 2.0. Nat. Genet., 38, 500–501.
 
-Trapnell,C. et al. (2012) Differential gene and transcript expression analysis of RNA-seq experiments with TopHat and Cufflinks. Nat. Protoc., 7, 562–578.
+11. Risso,D. et al. (2014) Normalization of RNA-seq data using factor analysis of control genes or samples. Nat. Biotechnol., 32, 896–902.
 
-Vernia,S. et al. (2014) The PPAR$\alpha$-FGF21 hormone axis contributes to metabolic regulation by the hepatic JNK signaling pathway. Cell Metab., 20, 512–525.
+12. Ritchie,M.E. et al. (2015) limma powers differential expression analyses for RNA-sequencing and microarray studies. Nucleic Acids Res., 43, e47–e47.
 
-Murtagh, Fionn and Legendre, Pierre (2014). Ward's hierarchical agglomerative clustering method: which algorithms implement Ward's criterion? Journal of Classification 31 (forthcoming).
+13. Trapnell,C. et al. (2012) Differential gene and transcript expression analysis of RNA-seq experiments with TopHat and Cufflinks. Nat. Protoc., 7, 562–578.
+
+14. Vernia,S. et al. (2014) The PPAR$\alpha$-FGF21 hormone axis contributes to metabolic regulation by the hepatic JNK signaling pathway. Cell Metab., 20, 512–525.
+
+15. Murtagh, Fionn and Legendre, Pierre (2014). Ward's hierarchical agglomerative clustering method: which algorithms implement Ward's criterion? Journal of Classification 31 (forthcoming).
+
+![*Up and Down regulated genes volcano plot of HFD WT vs Chow WT.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_37.png "")
+
+![*HFD upregulated gene list used for DO enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_37.png "")
+
+![*HFD upregulated gene list used for KEGG enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_38.png "")
+
+![*Comparison table of DEBrowser, MeV, Chipster, Galaxy, and CummeRBund*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_40.png "")

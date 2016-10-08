@@ -43,6 +43,41 @@ load_data <- function (input = NULL, session = NULL) {
     inFile <- input$file1
     try(m <- read.table(inFile$datapath, sep = "\t",
         header = TRUE, row.names = 1))
-    
     m
 }
+
+#' Correct Batch Effect
+#'
+#' Batch effect correction
+#' @param idata, data
+#' @param input, input values
+#' @return data
+#' @export
+#'
+#' @examples
+#'     x<-correctBatchEffect ()
+correctBatchEffect <- function (idata = NULL, input = NULL) {
+    if (is.null(idata)) return(NULL)
+    inFile <- input$file2
+    try(metadata <- read.table(inFile$datapath, sep = "\t",
+         header = TRUE, row.names = 1))
+    batch <- metadata[, input$batchselect]
+    columns <- rownames(metadata)
+    meta <- data.frame(cbind(columns, batch))
+    
+    data <- data.frame(idata[, columns])
+    data[, columns] <- apply(data[, columns], 2, function(x) as.integer(x))
+    
+    data[, columns] <- apply(data[, columns], 2, function(x) return(x + runif(1, 0, 0.01)))
+    
+    modcombat = model.matrix(~1, data = meta)
+    
+    combat_blind = ComBat(dat=data, batch=batch)
+    
+    a <- cbind(idata[rownames(combat_blind), c("transcript")], combat_blind)
+    
+    a[, columns] <- apply(a[, columns], 2, function(x) ifelse(x<0, 0, x))
+    colnames(a[, 1]) <- colnames(idata[, 1])
+    a
+}
+

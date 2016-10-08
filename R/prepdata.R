@@ -87,7 +87,8 @@ prepDataContainer <- function(data = NULL, counter=NULL,
         cols <- c(paste(inputconds()$conds[[2*i-1]]), 
         paste(inputconds()$conds[[2*i]]))
         m<-prepDEOutput(data, cols, conds, inputconds(), i)
-        m<-list(conds = conds, cols = cols, init_data=m)
+        m<-list(conds = conds, cols = cols, init_data=m, 
+            demethod_params = inputconds()$demethod_params[i])
         dclist[[i]] <- m
     }
     return(dclist)
@@ -182,7 +183,7 @@ prepDEOutput <- function(data = NULL, cols = NULL,
     params <- inputconds$demethod_params[i]
     de_res <- runDE(data, cols, conds, params)
     de_res <- data.frame(de_res)
-    norm_data <- getNormalizedMatrix(data[, cols])
+    norm_data <- getNormalizedMatrix(data[, cols], "TMM")
     mean_cond <- c()
     mean_cond_first <- getMean(norm_data, de_res, 
         inputconds, 2*i-1)
@@ -211,6 +212,7 @@ prepDEOutput <- function(data = NULL, cols = NULL,
 #'
 #' @param filt_data, loaded dataset
 #' @param cols, selected samples
+#' @param conds, seleced conditions
 #' @param input, input parameters
 #' @return data
 #' @export
@@ -218,10 +220,24 @@ prepDEOutput <- function(data = NULL, cols = NULL,
 #' @examples
 #'     x <- applyFilters()
 #'
-applyFilters <- function(filt_data = NULL, cols = NULL, 
+applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
     input = NULL){
     if (is.null(input$padjtxt) || is.null(input$foldChangetxt) 
         || is.null(filt_data)) return(NULL)
+    compselect <- 1
+    if (!is.null(input$compselect) ) 
+        compselect <- as.integer(input$compselect)
+    x <- paste0("Cond", 2*compselect - 1) 
+    y <- paste0("Cond", 2*compselect)
+    norm_data <- getNormalizedMatrix(filt_data[, cols], 
+        input$norm_method)
+    g <- data.frame(cbind(cols, conds))
+    filt_data$x <- log10(rowMeans(norm_data[, 
+        g[g$conds==x, "cols"]]) + 0.1)
+    filt_data$y <- log10(rowMeans(norm_data[, 
+        g[g$conds==y, "cols"]]) + 0.1)
+    filt_data[,cols] <- norm_data
+    
     padj_cutoff <- as.numeric(input$padjtxt)
     foldChange_cutoff <- as.numeric(input$foldChangetxt)
     m <- filt_data

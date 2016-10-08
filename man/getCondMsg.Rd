@@ -4,9 +4,13 @@
 \alias{getCondMsg}
 \title{getCondMsg}
 \usage{
-getCondMsg(cols = NULL, conds = NULL)
+getCondMsg(dc = NULL, num = NULL, cols = NULL, conds = NULL)
 }
 \arguments{
+\item{dc, }{columns}
+
+\item{num, }{selected comparison}
+
 \item{cols, }{columns}
 
 \item{conds, }{selected conditions}

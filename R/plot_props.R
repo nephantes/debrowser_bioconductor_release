@@ -92,11 +92,13 @@ getHoverPlots <- function(bardata=NULL, genename=NULL){
         set_options(width = "auto", height = 350, resizable=FALSE)
     vis3 %>% bind_shiny("plot3")
 
+    ypos <- -5 * max(nchar(as.vector(bardata$conds)))
     vis4 <- bardata %>%
         ggvis(x = ~conds, y = ~count,
             fill = ~conds) %>%
         group_by(conds) %>% layer_boxplots() %>%
-        add_title_pos(title = title4, align = "middle") %>%
+        add_title_pos(title = title4, align = "middle", angle = 310,
+                      dy = ypos, dx = 0) %>%
         set_options(width = "auto", height = 350, resizable=FALSE)
     vis4 %>% bind_shiny("plot4")
 }

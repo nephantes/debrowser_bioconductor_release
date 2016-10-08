@@ -20,7 +20,7 @@ getGoPanel <- function(flag = FALSE){
                 wellPanel(helpText( "Please select parameters and press the 
                     submit button in the left menu for the plots"),
             getHelpButton("method", 
-            "http://debrowser.readthedocs.io/en/develop/quickstart.html#go-term-plots"))),
+            "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#go-term-plots"))),
             tabsetPanel(id = "gotabs", type = "tabs",
                 tabPanel(title = "Plot", value = "gopanel1", id = "gopanel1",
                      column(12, wellPanel( plotOutput("GOPlots1")))),

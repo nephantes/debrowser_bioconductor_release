@@ -27,7 +27,7 @@
 #'             js inlineCSS
 #' @importFrom d3heatmap d3heatmap renderD3heatmap d3heatmapOutput
 #' @importFrom DT datatable dataTableOutput renderDataTable formatStyle
-#'             styleInterval
+#'             styleInterval formatRound
 #' @importFrom ggplot2 aes aes_string geom_bar geom_point ggplot
 #'             labs scale_x_discrete scale_y_discrete ylab
 #'             autoplot
@@ -42,7 +42,7 @@
 #' @importFrom graphics barplot hist pairs par rect text plot
 #' @importFrom stats aggregate as.dist cor cor.test dist
 #'             hclust kmeans na.omit prcomp var sd model.matrix
-#'             p.adjust
+#'             p.adjust runif
 #' @importFrom utils read.table write.table update.packages
 #' @importFrom DOSE enrichDO enrichMap gseaplot dotplot
 #' @importMethodsFrom AnnotationDbi as.data.frame as.list colnames
@@ -67,9 +67,11 @@
 #' @importFrom edgeR calcNormFactors equalizeLibSizes DGEList glmLRT
 #'             exactTest estimateCommonDisp glmFit
 #' @importFrom limma lmFit voom eBayes topTable
+#' @importFrom sva ComBat
 #' @import org.Hs.eg.db
 #' @import org.Mm.eg.db
 #' @import V8
+
 deServer <- function(input, output, session) {
     tryCatch(
     {
@@ -142,7 +144,7 @@ deServer <- function(input, output, session) {
         })
         
         buttonValues <- reactiveValues(goQCplots = FALSE, goDE = FALSE,
-            startDE = FALSE)
+            startDE = FALSE, gotoanalysis = FALSE)
         
         output$dataready <- reactive({
             hide(id = "loading-debrowser", anim = TRUE, animType = "fade")    
@@ -156,8 +158,22 @@ deServer <- function(input, output, session) {
         })
         outputOptions(output, "definished", 
             suspendWhenHidden = FALSE)
+        
+        observeEvent(input$gotoanalysis, {
+            buttonValues$gotoanalysis <- TRUE
+        })
+        
         Dataset <- reactive({
-            load_data(input, session)
+            a <- NULL
+            if ( buttonValues$gotoanalysis == TRUE || (!is.null(input$demo) && 
+                 input$demo == TRUE)){
+                a <- load_data(input, session)
+                if (!is.null(input$batchselect) && input$batchselect!="None")
+                {
+                   a<-correctBatchEffect(a, input)
+                }
+            }
+            a
         })
         choicecounter <- reactiveValues(nc = 0, qc = 0)
         observeEvent(input$add_btn, {
@@ -199,6 +215,11 @@ deServer <- function(input, output, session) {
                 choices = samp, multiple = TRUE,
                 selected = samp)
             )
+        })
+        output$batchEffect <- renderUI({
+            if(!is.null(input$file2)){
+                selectBatchEffect(input)
+            }
         })
         output$conditionSelector <- renderUI({
             selectConditions(Dataset(), choicecounter, input)
@@ -242,7 +263,8 @@ deServer <- function(input, output, session) {
             if (!is.null(comparison()$init_data) &&
                 !is.null(input$padjtxt) &&
                 !is.null(input$foldChangetxt))
-            applyFilters(init_data(), isolate(cols()), input)
+            applyFilters(init_data(), isolate(cols()), isolate(conds()),
+                input)
         })
         randstr <- reactive({ 
             a<-NULL
@@ -261,7 +283,8 @@ deServer <- function(input, output, session) {
                 compselect <- as.integer(input$compselect)
             if (!is.null(isolate(filt_data())) && !is.null(input$padjtxt) && 
                 !is.null(input$foldChangetxt)) {
-                condmsg$text <- getCondMsg( isolate(cols()), isolate(conds()))
+                condmsg$text <- getCondMsg(isolate(dc()), input$compselect,
+                    isolate(cols()), isolate(conds()))
                 selected$data <- getMainPanelPlots(isolate(filt_data()), 
                     isolate(cols()), isolate(conds()), input, compselect)
             }
@@ -338,7 +361,9 @@ deServer <- function(input, output, session) {
             options = list(lengthMenu = list(c(10, 25, 50, 100),
             c("10", "25", "50", "100")),
             pageLength = 25, paging = TRUE, searching = TRUE)) %>%
+            DT::formatRound(columns = isolate(cols()), digits = 2) %>%
             getTableStyle(input, dat[[2]], dat[[3]], buttonValues$startDE)
+            
             m
         })
         getMostVaried <- reactive({
