@@ -36,26 +36,27 @@ run_pca <- function(x=NULL, retx = TRUE,
 #' @param color, color for plot
 #' @param shape, shape for plot
 #' @param size, size of the plot
-#' @param factors, factors of the plot
+#' @param textonoff, text on off
+#' @param legendSelect, select legend
 #' @return pca list
 #' @examples
 #'     load(system.file("extdata", "demo", "demodata.Rda",
 #'             package="debrowser"))
 #'     metadata<-cbind(colnames(demodata[,2:7]), 
+#'             colnames(demodata[,2:7]),
 #'             c(rep("Cond1",3), rep("Cond2",3)))
-#'     colnames(metadata)<-c("samples", "conditions")
+#'     colnames(metadata)<-c("samples", "color", "shape")
 #'
 #'     a <- plot_pca(getNormalizedMatrix(
 #'             demodata[rowSums(demodata[,2:7])>10,2:7]),
 #'             metadata = metadata, color = "samples",
-#'             size = 5, shape = "conditions",
-#'             factors = c("samples", "conditions"))
+#'             size = 5, shape = "shape")
 #'
 #' @export
 #'
 plot_pca <- function(dat = NULL, pcx = 1, pcy = 2,
     metadata = NULL, color = NULL, shape = NULL,
-    size = NULL, factors = NULL) {
+    size = NULL, textonoff = "Off", legendSelect = "fill") {
         if ( is.null(dat) ) return(NULL)
     
         pca_data <- run_pca(dat)
@@ -68,23 +69,34 @@ plot_pca <- function(dat = NULL, pcx = 1, pcy = 2,
         } 
         xaxis <- paste0("PC", pcx)
         yaxis <- paste0("PC", pcy)
-        p_data <- plot_data[,c(xaxis, yaxis, "samples", "conditions")]
-        colnames(p_data) <- c("x", "y", "samples", "conditions")
+        p_data <- plot_data[,c(xaxis, yaxis, "samples", "color", "shape")]
+        colnames(p_data) <- c("x", "y", "samples", "color", "shape")
         # Prepare axis labels
         xaxis <- sprintf("PC%d (%.2f%%)", pcx,
             round(explained[pcx] * 100, 2))
         yaxis <- sprintf("PC%d (%.2f%%)", pcy,
             round(explained[pcy] * 100, 2))
 
-        p_data %>% ggvis(x = ~x, y = ~y) %>% 
+        a <- p_data %>% ggvis(x = ~x, y = ~y) %>% 
             layer_points(size := 100, 
-                fill = ~samples, shape =~ conditions) %>%
+                fill =~ color, shape =~ shape, key := ~samples) %>%
             add_tooltip(getToolTipPCA, "hover") %>%
             add_axis("x", title = xaxis) %>%
             add_axis("y", title = yaxis) %>%
-            hide_legend("shape") %>%
             set_options(duration = 0, width = "auto", height = "auto", 
                 resizable = TRUE)
+        if (textonoff == "On")
+            a <- a %>% layer_text(text := ~samples,  fontSize := 12, 
+                       align := "left", baseline := "bottom", stroke := "black")
+        if (legendSelect == "color") {
+            a <- a %>% hide_legend("shape") %>%
+            add_legend("fill")
+        }
+        else{
+            a <- a %>% hide_legend("fill") %>%
+            add_legend("shape")
+        }
+        a
 }
 
 #' getToolTipPCA
@@ -134,6 +146,7 @@ getPCAexplained <- function(datasetInput = NULL,
         datexp %>% ggvis(x = ~PCs, y = ~explained) %>% 
             layer_bars() %>%
             set_options(width = "auto", height = "auto", resizable = TRUE ) %>%
+            scale_ordinal('x', domain=datexp$PCs) %>%
             bind_shiny("ggvisQC2")
     }
     a

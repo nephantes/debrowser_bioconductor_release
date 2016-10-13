@@ -4,7 +4,10 @@
 \alias{getQCLeftMenu}
 \title{getQCLeftMenu}
 \usage{
-getQCLeftMenu()
+getQCLeftMenu(input = NULL)
+}
+\arguments{
+\item{input, }{input values}
 }
 \value{
 QC left menu

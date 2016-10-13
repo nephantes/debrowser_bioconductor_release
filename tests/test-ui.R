@@ -13,10 +13,6 @@ test_that("able to create panel UI", {
     expect_true(exists("QCPanel"))
     expect_equal(QCPanel[[1]][[1]], "div")
 
-    expect_silent( leftMenu <- getLeftMenu() )
-    expect_true(exists("leftMenu"))
-    expect_equal(leftMenu[[1]][[1]], "div")
-
     expect_silent( downloads <- getDownloadSection(TRUE) )
     expect_true(exists("downloads"))
     expect_equal(downloads[[1]][[1]], "div")

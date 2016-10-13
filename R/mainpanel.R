@@ -48,8 +48,8 @@ getMainPanelPlots <- function(filt_data = NULL,
             return(NULL)
 
     lb <- link_brush()
-    x <- paste0("Cond", 2*compselect - 1) 
-    y <- paste0("Cond", 2*compselect) 
+    y <- paste0("Cond", 2*compselect - 1) 
+    x <- paste0("Cond", 2*compselect) 
     
     domains <- getDomains(filt_data)
     colors <- getColors(domains)
@@ -81,7 +81,7 @@ getMainPanelPlots <- function(filt_data = NULL,
     } else if (input$mainplot == "maplot") {
         ma_dat <- reactive({
         dat <- filt_data
-        dat$M <- filt_data$y - filt_data$x
+        dat$M <- filt_data$x - filt_data$y
         dat$A <- (filt_data$x + filt_data$y) / 2
         return(dat)
         })

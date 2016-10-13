@@ -5,7 +5,7 @@
 \title{plot_pca}
 \usage{
 plot_pca(dat = NULL, pcx = 1, pcy = 2, metadata = NULL, color = NULL,
-  shape = NULL, size = NULL, factors = NULL)
+  shape = NULL, size = NULL, textonoff = "Off", legendSelect = "fill")
 }
 \arguments{
 \item{dat, }{data}
@@ -22,7 +22,9 @@ plot_pca(dat = NULL, pcx = 1, pcy = 2, metadata = NULL, color = NULL,
 
 \item{size, }{size of the plot}
 
-\item{factors, }{factors of the plot}
+\item{textonoff, }{text on off}
+
+\item{legendSelect, }{select legend}
 }
 \value{
 pca list
@@ -34,14 +36,14 @@ Plots the PCA results for the selected dataset.
     load(system.file("extdata", "demo", "demodata.Rda",
             package="debrowser"))
     metadata<-cbind(colnames(demodata[,2:7]), 
+            colnames(demodata[,2:7]),
             c(rep("Cond1",3), rep("Cond2",3)))
-    colnames(metadata)<-c("samples", "conditions")
+    colnames(metadata)<-c("samples", "color", "shape")
 
     a <- plot_pca(getNormalizedMatrix(
             demodata[rowSums(demodata[,2:7])>10,2:7]),
             metadata = metadata, color = "samples",
-            size = 5, shape = "conditions",
-            factors = c("samples", "conditions"))
+            size = 5, shape = "shape")
 
 }
 

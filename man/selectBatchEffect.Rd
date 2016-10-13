@@ -4,10 +4,15 @@
 \alias{selectBatchEffect}
 \title{selectBatchEffect}
 \usage{
-selectBatchEffect(input = NULL)
+selectBatchEffect(input = NULL, selectname = "batchselect",
+  label = "Batch effect correction column")
 }
 \arguments{
 \item{input, }{input values}
+
+\item{selectname, }{name of the select box}
+
+\item{label, }{label of the select box}
 }
 \description{
 Batch effect column selection

@@ -4,7 +4,10 @@
 \alias{getLeftMenu}
 \title{getLeftMenu}
 \usage{
-getLeftMenu()
+getLeftMenu(input = NULL)
+}
+\arguments{
+\item{input, }{input values}
 }
 \value{
 returns the left menu according to the selected tab;

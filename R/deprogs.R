@@ -22,11 +22,14 @@ runDE <- function(data = NULL, columns = NULL, conds = NULL, pars = NULL) {
     de_res <- NULL
     pars <- unlist(strsplit(pars, ","))
     if (pars[1] == "DESeq2")     
-        de_res <- runDESeq2(data, columns, conds, pars[2], pars[3], pars[4], pars[5])
+        de_res <- runDESeq2(data, columns, conds, pars[2], pars[3], pars[4], 
+            as.numeric(as.integer(pars[5])))
     else if (pars[1]  == "EdgeR")     
-        de_res <- runEdgeR(data, columns, conds, pars[2], pars[3], pars[4], pars[5])
+        de_res <- runEdgeR(data, columns, conds, pars[2], pars[3], pars[4], 
+            as.numeric(as.integer(pars[5])))
     else if (pars[1] == "Limma")
-        de_res <- runLimma(data, columns, conds, pars[2], pars[3], pars[4], pars[5])
+        de_res <- runLimma(data, columns, conds, pars[2], pars[3], pars[4],
+            as.numeric(as.integer(pars[5])))
     de_res
 }
 

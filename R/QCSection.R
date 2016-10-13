@@ -99,19 +99,42 @@ getQCPlots <- function(dataset = NULL, input = NULL,
                 clustering_method = inputQCPlot$clustering_method,
                 distance_method = inputQCPlot$distance_method,  interactive = FALSE)
         } else if (input$qcplot == "pca") {
-            if (!is.null(metadata)){
-                colnames(metadata) <- c("samples", "conditions")
-            }
+            sc <- getShapeColor(input)
             pcaplot <- plot_pca(dat, input$pcselx, input$pcsely,
-                metadata = metadata, color = "samples",
-                size = 5, shape = "conditions",
-                factors = c("samples", "conditions"))
+                metadata = metadata, color = sc$color,
+                size = 5, shape = sc$shape,
+                textonoff = sc$textonoff, 
+                legendSelect = sc$legendSelect )
             pcaplot %>% bind_shiny("ggvisQC1")
         } else if (input$qcplot == "IQR" || input$qcplot == "Density" ) {
             prepAddQCPlots(dataset, input)
         }
     }
     a
+}
+
+#' getShapeColor
+#'
+#' Generates the fill and shape selection boxes for PCA plots.
+#' metadata file has to be loaded in this case
+#'
+#' @param input, input values
+#' @return Color and shape from selection boxes or defaults
+#' @examples
+#'     x <- getShapeColor()
+#' @export
+#'
+getShapeColor <- function(input = NULL) {
+    if (is.null(input)) return (NULL)
+    sc <-  c()
+    if (!is.null(input$color_pca))
+        sc$color <- input$color_pca
+    if (!is.null(input$shape_pca))
+        sc$shape <- input$shape_pca
+    
+    sc$textonoff = input$textonoff
+    sc$legendSelect = input$legendSelect
+    sc
 }
 
 #' getQCReplot
@@ -132,15 +155,31 @@ getQCPlots <- function(dataset = NULL, input = NULL,
 getQCReplot <- function(cols = NULL, conds = NULL, 
     datasetInput = NULL, input = NULL, inputQCPlot = NULL){
     if (is.null(datasetInput)) return(NULL)
+    samples <- c()
+    color <- c()
+    shape <- c()
     if (!is.null(cols) && !input$dataset == "comparisons"){
         new_cols <- cols[which(cols %in% input$col_list)]
         new_conds <- conds[which(cols %in% input$col_list)]
         dataset <- datasetInput[, new_cols]
-        metadata <- cbind(new_cols, new_conds)
+        samples <- new_cols
+        color  <- new_cols
+        shape <- new_conds
+
     }else{
         dataset <- datasetInput[,c(input$col_list)]
-        metadata <- cbind(colnames(dataset), "Conds")
+        samples <- colnames(dataset)
+        color  <- colnames(dataset)
+        shape <- "Conds"
     }
+    mdata <- readMetaData(input)
+    if (!is.null(input$color_pca) && input$color_pca != "None")
+        color <- as.character(mdata[samples, input$color_pca])
+    if (!is.null(input$shape_pca) && input$shape_pca != "None")
+        shape <- as.character(mdata[samples, input$shape_pca])
+    
+    metadata <- cbind(samples, color, shape)
+
     if (nrow(dataset)<3) return(NULL)
     a <- getQCPlots(dataset, input, metadata,
                     inputQCPlot = inputQCPlot)

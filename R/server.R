@@ -35,7 +35,7 @@
 #'             bind_shiny create_broker ggvis ggvisOutput handle_brush
 #'             hide_legend layer_bars layer_boxplots layer_points
 #'             scale_nominal set_options %>% group_by layer_rects
-#'             band scale_numeric hide_axis layer_densities
+#'             band scale_numeric hide_axis layer_densities scale_ordinal
 #' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
 #' @importFrom grDevices dev.off pdf
@@ -79,7 +79,7 @@ deServer <- function(input, output, session) {
             options( shiny.maxRequestSize = 30 * 1024 ^ 2,
                 shiny.fullstacktrace = FALSE, shiny.trace=FALSE, 
                 shiny.autoreload=TRUE)
-            library(debrowser)
+            #library(debrowser)
             #library(d3heatmap)
             #library(edgeR)
         }
@@ -119,7 +119,7 @@ deServer <- function(input, output, session) {
             getDataPrepPanel(!is.null(init_data))
         })
         output$leftMenu  <- renderUI({
-            getLeftMenu()
+            getLeftMenu(input)
         })
         output$initialmenu <-renderUI({
             getInitialMenu(input, output, session)
