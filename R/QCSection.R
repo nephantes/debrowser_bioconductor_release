@@ -87,7 +87,7 @@ getIntHeatmapVis <- function(randstr = NULL) {
 #' @export
 #'
 getQCPlots <- function(dataset = NULL, input = NULL,
-    metadata = NULL, inputQCPlot = NULL) {
+    metadata = NULL, inputQCPlot = NULL, drawPCAExplained = NULL) {
     if (is.null(dataset)) return(NULL)
     a <- NULL
     if (nrow(dataset) > 0) {
@@ -106,6 +106,8 @@ getQCPlots <- function(dataset = NULL, input = NULL,
                 textonoff = sc$textonoff, 
                 legendSelect = sc$legendSelect )
             pcaplot %>% bind_shiny("ggvisQC1")
+            drawPCAExplained %>%  bind_shiny("ggvisQC2")
+            
         } else if (input$qcplot == "IQR" || input$qcplot == "Density" ) {
             prepAddQCPlots(dataset, input)
         }
@@ -153,7 +155,8 @@ getShapeColor <- function(input = NULL) {
 #' @export
 #'
 getQCReplot <- function(cols = NULL, conds = NULL, 
-    datasetInput = NULL, input = NULL, inputQCPlot = NULL){
+    datasetInput = NULL, input = NULL, inputQCPlot = NULL,
+    drawPCAExplained = NULL){
     if (is.null(datasetInput)) return(NULL)
     samples <- c()
     color <- c()
@@ -182,7 +185,8 @@ getQCReplot <- function(cols = NULL, conds = NULL,
 
     if (nrow(dataset)<3) return(NULL)
     a <- getQCPlots(dataset, input, metadata,
-                    inputQCPlot = inputQCPlot)
+                    inputQCPlot = inputQCPlot,
+                    drawPCAExplained = drawPCAExplained)
 }
 #' saveQCPlot
 #'

@@ -19,10 +19,11 @@ run_pca <- function(x=NULL, retx = TRUE,
                 center = TRUE, scale = TRUE) {
     if ( is.null(x) ) return (NULL)
         pca <- prcomp(t(x), retx = retx,
-                center = center, scale. = scale)
+            center = center, scale. = scale)
         variances <- pca$sdev ^ 2
         explained <- variances / sum(variances)
-        return(list(PCs = pca$x, explained = explained))
+       
+        return(list(PCs = pca$x, explained = explained, pca = pca))
 }
 
 #' plot_pca
@@ -133,9 +134,11 @@ getToolTipPCA <- function(dat=NULL){
 getPCAexplained <- function(datasetInput = NULL, 
     input = NULL) {
     if (is.null(datasetInput)) return(NULL)
-    a <- NULL
+    datexp <- NULL
+    pcaset <- NULL
     if (input$qcplot == "pca"){
-        dataset <- datasetInput[,c(input$col_list)]
+        dataset <- datasetInput[,input$col_list[c(input$col_list)
+            %in% colnames(datasetInput)]]
         pca_data <- run_pca(getNormalizedMatrix(dataset, input$norm_method))
         datexp <- data.frame(cbind(unlist(lapply(
             c(1:length(pca_data$explained)), 
@@ -143,12 +146,43 @@ getPCAexplained <- function(datasetInput = NULL,
             round(pca_data$explained * 100, 2)))
         colnames(datexp) <- c("PCs", "explained")
         datexp$explained <- as.numeric( as.character(datexp$explained) )
-        datexp %>% ggvis(x = ~PCs, y = ~explained) %>% 
-            layer_bars() %>%
-            set_options(width = "auto", height = "auto", resizable = TRUE ) %>%
-            scale_ordinal('x', domain=datexp$PCs) %>%
-            bind_shiny("ggvisQC2")
+         
+        var <- pca_data$pca$sdev^2/sum(pca_data$pca$sdev^2)
+        
+        ## Select the genes for PCA, removing the least variable 
+
+        dThresh.pctile <- 0.80     # distance threshold
+        gList.dThresh <- c()
+
+        d <- mahalanobis(pca_data$pca$rotation[,c(input$pcselx,input$pcsely)],
+            center=rep(0,2),
+            cov=cov(pca_data$pca$rotation[,c(input$pcselx,input$pcsely)]))
+        dThresh<-quantile(d, dThresh.pctile)
+        gList.dThresh <- names(which(d>dThresh))
+        pcaset <-  datasetInput[gList.dThresh, ]
     }
+    return (list(plotdata =  datexp, pcaset = pcaset))
+}
+
+#' drawPCAExplained
+#'
+#' Creates a more detailed plot using the PCA results from
+#' the selected dataset.
+#'
+#' @param explainedData, selected data
+#' @return explained plot
+#' @examples
+#'     x <- drawPCAExplained()
+#'
+#' @export
+#'
+drawPCAExplained <- function(explainedData = NULL){
+    a <- NULL
+    if (is.null(explainedData)) return(NULL)
+    a <- explainedData %>% ggvis(x = ~PCs, y = ~explained) %>% 
+        layer_bars() %>%
+        set_options(width = "auto", height = "auto", resizable = TRUE ) %>%
+        scale_ordinal('x', domain=explainedData$PCs)
     a
 }
 

@@ -6,7 +6,8 @@
 get data to fill up tables tab}
 \usage{
 getDataForTables(input = NULL, init_data = NULL, filt_data = NULL,
-  selected = NULL, getMostVaried = NULL, mergedComp = NULL)
+  selected = NULL, getMostVaried = NULL, mergedComp = NULL,
+  explainedData = NULL)
 }
 \arguments{
 \item{input, }{input parameters}
@@ -20,6 +21,8 @@ getDataForTables(input = NULL, init_data = NULL, filt_data = NULL,
 \item{getMostVaried, }{most varied genes}
 
 \item{mergedComp, }{merged comparison set}
+
+\item{explainedData, }{pca gene set}
 }
 \value{
 data

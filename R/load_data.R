@@ -74,7 +74,7 @@ correctBatchEffect <- function (idata = NULL, input = NULL) {
     
     combat_blind = ComBat(dat=data, batch=batch)
     
-    a <- cbind(idata[rownames(combat_blind), c("transcript")], combat_blind)
+    a <- cbind(idata[rownames(combat_blind), 2], combat_blind)
     
     a[, columns] <- apply(a[, columns], 2, function(x) ifelse(x<0, 0, x))
     colnames(a[, 1]) <- colnames(idata[, 1])

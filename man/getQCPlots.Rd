@@ -5,7 +5,7 @@
 \title{getQCPlots}
 \usage{
 getQCPlots(dataset = NULL, input = NULL, metadata = NULL,
-  inputQCPlot = NULL)
+  inputQCPlot = NULL, drawPCAExplained = NULL)
 }
 \arguments{
 \item{dataset, }{the dataset to use}

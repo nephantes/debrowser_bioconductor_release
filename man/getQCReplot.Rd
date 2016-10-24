@@ -5,7 +5,7 @@
 \title{getQCReplot}
 \usage{
 getQCReplot(cols = NULL, conds = NULL, datasetInput = NULL,
-  input = NULL, inputQCPlot = NULL)
+  input = NULL, inputQCPlot = NULL, drawPCAExplained = NULL)
 }
 \arguments{
 \item{cols, }{the dataset to use}

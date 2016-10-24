@@ -19,9 +19,9 @@ getDownloadSection <- function(flag = FALSE, type = "main") {
     if (flag){
         if (type == "main")
             choices <- c("up+down", "up", "down", "selected",
-                "comparisons", "alldetected", "most-varied")
+                "comparisons", "alldetected", "most-varied", "pcaset")
         else 
-            choices <- c("most-varied", "alldetected", "selected")
+            choices <- c("most-varied", "alldetected", "selected", "pcaset")
         a <- list(conditionalPanel( (condition <- "input.methodtabs!='panel0'"),
             selectInput("dataset", "Choose a dataset:",
             choices = choices), 

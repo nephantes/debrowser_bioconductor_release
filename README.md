@@ -1,16 +1,11 @@
----
-output: 
-  pdf_document: 
-    keep_tex: yes
----
 # DEBrowser: 
 Interactive Differential Expression Analysis Tool
 
 # Introduction
 
-Differential gene expression analysis has become an increasingly popular tool
+Differential expression (DE) analysis has become an increasingly popular tool
 in determining and viewing up and/or down experssed genes between two sets of
-samples.  The goal of Differential gene expression analysis is to find genes
+samples.  The goal of differential gene expression analysis is to find genes
 or transcripts whose difference in expression, when accounting for the
 variance within condition, is higher than expected by chance.
 [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) is
@@ -25,8 +20,8 @@ Differential Expression Browser uses DESeq2 (Love et al., 2014),
 [Limma](https://bioconductor.org/packages/release/bioc/html/limma.html)
 (Ritchie et al., 2015) coupled with 
 shiny (Chang, W. et al., 2016)  to produce real-time changes within your 
-plot queries and allows for interactive browsing of your DESeq results. 
-In addition to DESeq analysis, DEBrowser also offers a variety of other plots 
+plot queries and allows for interactive browsing of your DE results. 
+In addition to DE analysis, DEBrowser also offers a variety of other plots 
 and analysis tools to help visualize your data even further.
 
 ## DEBrowser
@@ -84,9 +79,8 @@ values must contain the gene, transcript(s), and the sample raw count values
 you wish to enter into DEBrowser.
 
 It's important to note that if your rows contain duplicate gene names,
-DEBrowser will reject your TSV file.  Please try to keep unique gene names.
-
-IE:
+DEBrowser will reject your TSV file.  Please try to keep unique gene names.  A
+sample file looks like:
 
 | gene     | transcript | exper_rep1 | exper_rep2 | control_rep1 | control_rep2 |
 |----------|------------|------------|------------|--------------|--------------|
@@ -97,7 +91,8 @@ IE:
 You can also view/use the demo data by clicking the 'Load Demo!' text as an
 example.  For the case study demo data, feel free to download our case study
 demo files at http://bioinfo.umassmed.edu/pub/debrowser/advanced_demo.tsv or 
-a simplified version http://bioinfo.umassmed.edu/pub/debrowser/simple_demo.tsv. 
+a simplified version http://bioinfo.umassmed.edu/pub/debrowser/simple_demo.tsv.
+Please also note that, DEBrowser skips second column and starts reading the quantification values from the 3rd column.
 
 ## Data via JSON objects
 
@@ -154,11 +149,36 @@ api/?source=http://bioinfo.umassmed.edu/pub/debrowser/advanced_demo.tsv&format=J
 Entering this URL into your web browser will automatically load in your data as a JSON
 object, allowing you to start browsing your data right away.
 
-After obtaining and loading in the gene quantifications file, you
+## Batch Effect Corrections
+
+In addition to the sample TSV file you will provide; you can also correct for batch effects or any other normalizing conditions you might want to address
+that might be within your results.  To handle for these corrections, simply create a TSV file such as the one located below:
+
+
+| sample   | batch      | condition  |
+|----------|------------|------------|
+| s1_b1_cA | 1          | A          |
+| s2_b1_cA | 1          | A          |
+| s3_b2_cB | 2          | B          |
+| s4_b2_cB | 2          | B          |
+| s5_b1_cB | 1          | B          |
+
+This meta data file is custom made TSV created by the user and is used in order to establish different batch effects for multiple conditions.
+You can have as many conditions as you may require, as long as all of the samples are present.  Once the TSV file has been loaded in along with your
+data TSV file, DEBrowser uses ComBat (part of the SVA bioconductor package) to adjust for possible batch effect or conditional biases.  For more information
+about ComBat within the SVA package you can visit here: https://bioconductor.org/packages/release/bioc/vignettes/sva/inst/doc/sva.pdf.
+
+To load in the specific file that contains the batch meta data, at the start of the DEBrowser there will be a 
+"Choose Meta Data File (Optional)" which you can then select the batch meta data file to use for this analysis.
+Upon meta-data loading, you will then be able to select from a drop down box that will specify which condition
+column you want to use for analysis.
+
+After obtaining and loading in the gene quantifications file, and if specified the 
+meta data file containing your batch correction fields, you
 then have the option to view QC information of your quantifications or you can 
 continue on to running DESeq2 (Figure 1).
 
-![*The initial options selection.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_1.png "Initial option selection")
+![*(A) The initial data selection menu.  Intial TSV data is loaded in the 'Choose TSV File' while the optional meta data file is loaded in under 'Choose Mera Data File (Optional)'.  (B) Options list once data/meta data have been loaded in.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_1.png "Initial option selection")
 
 ## Quality Control Information:
 
@@ -172,8 +192,8 @@ options you can alter to more easily view the all-to-all plot.
 Additionally, two more QC plots are available for you to use: heatmap and
 PCA plots.  The heatmap (Figure 3) will display genes for each sample within your dataset
 in the form of a heatmap based on your dataset selection and PCA (Figure 4) 
-will display Principal component analysis of your dataset. Additionally,
-you can view the IRQ (Interquartile  Range) for both your raw data and your
+will display Principal component analysis of your dataset.
+Additionally, you can view the IRQ (Interquartile  Range) for both your raw data and your
 data after normalization (Figure 5).  You can also view a density plot for your
 sample data for your raw data and the data after normalization (Figure 6).
 IQR and Density plots are another great visualization too to help you spot
@@ -402,7 +422,7 @@ menu.
 ![*Display of the heatmap within DEBrowser.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_17.png "Heatmap")
 
 The heatmap is a great way to analyze replicate results of genes all in
-one simple plot (Figure 17).  Users have the option to change the clustering method used
+one simple plot (Figure 19).  Users have the option to change the clustering method used
 as well as the distance method used to display their heatmap.  In addition,
 you can also change the size of the heatmap produced and adjust the p-adjust
 and fold change cut off for this plot as well.  Once all of the parameters
@@ -413,7 +433,8 @@ generate your heatmap.
 
 * **complete:**
 	Complete-linkage clustering is one of the linkage method used in hierarchical clustering.
-	In each step of clustering, closest cluster pairs are always merged up to a specified distance     threshold. Distance between clusters for complete link clustering is the maximum of
+	In each step of clustering, closest cluster pairs are always merged up to a specified distance
+	threshold. Distance between clusters for complete link clustering is the maximum of
 	the distances between the members of the clusters.
 	
 * **ward D2:**
@@ -494,7 +515,9 @@ components.  Within the PCA plot section you can select the p-adjust
 value, fold change cut off value, which comparison set to use, which dataset
 to use, the height and width of the corresponding plots, as well as which
 principal components to analyze by changing the appropriate values on the
-left menu.
+left menu.  If loaded with a batch meta data file, you can select from a 
+specific dropdown within the PCA QC plots in order to group specific points on 
+color or shape based on specified groups within your meta data file.
 
 The next tab, 'GO Term', takes you to the ontology comparison portion of
 DEBrowser.  From here you can select the standard dataset options such as
@@ -656,13 +679,19 @@ For more information about Galaxy (Giardine et al., 2005), please visit this lin
 
 For more information about CummeRBund (Trapnell et al., 2012), please visit this link: [CummeRbund](http://compbio.mit.edu/cummeRbund/manual_2_0.html)
 
+#       Batch Effect Correction Example
+
+Batch effects can have negative effects on your overall data as a whole.  If samples were not handled at the same time, or just do not
+have the sample level of technical variance as the rest of your samples, this can lead to specific batch effects that might skew test results.  In
+Figures 41-44, we show both before batch and after batch correction IQR plots and how it can having skewing effects on the results of QC analysis.
+
 #       Future Plan:
 
 Future plans will include the following:
 
-	* Venn Diagrams to compare overlapping differentially expressed genes in different condition comparison results.
+	* Venn Diagrams to compare overlapping differentially expressed genes in different 
+	  condition comparison results.
 	* Increase in the number of used clustering methods.
-	* Batch effect correction method(s).
 	* GO term analysis gene lists will be added for found GO categories.
 
 #       References
@@ -697,10 +726,20 @@ Future plans will include the following:
 
 15. Murtagh, Fionn and Legendre, Pierre (2014). Ward's hierarchical agglomerative clustering method: which algorithms implement Ward's criterion? Journal of Classification 31 (forthcoming).
 
+16. Johnson et al. (2007) Adjusting batch effects in microarray expression data using empirical Bayes methods.  Biostatistics, 8, 118-127.
+
 ![*Up and Down regulated genes volcano plot of HFD WT vs Chow WT.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_37.png "")
 
-![*HFD upregulated gene list used for DO enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_37.png "")
+![*HFD upregulated gene list used for DO enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_38.png "")
 
-![*HFD upregulated gene list used for KEGG enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_38.png "")
+![*HFD upregulated gene list used for KEGG enrichment*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_39.png "")
 
 ![*Comparison table of DEBrowser, MeV, Chipster, Galaxy, and CummeRBund*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_40.png "")
+
+![*IQR of samples before batch correction*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_41.png "")
+
+![*IQR of samples after batch correction*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_42.png "")
+
+![*All-2-All scatter plots showing QC without batch correction.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_43.png "")
+
+![*All-2-All scatter plots showing QC with batch correction.*](http://debrowser.umassmed.edu/imgs/debrowser_pics/figure_44.png "")
