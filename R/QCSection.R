@@ -80,6 +80,7 @@ getIntHeatmapVis <- function(randstr = NULL) {
 #' @param input, user input
 #' @param metadata, coupled samples and conditions
 #' @param inputQCPlot, input QC params
+#' @param drawPCAExplained, to draw pca loading plot
 #' @return the panel for QC plots
 #' @examples
 #'     x <- getQCPlots()
@@ -148,6 +149,7 @@ getShapeColor <- function(input = NULL) {
 #' @param datasetInput, the dataset to use
 #' @param input, user input
 #' @param inputQCPlot, input QC params
+#' @param drawPCAExplained, to draw pca loading plot
 #' @return the panel for QC plots
 #' @examples
 #'     x <- getQCReplot()

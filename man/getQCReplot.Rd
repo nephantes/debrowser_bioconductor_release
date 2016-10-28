@@ -17,6 +17,8 @@ getQCReplot(cols = NULL, conds = NULL, datasetInput = NULL,
 \item{input, }{user input}
 
 \item{inputQCPlot, }{input QC params}
+
+\item{drawPCAExplained, }{to draw pca loading plot}
 }
 \value{
 the panel for QC plots

@@ -15,6 +15,8 @@ getQCPlots(dataset = NULL, input = NULL, metadata = NULL,
 \item{metadata, }{coupled samples and conditions}
 
 \item{inputQCPlot, }{input QC params}
+
+\item{drawPCAExplained, }{to draw pca loading plot}
 }
 \value{
 the panel for QC plots
