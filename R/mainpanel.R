@@ -70,7 +70,7 @@ getMainPanelPlots <- function(filt_data = NULL,
         bind_shiny(paste0("vplot1-", randstr()))
         volcano_selected %>% volcanoZoom(data_tooltip, domains, colors) %>%
         bind_shiny(paste0("vplot2-", randstr()))
-        } else if (input$mainplot == "scatter") {
+    } else if (input$mainplot == "scatter") {
         gene_selected <- reactive({
         filt_data[lb$selected(), ]
         })

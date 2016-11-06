@@ -22,7 +22,7 @@ mainScatter <- function(dat = NULL, lb = NULL,
     domains = NULL, colors = NULL) {
     if ( is.null(dat) ) return(NULL)
 
-    dat %>% ggvis(~y, ~x) %>%
+    dat %>% ggvis(~x, ~y) %>%
         layer_points( size := ~Size, size.hover := 200,
             fillOpacity := 0.2, fillOpacity.hover := 0.7,
             fill.brush := "red", opacity := 0.8, 
@@ -60,7 +60,7 @@ mainScatter <- function(dat = NULL, lb = NULL,
 scatterZoom <- function(dat = NULL, data_tooltip = NULL,
     x = NULL, y = NULL, domains = NULL, colors = NULL) {
     if ( is.null(dat) ) return(NULL)
-    dat %>% ggvis(~y, ~x) %>%
+    dat %>% ggvis(~x, ~y) %>%
         layer_points(size := ~Size, size.hover := 200,
             stroke = ~Legend, key := ~ID, fill = ~padj) %>%
         add_tooltip(data_tooltip, "hover") %>%

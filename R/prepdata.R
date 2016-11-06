@@ -232,10 +232,18 @@ applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
     norm_data <- getNormalizedMatrix(filt_data[, cols], 
         input$norm_method)
     g <- data.frame(cbind(cols, conds))
-    filt_data$x <- log10(rowMeans(norm_data[, 
-        g[g$conds==x, "cols"]]) + 0.1)
-    filt_data$y <- log10(rowMeans(norm_data[, 
-        g[g$conds==y, "cols"]]) + 0.1)
+    if (length(g[g$conds == x, "cols"]) > 1 )
+        filt_data$x <- log10(rowMeans(norm_data[, 
+            as.vector(g[g$conds == x, "cols"])]) + 0.1)
+    else
+        filt_data$x <- log10(norm_data[, 
+             as.vector(g[g$conds == x, "cols"])] + 0.1)
+    if (length(g[g$conds == x, "cols"]) > 1 )
+        filt_data$y <- log10(rowMeans(norm_data[, 
+             as.vector(g[g$conds == y, "cols"])]) + 0.1)
+    else
+        filt_data$y <- log10(norm_data[, 
+             as.vector(g[g$conds == y, "cols"])] + 0.1)
     filt_data[,cols] <- norm_data
     
     padj_cutoff <- as.numeric(input$padjtxt)

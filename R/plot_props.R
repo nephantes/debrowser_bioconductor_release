@@ -80,15 +80,18 @@ getHoverPlots <- function(bardata=NULL, genename=NULL){
     ypos <- -5 * max(nchar(as.vector(bardata$libs)))
     bardata$count <- as.numeric(as.character(bardata$count))
 
+    dat <- rbind(bardata[bardata$conds == levels(bardata$conds)[1], ],
+                 bardata[bardata$conds == levels(bardata$conds)[2], ])    
     title3 <- paste(genename, " variation")
     title4 <- paste(genename, " conditions")
 
-    vis3 <- bardata %>%
+    vis3 <- dat %>%
         ggvis(x = ~libs, y = ~count,
         fill = ~conds) %>%
     group_by(conds) %>% layer_bars() %>%
     add_title_pos(title = title3, angle = 310,
                     dy = ypos, dx = 0) %>%
+        scale_ordinal('x', domain=dat$libs) %>%
         set_options(width = "auto", height = 350, resizable=FALSE)
     vis3 %>% bind_shiny("plot3")
 
