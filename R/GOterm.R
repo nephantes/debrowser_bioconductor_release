@@ -180,11 +180,6 @@ compareClust <- function(dat = NULL, ont = "CC", org = "org.Hs.eg.db",
                 xx <- compareCluster(genecluster, fun = fun, 
                     organism = getOrganism(org),
                     pvalueCutoff = pvalueCutoff)
-            } else if (fun == "enrichPathway"){
-                installpack("ReactomePA")
-                xx <- compareCluster(genecluster, fun = fun, 
-                    organism = getOrganismPathway(org),
-                    pvalueCutoff = pvalueCutoff)
             } else if (fun == "enrichDO") {
                  installpack("DOSE")
                  xx <- compareCluster(genecluster, fun = fun,

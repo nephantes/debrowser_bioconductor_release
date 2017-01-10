@@ -48,8 +48,8 @@ getMainPanelPlots <- function(filt_data = NULL,
             return(NULL)
 
     lb <- link_brush()
-    y <- paste0("Cond", 2*compselect - 1) 
-    x <- paste0("Cond", 2*compselect) 
+    x <- paste0("Cond", 2*compselect - 1) 
+    y <- paste0("Cond", 2*compselect) 
     
     domains <- getDomains(filt_data)
     colors <- getColors(domains)

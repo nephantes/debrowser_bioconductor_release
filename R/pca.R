@@ -151,12 +151,10 @@ getPCAexplained <- function(datasetInput = NULL,
         
         ## Select the genes for PCA, removing the least variable 
 
-        dThresh.pctile <- 0.80     # distance threshold
+        dThresh.pctile <- 1 - as.numeric(input$pctile)     # distance threshold
         gList.dThresh <- c()
 
-        d <- mahalanobis(pca_data$pca$rotation[,c(input$pcselx,input$pcsely)],
-            center=rep(0,2),
-            cov=cov(pca_data$pca$rotation[,c(input$pcselx,input$pcsely)]))
+        d <- pca_data$pca$rotation[,c(input$pcselx)]
         dThresh<-quantile(d, dThresh.pctile)
         gList.dThresh <- names(which(d>dThresh))
         pcaset <-  datasetInput[gList.dThresh, ]

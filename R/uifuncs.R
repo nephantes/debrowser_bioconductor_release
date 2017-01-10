@@ -98,8 +98,7 @@ getGOLeftMenu <- function() {
             ),
             conditionalPanel( ( condition <- "input.goplot=='compare'"),
                 selectInput("gofunc", "Plot Function:",
-                choices =  c( "enrichGO", "enrichDO", "enrichPathway",
-                "enrichKEGG"))
+                choices =  c( "enrichGO", "enrichDO", "enrichKEGG"))
             ),
             downloadButton("downloadGOPlot", "Download Plots"))
 }
@@ -181,6 +180,7 @@ getQCLeftMenu <- function( input = NULL) {
         conditionalPanel( (condition <- "input.qcplot=='pca'"),
             getPCselection(1, "x"),
             getPCselection(2, "y"),
+            textInput("pctile", "Top %", value = "0.05" ),
             getTextOnOff(),
             getLegendSelect(),
             getColorShapeSelection(input)
