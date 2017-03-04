@@ -4,7 +4,10 @@
 \alias{getLoadingMsg}
 \title{getLoadingMsg}
 \usage{
-getLoadingMsg()
+getLoadingMsg(output = NULL)
+}
+\arguments{
+\item{output, }{output message}
 }
 \value{
 loading msg
@@ -19,4 +22,3 @@ within the DEBrowser.
 \examples{
     x <- getLoadingMsg()
 }
-

@@ -4,10 +4,12 @@
 \alias{installpack}
 \title{installpack}
 \usage{
-installpack(package_name = NULL)
+installpack(package_name = NULL, github = FALSE)
 }
 \arguments{
 \item{package_name, }{package name to be installed}
+
+\item{github, }{if github = true}
 }
 \description{
 install packages if they don't exist
@@ -20,4 +22,3 @@ display.
     x <- installpack()
 
 }
-

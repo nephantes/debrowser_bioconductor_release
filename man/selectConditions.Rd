@@ -4,7 +4,8 @@
 \alias{selectConditions}
 \title{selectConditions}
 \usage{
-selectConditions(Dataset = NULL, choicecounter, input = NULL)
+selectConditions(Dataset = NULL, choicecounter, input = NULL,
+  loadingJSON = NULL)
 }
 \arguments{
 \item{Dataset, }{used dataset}
@@ -12,6 +13,8 @@ selectConditions(Dataset = NULL, choicecounter, input = NULL)
 \item{choicecounter, }{total number of comparisons}
 
 \item{input, }{input params}
+
+\item{loadingJSON, }{loads from json}
 }
 \value{
 the panel for go plots;
@@ -27,4 +30,3 @@ used in DESeq.
     x<- selectConditions()
 
 }
-

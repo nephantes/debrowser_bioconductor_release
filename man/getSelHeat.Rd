@@ -4,7 +4,7 @@
 \alias{getSelHeat}
 \title{getSelHeat}
 \usage{
-getSelHeat(data = NULL, input = NULL)
+getSelHeat(data = NULL, input)
 }
 \arguments{
 \item{data, }{selected genes}
@@ -21,4 +21,3 @@ heatmap selection functionality
     x <- getSelHeat()
 
 }
-
