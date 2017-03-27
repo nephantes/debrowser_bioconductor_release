@@ -441,7 +441,7 @@ deServer <- function(input, output, session) {
                     value =  choicecounter$lastselecteddataset)
                 edat$val <- explainedData()
                 getQCReplot(isolate(cols()), isolate(conds()), 
-                    df_select(), isolate(input), inputQCPlot(),
+                    df_select(), input, inputQCPlot(),
                     drawPCAExplained(edat$val$plotdata) )
             }
         })
@@ -452,7 +452,8 @@ deServer <- function(input, output, session) {
         v <- c()
         output$intheatmap <- d3heatmap::renderD3heatmap({
             shinyjs::onclick("intheatmap", js$getNames(v))
-            getIntHeatmap(isolate(df_select()), input, inputQCPlot())
+            dat <- getNormalizedMatrix(df_select(), input$norm_method)
+            getIntHeatmap(dat, input, inputQCPlot())
         })
         
         output$columnSelForHeatmap <- renderUI({
