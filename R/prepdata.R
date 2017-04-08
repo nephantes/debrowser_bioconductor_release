@@ -288,7 +288,7 @@ applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
         most_varied <- getMostVariedList(m, cols, input)
         m[rownames(most_varied), c("Legend")] <- "MV"
     }
-    if (input$dataset == "selected" && !is.null(cols) &&
+    if (input$dataset == "selected" &&
         !is.null(input$genenames)) {
         selectedGenes <- unlist(strsplit(input$genenames, ","))
         m[selectedGenes, c("Legend")] <- "GS"

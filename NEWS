@@ -1,5 +1,11 @@
 
 ************************************
+Version 1.3.11 Release
+**********************************
+- heatmap column fix
+- old_state fix for Windows
+
+************************************
 Version 1.3.10 Release
 **********************************
 - addDataCols NAMESPACE fix
