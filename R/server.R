@@ -59,8 +59,7 @@
 #'             nchar paste rownames toupper unique which
 #'             as.matrix lapply rev "rownames<-"
 #'             gsub ifelse
-#' @importMethodsFrom S4Vectors eval grep grepl levels rowMeans
-#'             rowSums sapply t 
+#' @importMethodsFrom S4Vectors eval grep grepl levels sapply t 
 #' @importMethodsFrom SummarizedExperiment cbind order rbind
 #' @importFrom jsonlite fromJSON
 #' @importFrom methods new
@@ -77,22 +76,26 @@
 #' @importFrom limma lmFit voom eBayes topTable
 #' @importFrom sva ComBat
 #' @importFrom RCurl getURL
-#' @importFrom devtools install_github load_data
 #' @import org.Hs.eg.db
 #' @import org.Mm.eg.db
 #' @import V8
 #' @import shinydashboard
+#' @import shinyBS
+#' @import pathview
+#' @import googleAuthR
 
 deServer <- function(input, output, session) {
+    #library(debrowser)
+    #library(googleAuthR)
     enableBookmarking("server")
     tryCatch(
     {
-        debrowser::loadpacks()
         if (!interactive()) {
             options( shiny.maxRequestSize = 30 * 1024 ^ 2,
                     shiny.fullstacktrace = FALSE, shiny.trace=FALSE, 
                      shiny.autoreload=TRUE)
             debrowser::loadpack(debrowser)
+          
         }
         shinyjs::hide("dropdown-toggle")
         shinyjs::js$setButtonHref()
@@ -106,7 +109,7 @@ deServer <- function(input, output, session) {
         options(googleAuthR.scopes.selected = 
             c("https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/userinfo.profile"))
-    
+
         access_token <- callModule(googleAuth, "initial_google_button")
         # To hide the panels from 1 to 4 and only show Data Prep
         togglePanels(0, c(0), session)
@@ -510,6 +513,23 @@ deServer <- function(input, output, session) {
                 return(inputGOstart()$p)
             }
         })
+        output$KEGGPlot <- renderImage({
+            org <- input$organism
+            dat <- getDataForTables(input, init_data(),
+                    filt_data(), selected,
+                    getMostVaried(),  isolate(mergedComp()),
+                    isolate(edat$val$pcaset))
+            b <- getEntrezIds(dat[[1]], org)
+            a <- inputGOstart()
+            i <- input$gotable_rows_selected
+            pv.out <- pathview::pathview(gene.data = b, pathway.id = a$table$ID[i],
+                       species = substr(a$table$ID[i],0,3), out.suffix = "b.2layer", kegg.native = T)
+            list(src = paste0(a$table$ID[i],".b.2layer.png"),
+                 contentType = 'image/png')
+            
+        }, deleteFile = TRUE)
+        
+        
         
         output$getColumnsForTables <-  renderUI({
             if (is.null(table_col_names())) return (NULL)
