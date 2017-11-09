@@ -8,8 +8,6 @@ installpack(package_name = NULL)
 }
 \arguments{
 \item{package_name, }{package name to be installed}
-
-\item{github, }{if github = true}
 }
 \description{
 install packages if they don't exist

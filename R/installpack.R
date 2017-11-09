@@ -4,7 +4,6 @@
 #' display.
 #'
 #' @param package_name, package name to be installed
-#' @param github, if github = true
 #' @note \code{installpack}
 #'
 #' @examples
