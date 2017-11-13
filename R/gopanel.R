@@ -3,7 +3,6 @@
 #' Creates go term analysis panel within the shiny
 #' display.
 #' 
-#' @param flag, flag to show the element in the ui
 #' @note \code{getGoPanel}
 #' @return the panel for go term analysis;
 #'
@@ -12,23 +11,21 @@
 #'
 #' @export
 #' 
-getGoPanel <- function(flag = FALSE){
-    a <- NULL
-    if (flag)
-        a <- list(
-            conditionalPanel(condition = "!input.startGO",
-                wellPanel(helpText( "Please select parameters and press the 
+getGoPanel <- function(){
+       gopanel <- list(
+           wellPanel(helpText( "Please select parameters and press the 
                     submit button in the left menu for the plots"),
             getHelpButton("method", 
-            "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#go-term-plots"))),
+            "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#go-term-plots")),
             tabsetPanel(id = "gotabs", type = "tabs",
                 tabPanel(title = "Plot", value = "gopanel1", id = "gopanel1",
                      column(12, wellPanel( plotOutput("GOPlots1")))),
                 tabPanel(title = "Table", value = "gopanel2", id = "gopanel2",
                      column(12, wellPanel( DT::dataTableOutput("gotable"))))
-            ),
-            getKEGGModal())
-    a
+            )
+          # ,getKEGGModal()
+        )
+       return(gopanel)
 }
 
 #' getGOPlots
@@ -47,7 +44,7 @@ getGoPanel <- function(flag = FALSE){
 #' 
 getGOPlots <- function(dataset = NULL, input = NULL){
     if (is.null(dataset)) return(NULL)
-    a <- NULL
+    goplots <- NULL
     org <- input$organism
     if (input$goplot == "disease")
         org <- "org.Hs.eg.db"
@@ -55,30 +52,30 @@ getGOPlots <- function(dataset = NULL, input = NULL){
     if (input$goplot == "enrichGO"){
         res <- getEnrichGO(genelist, ont = input$ontology,
             pvalueCutoff = input$gopvalue, org = input$organism)
-        a<-res
+        goplots<-res
         if (input$goextplot == "Dotplot")
-            a$p <- dotplot(res$enrich_p, showCategory=30)
+            goplots$p <- dotplot(res$enrich_p, showCategory=30)
     }
     else if (input$goplot == "enrichKEGG"){
         res <- getEnrichKEGG(genelist, pvalueCutoff=
             as.numeric(input$pvaluetxt), org = input$organism)
-        a<-res
+        goplots<-res
         if (input$goextplot == "Dotplot")
-            a$p <- dotplot(res$enrich_p, showCategory=30)
+            goplots$p <- dotplot(res$enrich_p, showCategory=30)
     }
     else if (input$goplot == "compare"){
         cl <- clusterData(dataset)
         res <- compareClust(cl, fun=input$gofunc, input$ontology,
             org = input$organism)
-        a<-res
+        goplots<-res
     }
     else if (input$goplot == "disease"){
         res <- getEnrichDO(genelist, pvalueCutoff=as.numeric(input$pvaluetxt) )
-        a<-res
+        goplots<-res
         if (input$goextplot == "Dotplot")
-            a$p <- dotplot(res$enrich_p, showCategory=30)
+            goplots$p <- dotplot(res$enrich_p, showCategory=30)
     }
-    a
+    return(goplots)
 }
 
 #' getOrganismBox
@@ -97,7 +94,7 @@ getGOPlots <- function(dataset = NULL, input = NULL){
 #'     x <- getOrganismBox()
 #'
 getOrganismBox <- function(){
-    a <- list(
+    organismBox <- list(
         conditionalPanel( ( condition <- "input.goplot!='disease' &&
                             input.gofunc != 'enrichDO'"),
         selectInput("organism", "Choose an organism:",
@@ -109,6 +106,7 @@ getOrganismBox <- function(){
             "Worm" = "org.Ce.eg.db",
             "Yeast" = "org.Sc.sgd.db"
         ))))
+    return(organismBox)
 }
 
 #' getOrganism

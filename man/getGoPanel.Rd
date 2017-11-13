@@ -4,10 +4,7 @@
 \alias{getGoPanel}
 \title{getGoPanel}
 \usage{
-getGoPanel(flag = FALSE)
-}
-\arguments{
-\item{flag, }{flag to show the element in the ui}
+getGoPanel()
 }
 \value{
 the panel for go term analysis;

@@ -18,7 +18,7 @@ getQCPanel <- function(input = NULL) {
         height = input$height
         width = input$width
     }
-    a <- list(
+    qcPanel <- list(
         wellPanel(helpText( "Please select the parameters and press the 
         submit button in the left menu for the plots" ),
         getHelpButton("method", 
@@ -43,7 +43,7 @@ getQCPanel <- function(input = NULL) {
                 });
         '))
        )
-    return(a)
+    return(qcPanel)
 }
 
 #' getIntHeatmapVis
@@ -61,11 +61,12 @@ getQCPanel <- function(input = NULL) {
 #'
 getIntHeatmapVis <- function(randstr = NULL) {
     if (is.null(randstr)) return(NULL)
-    a <- list(
+    intHeatmap <- list(
     conditionalPanel(condition = 
         "(input.qcplot == 'heatmap' && input.interactive)",
         column(12, ggvisOutput(paste0("heatmapplot-", randstr)))
     ))
+    return(intHeatmap)
 }
 #' getQCPlots
 #'
@@ -87,13 +88,13 @@ getIntHeatmapVis <- function(randstr = NULL) {
 getQCPlots <- function(dataset = NULL, input = NULL,
     metadata = NULL, inputQCPlot = NULL, drawPCAExplained = NULL) {
     if (is.null(dataset)) return(NULL)
-    a <- NULL
+    qcPlots <- NULL
     if (nrow(dataset) > 0) {
         dat <- dataset
         if (input$qcplot == "all2all") {
-            a <- all2all(dat, input$cex)
+            qcPlots <- all2all(dat, input$cex)
         } else if (input$qcplot == "heatmap") {
-            a <- runHeatmap(dat, title = paste("Dataset:", input$dataset),
+            qcPlots <- runHeatmap(dat, title = paste("Dataset:", input$dataset),
                 clustering_method = inputQCPlot$clustering_method,
                 distance_method = inputQCPlot$distance_method,  interactive = FALSE)
         } else if (input$qcplot == "pca") {
@@ -110,7 +111,7 @@ getQCPlots <- function(dataset = NULL, input = NULL,
             prepAddQCPlots(dataset, input)
         }
     }
-    a
+    return(qcPlots)
 }
 
 #' getShapeColor
@@ -134,7 +135,7 @@ getShapeColor <- function(input = NULL) {
     
     sc$textonoff = input$textonoff
     sc$legendSelect = input$legendSelect
-    sc
+    return(sc)
 }
 
 #' getQCReplot
@@ -183,9 +184,9 @@ getQCReplot <- function(cols = NULL, conds = NULL,
     metadata <- cbind(samples, color, shape)
 
     if (nrow(dataset)<3) return(NULL)
-    a <- getQCPlots(dataset, input, metadata,
-                    inputQCPlot = inputQCPlot,
-                    drawPCAExplained = drawPCAExplained)
+        getQCPlots(dataset, input, metadata,
+            inputQCPlot = inputQCPlot,
+            drawPCAExplained = drawPCAExplained)
 }
 
 #' saveQCPlot
@@ -343,7 +344,7 @@ prepAddQCPlots <- function(data=NULL, input=NULL){
 #'
 getSelectedCols <- function(data = NULL, datasetInput = NULL, input=NULL){
     if(is.null(data) || is.null(datasetInput)) return(NULL)
-    m <- NULL
+    selCols <- NULL
     if (!is.null(input$dataset)){
         all <- input$samples
         selection <- input$col_list
@@ -353,7 +354,7 @@ getSelectedCols <- function(data = NULL, datasetInput = NULL, input=NULL){
             selection <- input$col_list
         }
         if (!is.null(selection))
-            m <- data[rownames(datasetInput), selection]
+            selCols <- data[rownames(datasetInput), selection]
     }
-    m
+    return(selCols)
 }

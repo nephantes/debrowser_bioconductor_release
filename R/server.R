@@ -58,7 +58,7 @@
 #' @importMethodsFrom IRanges as.matrix "colnames<-" mean
 #'             nchar paste rownames toupper unique which
 #'             as.matrix lapply rev "rownames<-"
-#'             gsub ifelse
+#'             gsub
 #' @importMethodsFrom S4Vectors eval grep grepl levels sapply t 
 #' @importMethodsFrom SummarizedExperiment cbind order rbind
 #' @importFrom jsonlite fromJSON
@@ -85,8 +85,8 @@
 #' @import googleAuthR
 
 deServer <- function(input, output, session) {
-    #library(debrowser)
-    #library(googleAuthR)
+    library(debrowser)
+    library(googleAuthR)
     enableBookmarking("server")
     tryCatch(
     {
@@ -95,7 +95,6 @@ deServer <- function(input, output, session) {
                     shiny.fullstacktrace = FALSE, shiny.trace=FALSE, 
                      shiny.autoreload=TRUE)
             debrowser::loadpack(debrowser)
-          
         }
         shinyjs::hide("dropdown-toggle")
         shinyjs::js$setButtonHref()
@@ -103,12 +102,13 @@ deServer <- function(input, output, session) {
         if(exists(".startdebrowser.called")){
             shinyjs::hide("logout")
         }
-        options("googleAuthR.webapp.client_id" = 
-        "186441708690-n65idoo8t19ghi7ieopat6mlqkht9jts.apps.googleusercontent.com")
-        options("googleAuthR.webapp.client_secret" = "ulK-sj8bhvduC9kLU4VQl5ih")
+
         options(googleAuthR.scopes.selected = 
             c("https://www.googleapis.com/auth/userinfo.email",
             "https://www.googleapis.com/auth/userinfo.profile"))
+        options("googleAuthR.webapp.client_id" = 
+            "186441708690-n65idoo8t19ghi7ieopat6mlqkht9jts.apps.googleusercontent.com")
+        options("googleAuthR.webapp.client_secret" = "ulK-sj8bhvduC9kLU4VQl5ih")
 
         access_token <- callModule(googleAuth, "initial_google_button")
         # To hide the panels from 1 to 4 and only show Data Prep
@@ -199,16 +199,16 @@ deServer <- function(input, output, session) {
             getProgramTitle(session)
         })
         output$mainpanel <- renderUI({
-            a <- NULL
+            debrowser_mainpanel <- NULL
             if (!is.null(randstr()))
-                a <- getMainPanel(randstr())
-            a
+                debrowser_mainpanel <- getMainPanel(randstr())
+            debrowser_mainpanel
         })
         output$qcpanel <- renderUI({
             getQCPanel(input)
         })
         output$gopanel <- renderUI({
-            getGoPanel(!is.null(init_data()))
+            getGoPanel()
         })
         output$cutoffSelection <- renderUI({
             nc <- 1
@@ -222,8 +222,7 @@ deServer <- function(input, output, session) {
                              "comparisons", "alldetected",
                              "most-varied", "pcaset")
             choices <- c(choices, "selected")
-                a <- getDownloadSection(TRUE, choices)
-                a
+            getDownloadSection(TRUE, choices)
         })
         output$preppanel <- renderUI({
             getDataPrepPanel(!is.null(init_data))
@@ -273,20 +272,20 @@ deServer <- function(input, output, session) {
             buttonValues$gotoanalysis <- TRUE
         })
         Dataset <- reactive({
-            a <- NULL
+            tmpDataset <- NULL
             query <- parseQueryString(session$clientData$url_search)
             jsonobj<-query$jsonobject
             if (buttonValues$gotoanalysis == TRUE || (!is.null(input$demo) && 
                 input$demo == TRUE) || !is.null(jsonobj) ){
-                a <- load_data(input, session)
+                tmpDataset <- load_data(input, session)
                 if (!is.null(input$batchselect) && input$batchselect!="None")
                 {
-                    a<-correctBatchEffect(a, input)
+                    tmpDataset<-correctBatchEffect(tmpDataset, input)
                 }
             }
             if (!is.null(jsonobj))
                 hide(id = "loading-debrowser", anim = TRUE, animType = "fade")
-            a
+            return(tmpDataset)
         })
         observeEvent(input$add_btn, {
             shinyjs::enable("startDE")
@@ -327,12 +326,13 @@ deServer <- function(input, output, session) {
                 samp <- samples()
             else
                 samp <- input$samples
-            a <- list(
+            tmpSamples <- list(
                 selectInput("samples",
                     label = "Samples",
                     choices = samp, multiple = TRUE,
                     selected = samp)
             )
+            return(tmpSamples)
         })
         output$batchEffect <- renderUI({
             if(!is.null(input$file2)){
@@ -400,27 +400,27 @@ deServer <- function(input, output, session) {
             }
         })
         randstr <- reactive({ 
-            a<-NULL
+            tmpRand<-NULL
             if (!is.null(selected$data$randstr))
-                a<-selected$data$randstr() 
-            a
+                tmpRand<-selected$data$randstr() 
+            tmpRand
         })
         selected <- reactiveValues(data = NULL)
         observe({
             setFilterParams(session, input)
             if ((!is.null(input$genenames) && input$interactive == TRUE) || 
                 (!is.null(input$genesetarea) && input$genesetarea != "")){
-                m <- init_data()
+                tmpDat <- init_data()
                 if (!is.null(filt_data()))
-                    m <- filt_data()
+                    tmpDat <- filt_data()
                 genenames <- ""
                 if (!is.null(input$genenames)){
                     genenames <- input$genenames
                 } else {
-                   m <- getSearchData(m, input)
-                   genenames <- paste(rownames(m), collapse = ",")
+                   tmpDat <- getSearchData(tmpDat, input)
+                   genenames <- paste(rownames(tmpDat), collapse = ",")
                 }
-                selected$data <- getSelHeat(m, genenames)
+                selected$data <- getSelHeat(tmpDat, genenames)
             }
         })
         condmsg <- reactiveValues(text = NULL)
@@ -488,13 +488,13 @@ deServer <- function(input, output, session) {
         inputQCPlot <- reactiveValues(clustering_method = "ward.D2",
             distance_method = "cor", interactive = FALSE, width = 700, height = 500)
         inputQCPlot <- eventReactive(input$startQCPlot, {
-            m <- c()
-            m$clustering_method <- input$clustering_method
-            m$distance_method <- input$distance_method
-            m$interactive <- input$interactive
-            m$width <- input$width
-            m$height <- input$height
-            return(m)
+            tmpDat <- c()
+            tmpDat$clustering_method <- input$clustering_method
+            tmpDat$distance_method <- input$distance_method
+            tmpDat$interactive <- input$interactive
+            tmpDat$width <- input$width
+            tmpDat$height <- input$height
+            return(tmpDat)
         })
         
         goplots <- reactive({
@@ -502,11 +502,16 @@ deServer <- function(input, output, session) {
                 filt_data(), selected,
                 getMostVaried(),  isolate(mergedComp()),
                 isolate(edat$val$pcaset))
-            getGOPlots(dat[[1]][, isolate(cols())], input)
+            tmpPlots <- getGOPlots(dat[[1]][, isolate(cols())], input)
+            return(tmpPlots)
         })
-        
-        inputGOstart <- eventReactive(input$startGO, {
-            goplots()
+        inputGOstart <- reactive({
+            if (input$startGO){
+                goplots()
+            }
+        })
+        observeEvent(input$startGO, {
+            inputGOstart()
         })
         output$GOPlots1 <- renderPlot({
             if (!is.null(inputGOstart()$p) && input$startGO){
@@ -519,25 +524,23 @@ deServer <- function(input, output, session) {
                     filt_data(), selected,
                     getMostVaried(),  isolate(mergedComp()),
                     isolate(edat$val$pcaset))
-            b <- getEntrezIds(dat[[1]], org)
-            a <- inputGOstart()
+            genedata <- getEntrezIds(dat[[1]], org)
             i <- input$gotable_rows_selected
-            pv.out <- pathview::pathview(gene.data = b, pathway.id = a$table$ID[i],
-                       species = substr(a$table$ID[i],0,3), out.suffix = "b.2layer", kegg.native = T)
-            list(src = paste0(a$table$ID[i],".b.2layer.png"),
+            pv.out <- pathview::pathview(gene.data = genedata, 
+                      pathway.id = inputGOstart()$table$ID[i],
+                      species = substr(inputGOstart()$table$ID[i],0,3), 
+                      out.suffix = "b.2layer", kegg.native = T)
+            list(src = paste0(inputGOstart()$table$ID[i],".b.2layer.png"),
                  contentType = 'image/png')
-            
         }, deleteFile = TRUE)
-        
-        
-        
+
         output$getColumnsForTables <-  renderUI({
             if (is.null(table_col_names())) return (NULL)
             selected_list <- table_col_names()
             if (!is.null(input$table_col_list) 
                 && all(input$table_col_list %in% colnames(tabledat()[[1]])))
                 selected_list <- input$table_col_list
-            a <- list(
+            colsForTable <- list(
                 wellPanel(id = "tPanel",
                     style = "overflow-y:scroll; max-height: 200px",
                     checkboxGroupInput("table_col_list", "Select col to include:",
@@ -545,6 +548,7 @@ deServer <- function(input, output, session) {
                     selected=selected_list)
                 )
             )
+            return(colsForTable)
         })
         table_col_names <- reactive({
             if (is.null(tabledat())) return (NULL)
@@ -570,7 +574,7 @@ deServer <- function(input, output, session) {
             dat2[,  rcols] <- apply(dat2[,  rcols], 2,
                                     function(x) round( as.numeric(x), digits = 2))  
             dat[[1]] <- dat2
-            dat
+            return(dat)
         })
         output$tables <- DT::renderDataTable({
             dat <- tabledat()
@@ -584,22 +588,22 @@ deServer <- function(input, output, session) {
             if (!dat[[3]] %in% input$table_col_list)
                 dat[[3]]= ""
             
-            m <- DT::datatable(dat[[1]][, input$table_col_list],
+            datDT <- DT::datatable(dat[[1]][, input$table_col_list],
                 options = list(lengthMenu = list(c(10, 25, 50, 100),
                 c("10", "25", "50", "100")),
                 pageLength = 25, paging = TRUE, searching = TRUE)) %>%
                 getTableStyle(input, dat[[2]], dat[[3]], buttonValues$startDE)
-            m
+            return(datDT)
         })
         getMostVaried <- reactive({
-            a <- NULL
+            mostVaried <- NULL
             if (choicecounter$qc == 0)
-                a <- filt_data()[filt_data()$Legend=="MV" | 
+                mostVaried <- filt_data()[filt_data()$Legend=="MV" | 
                     filt_data()$Legend=="GS", ]
             else
-                a <- getMostVariedList(data.frame(init_data()), 
+                mostVaried <- getMostVariedList(data.frame(init_data()), 
                     c(input$samples), input)
-            a
+            mostVaried
         })
         output$gotable <- DT::renderDataTable({
             if (!is.null(inputGOstart()$table)){
@@ -623,36 +627,36 @@ deServer <- function(input, output, session) {
             merged
         })
         datasetInput <- function(addIdFlag = FALSE){
-            m <- NULL
+            tmpDat <- NULL
             if (choicecounter$qc == 0 ) {
                 mergedCompDat <- NULL
                 if (input$dataset == "comparisons"){
                     mergedCompDat <- mergedComp()
                 }
-                m <- getSelectedDatasetInput(filt_data(), 
+                tmpDat <- getSelectedDatasetInput(filt_data(), 
                      selected$data$getSelected(), getMostVaried(),
                      mergedCompDat, isolate(edat$val$pcaset), input)
             }
             else
-                m <- getSelectedDatasetInput(init_data(), 
+                tmpDat <- getSelectedDatasetInput(init_data(), 
                      getSelected = selected$data$getSelected(),
                      getMostVaried = getMostVaried(),
                      explainedData = isolate(edat$val$pcaset),
                      input = input)
             if(addIdFlag)
-                m <- addID(m)
+                tmpDat <- addID(tmpDat)
             if (input$dataset != "pcaset"){
                 choicecounter$lastselecteddataset = input$dataset
             }
-            m
+            return(tmpDat)
         }
         output$downloadData <- downloadHandler(filename = function() {
             paste(input$dataset, "csv", sep = ".")
         }, content = function(file) {
             dat <- getDataForTables(input, init_data(),
-                                    filt_data(), selected,
-                                    getMostVaried(),  isolate(mergedComp()),
-                                    isolate(edat$val$pcaset))
+                filt_data(), selected,
+                getMostVaried(),  isolate(mergedComp()),
+                isolate(edat$val$pcaset))
             dat2 <- removeCols(c("x", "y","Legend", "Size"), dat[[1]])
             if(!("ID" %in% names(dat2)))
                 dat2 <- addID(dat2)

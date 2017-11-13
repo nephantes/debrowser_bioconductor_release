@@ -80,7 +80,7 @@ enableBookmarking("server")
         
     startup <- readRDS("shiny_saves/startup.rds")
     if (startup[['bookmark_counter']] == 0){
-        a <- (fluidPage(
+        debrowser <- (fluidPage(
             tags$script('Shiny.addCustomMessageHandler("testmessage",
                 function(message) {
                     window.location.href = new_url;
@@ -89,11 +89,11 @@ enableBookmarking("server")
     }
 
     else{
-    a <- (fluidPage(
-    #initStore("store", "shinyStore-debrowser"),
-    shinyjs::useShinyjs(),
-    shinyjs::extendShinyjs(text = heatmapJScode, functions = c("getNames")),
-    shinyjs::inlineCSS("
+        debrowser <- (fluidPage(
+        #initStore("store", "shinyStore-debrowser"),
+        shinyjs::useShinyjs(),
+        shinyjs::extendShinyjs(text = heatmapJScode, functions = c("getNames")),
+        shinyjs::inlineCSS("
         #loading-debrowser {
         position: absolute;
         background: #000000;
@@ -157,5 +157,5 @@ enableBookmarking("server")
     )
     )
     }
-    a
+    debrowser
 }

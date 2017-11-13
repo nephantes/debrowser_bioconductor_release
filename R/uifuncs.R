@@ -11,9 +11,9 @@
 #' @export
 #'
 getDataPrepPanel <- function(flag = FALSE){
-    a <- NULL
+    dataPrepPanel <- NULL
     if(flag)
-    a<- list(
+        dataPrepPanel <- list(
         conditionalPanel(condition = "input.demo || output.dataready",
         wellPanel(
         uiOutput("sampleSelector"),
@@ -34,7 +34,7 @@ getDataPrepPanel <- function(flag = FALSE){
             !output.fileUploaded",
             uiOutput("startup"))
     )
-    a
+    return(dataPrepPanel)
 }
 
 #' getLeftMenu
@@ -50,7 +50,7 @@ getDataPrepPanel <- function(flag = FALSE){
 #'
 getLeftMenu <- function(input = NULL) {
 if (is.null(input)) return(NULL)
-a <- list(
+   leftMenu <- list(
         conditionalPanel( (condition <- "input.methodtabs=='panel1'"),
                           actionButton("startPlots", "Submit!"),
         shinydashboard::menuItem(" Plot Type", icon = icon("star-o"), startExpanded=TRUE,
@@ -83,6 +83,7 @@ a <- list(
              uiOutput("getColumnsForTables")
         ))
     )
+   return(leftMenu)
 }
 #' getMainPlotsLeftMenu
 #'
@@ -95,13 +96,13 @@ a <- list(
 #' @export
 #'
 getMainPlotsLeftMenu <- function() {
-    a <- list(
+    mainPlotsLeftMenu <- list(
         shinydashboard::menuItem(" Background Selection", icon = icon("star-o"),
-                                 
-              sliderInput("backperc", "Background Data(%):",
-                          min=10, max=100, value=10, sep = "",
-                          animate = FALSE))
-             )
+        sliderInput("backperc", "Background Data(%):",
+            min=10, max=100, value=10, sep = "",
+            animate = FALSE))
+        )
+    return(mainPlotsLeftMenu)
 }
 
 #' getGOLeftMenu
@@ -115,7 +116,7 @@ getMainPlotsLeftMenu <- function() {
 #' @export
 #'
 getGOLeftMenu <- function() {
-    a <- list(
+    list(
     shinydashboard::menuItem(" Go Term Options", icon = icon("star-o"), startExpanded=TRUE, 
                                        
     tags$head(tags$script(HTML(logSliderJScode("gopvalue")))),
@@ -174,7 +175,7 @@ getPCselection <- function(num = 1, xy = "x" ) {
 #'
 getColorShapeSelection <- function(input = NULL) {
     if (is.null(input)) return (NULL)
-    a <- list(selectBatchEffect(input, "color_pca", "Color field"),
+        list(selectBatchEffect(input, "color_pca", "Color field"),
            selectBatchEffect(input, "shape_pca", "Shape field"))
 }
 
@@ -193,7 +194,7 @@ getColorShapeSelection <- function(input = NULL) {
 #'
 getQCLeftMenu <- function( input = NULL) {
     if (is.null(input)) return(NULL)
-    a <- list(
+        list(
         shinydashboard::menuItem(" Select Columns", icon = icon("star-o"), startExpanded=TRUE, 
             uiOutput("columnSelForQC")),
             shinydashboard::menuItem(" QC Options", icon = icon("star-o"), startExpanded=FALSE,
@@ -245,7 +246,7 @@ getQCLeftMenu <- function( input = NULL) {
 #'
 logSliderJScode <- function(slidername = NULL){
     if (is.null(slidername)) return (NULL)
-    a <- paste0("$(function() {
+    paste0("$(function() {
     setTimeout(function(){
     var vals = [0];
     var powStart = 4;
@@ -275,9 +276,8 @@ logSliderJScode <- function(slidername = NULL){
 #'
 getCutOffSelection <- function(nc = 1){
     compselect <- getCompSelection(nc)
-    a <- list(
-    conditionalPanel( (condition <- "input.dataset!='most-varied' &&
-                       input.methodtabs!='panel0'"),
+    list( conditionalPanel( (condition <- "input.dataset!='most-varied' &&
+        input.methodtabs!='panel0'"),
         tags$head(tags$script(HTML(logSliderJScode("padj")))),
         shinydashboard::menuItem(" Filter", icon = icon("star-o"),
             #h4("Filter"),
@@ -308,10 +308,10 @@ getCutOffSelection <- function(nc = 1){
 #'
 getInitialMenu <- function(input = NULL, output = NULL, session = NULL) {
     if (is.null(input)) return (NULL)
-    a<-NULL
+    initialMenu <- NULL
     if (is.null(parseQueryString(session$clientData$url_search)$jsonobject))
     {
-        a<-list(
+        initialMenu <- list(
             conditionalPanel(condition = "!input.demo &&
                 !output.dataready",
                 actionLink("demo", "Load Demo!"),
@@ -329,7 +329,7 @@ getInitialMenu <- function(input = NULL, output = NULL, session = NULL) {
                 actionButton("gotoanalysis", "Go to Analysis!"))
             )
     }
-    a
+    return(initialMenu)
 }
 
 #' getProgramTitle
@@ -346,13 +346,13 @@ getInitialMenu <- function(input = NULL, output = NULL, session = NULL) {
 #'
 getProgramTitle <- function(session = NULL) {
     if (is.null(session)) return (NULL)
-    a<-NULL
+    DEBrowser <- NULL
     title<-parseQueryString(session$clientData$url_search)$title
     if (is.null(title) || title != "no" )
-        a <- list(titlePanel("DEBrowser"))
+        DEBrowser <- list(titlePanel("DEBrowser"))
     else
-        a <- list(titlePanel(" "))
-    a
+        DEBrowser <- list(titlePanel(" "))
+    return(DEBrowser)
 }
 
 #' getLoadingMsg

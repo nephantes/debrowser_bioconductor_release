@@ -50,11 +50,11 @@ getEntrezIds <- function(genes = NULL, org = "org.Hs.eg.db") {
     if (is.null(genes)) return(NULL)
     installpack(org)
     allkeys <- AnnotationDbi::keys(eval(parse(text = org)),
-                                   keytype="SYMBOL")
+        keytype="SYMBOL")
     
     mapped_genes <- mapIds(eval(parse(text = org)), keys = rownames(genes),
-                           column="ENTREZID", keytype="SYMBOL",
-                           multiVals = "first")
+        column="ENTREZID", keytype="SYMBOL",
+        multiVals = "first")
     mapped_genes <- mapped_genes[!is.na(mapped_genes)]
     genelist <- cbind(mapped_genes, genes[names(mapped_genes), "log2FoldChange"])
     
@@ -89,7 +89,7 @@ getEnrichGO <- function(genelist = NULL, pvalueCutoff = 0.01,
     installpack(org)
     res$enrich_p <- clusterProfiler::enrichGO(gene = genelist, OrgDb = org,
     # res$enrich_p <- enrichGO(gene = genelist, organism = "human",
-            ont = ont, pvalueCutoff = pvalueCutoff)
+        ont = ont, pvalueCutoff = pvalueCutoff)
                              
     res$p <- barplot(res$enrich_p, title = paste("Enrich GO", ont),
         font.size = 12)

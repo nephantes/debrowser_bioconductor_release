@@ -29,7 +29,7 @@ test_that("able to create panel UI", {
     expect_true(exists("getAfter"))
     expect_equal(getAfter[[1]][[1]], "div")
 
-    expect_silent(getGO <- getGoPanel(TRUE) )
+    expect_silent(getGO <- getGoPanel() )
     expect_true(exists("getGO"))
     expect_equal(getGO[[1]][[1]], "div")
 })
