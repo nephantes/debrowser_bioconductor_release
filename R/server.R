@@ -85,8 +85,8 @@
 #' @import googleAuthR
 
 deServer <- function(input, output, session) {
-    library(debrowser)
-    library(googleAuthR)
+    #library(debrowser)
+    #library(googleAuthR)
     enableBookmarking("server")
     tryCatch(
     {
