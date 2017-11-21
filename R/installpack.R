@@ -16,7 +16,6 @@ installpack <- function(package_name = NULL) {
    
     if (!loadpack(package_name))
     {
-       update.packages(ask= FALSE) #update installed packages.
        eval (parse(text = sprintf("install.packages(\"%s\", 
            dependencies = TRUE)",  package_name)))
        source("http://bioconductor.org/biocLite.R")
