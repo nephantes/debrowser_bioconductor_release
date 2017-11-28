@@ -278,6 +278,8 @@ deServer <- function(input, output, session) {
             if (buttonValues$gotoanalysis == TRUE || (!is.null(input$demo) && 
                 input$demo == TRUE) || !is.null(jsonobj) ){
                 tmpDataset <- load_data(input, session)
+                tmpDataset[is.na(tmpDataset)] <- 0
+                tmpDataset <-tmpDataset[rowSums(tmpDataset)>0, ] 
                 if (!is.null(input$batchselect) && input$batchselect!="None")
                 {
                     tmpDataset<-correctBatchEffect(tmpDataset, input)
@@ -313,7 +315,7 @@ deServer <- function(input, output, session) {
         })
         samples <- reactive({
             if (is.null(Dataset())) return(NULL)
-            getSamples(colnames(Dataset()), index = 2)
+            getSamples(colnames(Dataset()), index = 1)
         })
         output$restore_DE <- reactive({
             choicecounter$nc

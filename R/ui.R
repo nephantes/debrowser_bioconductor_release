@@ -66,8 +66,8 @@ enableBookmarking("server")
             shinydashboard::messageItem("Refresh", "", 
                                         icon = shiny::icon("refresh"))
             ))
-    dbHeader$children[[2]]$children <- tags$a(style='color: white;',
-                                              id="top_logo" , "DEBrowser")
+   dbHeader$children[[2]]$children <- tags$a(style='color: white;',
+                                            id="top_logo" , "DEBrowser")
     addResourcePath(prefix = "www", directoryPath = system.file("extdata",
         "www", package = "debrowser"))
     if(!file.exists("shiny_saves/startup.rds")){
@@ -90,7 +90,6 @@ enableBookmarking("server")
 
     else{
         debrowser <- (fluidPage(
-        #initStore("store", "shinyStore-debrowser"),
         shinyjs::useShinyjs(),
         shinyjs::extendShinyjs(text = heatmapJScode, functions = c("getNames")),
         shinyjs::inlineCSS("
@@ -108,9 +107,9 @@ enableBookmarking("server")
     # Loading message
     tags$div(h4("Loading DEBrowser"), id = "loading-debrowser",
         tags$img(src = "www/images/initial_loading.gif")),
-    tags$head(
+    tags$head(tags$title("DEBrowser"),
         tags$link(rel = "stylesheet", type = "text/css",
-                  href = "www/shinydashboard_additional.css")
+        href = "www/shinydashboard_additional.css")
     ),
     shinydashboard::dashboardPage(
         dbHeader,

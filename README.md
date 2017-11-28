@@ -92,7 +92,7 @@ You can also view/use the demo data by clicking the 'Load Demo!' text as an
 example.  For the case study demo data, feel free to download our case study
 demo files at https://bioinfo.umassmed.edu/pub/debrowser/advanced_demo.tsv or
 a simplified version https://bioinfo.umassmed.edu/pub/debrowser/simple_demo.tsv.
-Please also note that, DEBrowser skips second column and starts reading the quantification values from the 3rd column.
+Please also note that, DEBrowser reads the gene names from the first column and skips other non numerical columns and starts reading the quantification values from the 3rd column in this case.
 
 ## Data via JSON objects
 
@@ -123,8 +123,7 @@ web address: https://www.url-encode-decode.com/.
 Encoding our URL will turn it into this:
 
 ```
-http%3A%2F%2Fdolphin.umassmed.edu%2Fpublic%2Fapi%2F%3Fsource%3Dhttp%3A%2F%2Fbioinfo
-.umassmed.edu%2Fpub%2Fdebrowser%2Fadvanced_demo.tsv%26format%3DJSON
+https%3A%2F%2Fdolphin.umassmed.edu%2Fpublic%2Fapi%2F%3Fsource%3Dhttps%3A%2F%2Fbioinfo.umassmed.edu%2Fpub%2Fdebrowser%2F%0D%0Aadvanced_demo.tsv%26format%3DJSON
 ```
 
 Now this link can be be used in debrowser as:
@@ -135,15 +134,13 @@ https://debrowser.umassmed.edu:444/debrowser/R/
 
 It accepts two parameters:
 
-	1. jsonobject=http%3A%2F%2Fdolphin.umassmed.edu%2Fpublic%2Fapi%2F%3Fsource%3Dhttp%3A%2F%2F
-	   bioinfo.umassmed.edu%2Fpub%2Fdebrowser%2Fadvanced_demo.tsv%26format%3DJSON
+	1. jsonobject=https%3A%2F%2Fdolphin.umassmed.edu%2Fpublic%2Fapi%2F%3Fsource%3Dhttps%3A%2F%2Fbioinfo.umassmed.edu%2Fpub%2Fdebrowser%2F%0D%0Aadvanced_demo.tsv%26format%3DJSON
 	2. title=no
 
 The finished product of the link will look like this:
 
 ```
-https://debrowser.umassmed.edu:444/debrowser/R/?jsonobject=https://dolphin.umassmed.edu/public/
-api/?source=https://bioinfo.umassmed.edu/pub/debrowser/advanced_demo.tsv&format=JSON&title=no
+https://debrowser.umassmed.edu:444/debrowser/R/?jsonobject=https%3A%2F%2Fdolphin.umassmed.edu%2Fpublic%2Fapi%2F%3Fsource%3Dhttps%3A%2F%2Fbioinfo.umassmed.edu%2Fpub%2Fdebrowser%2F%0D%0Aadvanced_demo.tsv%26format%3DJSON&title=no
 ```
 
 Entering this URL into your web browser will automatically load in your data as a JSON
