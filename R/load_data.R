@@ -46,7 +46,9 @@ load_data <- function (input = NULL, session = NULL) {
         return(NULL)
     }
     else if (is.null(input$file1) && loaddemo()$demo == TRUE) {
-        return(loaddemo()$demodata)
+        df <- loaddemo()$demodata 
+        df <- df[,sapply(df, is.numeric)]
+        return(df)
     }
     # Restore from file 1
     bookmark_file1_path <- paste0("shiny_bookmarks/", 
@@ -59,9 +61,10 @@ load_data <- function (input = NULL, session = NULL) {
         inFile1 <- input$file1
         to_read_from <- inFile1$datapath
     }
-    try(m <- read.table(to_read_from, sep = "\t",
+    try(df <- read.table(to_read_from, sep = "\t",
         header = TRUE, row.names = 1))
-    m
+    df <- df[,sapply(df, is.numeric)]
+    df
 }
 
 #' Correct Batch Effect

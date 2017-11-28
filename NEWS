@@ -1,4 +1,10 @@
 ************************************
+Version 1.6.6 Release
+**********************************
+- HTML Header fixed
+- A more generic file import tool that senses string columns developed
+
+************************************
 Version 1.5.4 Release
 **********************************
 - heatmap redblue fix

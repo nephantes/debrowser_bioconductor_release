@@ -10,7 +10,7 @@
 #' @examples
 #'     x <- getSamples()
 #'
-getSamples <- function (cnames = NULL, index = 2) { 
+getSamples <- function (cnames = NULL, index = 1) { 
     m <- NULL
     if (!is.null(cnames)) {
         cn <- cnames[index:length(cnames)]
