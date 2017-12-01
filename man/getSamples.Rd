@@ -4,7 +4,7 @@
 \alias{getSamples}
 \title{getSamples}
 \usage{
-getSamples(cnames = NULL, index = 2)
+getSamples(cnames = NULL, index = 1)
 }
 \arguments{
 \item{cnames, }{names of the  samples}

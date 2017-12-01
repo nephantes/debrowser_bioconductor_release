@@ -133,12 +133,10 @@ getJsonObj <- function(session = NULL, input = NULL,
         }
     })
     
-    json_obj <- parseQueryString(session$clientData$url_search)[['jsonobject']]
+    json_obj <- parseQueryString(session$clientData$url_search)[['username']]
     # coming from json
     if(!is.null(json_obj) && (json_obj != "")){
-        loadingJSON$username <- parseQueryString(session$clientData$url_search)[['username']]
-        #updateStore(session, "text",
-        #    isolate(loadingJSON$username))
+        loadingJSON$username <- json_obj
     } else{
         user_email <- user_details()$emails$value
         username_from_email <- gsub("[[:punct:]]", "", user_email)

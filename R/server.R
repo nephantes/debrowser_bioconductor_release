@@ -86,7 +86,7 @@
 
 deServer <- function(input, output, session) {
     #library(debrowser)
-    #library(googleAuthR)
+    library(googleAuthR)
     enableBookmarking("server")
     tryCatch(
     {
