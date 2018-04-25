@@ -49,8 +49,9 @@
 #'             p.adjust runif cov mahalanobis quantile
 #' @importFrom utils read.csv read.table write.table update.packages
 #'             download.file
-#' @importFrom DOSE enrichDO enrichMap gseaplot dotplot
-#' @importMethodsFrom DOSE dotplot summary
+#' @importFrom DOSE enrichDO enrichMap
+#' @importFrom enrichplot gseaplot dotplot
+#' @importMethodsFrom DOSE summary
 #' @importMethodsFrom AnnotationDbi as.data.frame as.list colnames
 #'             exists sample subset head mappedkeys ncol nrow subset 
 #'             keys mapIds
@@ -86,7 +87,7 @@
 
 deServer <- function(input, output, session) {
     #library(debrowser)
-    #library(googleAuthR)
+    library(googleAuthR)
     enableBookmarking("server")
     tryCatch(
     {
