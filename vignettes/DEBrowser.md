@@ -1,18 +1,15 @@
 ---
 title: "DEBrowser user guide"
-author: "Alper Kucukural, Berk Sarioz, Nicholas Merowsky, Manuel Garber"
-output: BiocStyle::html_document2
+author: "Alper Kucukural, Manuel Garber"
+output: BiocStyle::html_document
 fig_caption: true
 vignette: >
     %\VignetteIndexEntry{DEBrowser Vignette}
-    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEngine{knitr::knitr}
     %\VignetteEncoding{UTF-8}
 ---
 
 
-```
-## No methods found in "IRanges" for requests: ifelse
-```
 
 # DEBrowser:
 Interactive Differential Expression Analysis Tool
