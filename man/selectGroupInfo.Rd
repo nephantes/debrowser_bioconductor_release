@@ -8,6 +8,8 @@ selectGroupInfo(metadata = NULL, input = NULL, selectname = "groupselect",
   label = "Group info")
 }
 \arguments{
+\item{metadata, }{metadata}
+
 \item{input, }{input values}
 
 \item{selectname, }{name of the select box}

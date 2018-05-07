@@ -7,9 +7,6 @@ Creates a panel to select samples for each condition}
 \usage{
 condSelectUI()
 }
-\arguments{
-\item{id, }{namespace id}
-}
 \value{
 panel
 }

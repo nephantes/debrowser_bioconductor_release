@@ -6,6 +6,10 @@
 #' @param id, id
 #' @param h, height
 #' @param w, width
+#' @param t, top margin	
+#' @param b, bottom margin	
+#' @param l, left margin	
+#' @param r, right margin
 #' @return size and margins controls
 #' @examples
 #'     x <- plotSizeMarginsUI("heatmap")

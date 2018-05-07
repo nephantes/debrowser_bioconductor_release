@@ -8,6 +8,8 @@ mainScatterNew(input = NULL, data = NULL, source = NULL, x = NULL,
   y = NULL)
 }
 \arguments{
+\item{input, }{input params}
+
 \item{data, }{dataframe that has log2FoldChange and log10padj values}
 
 \item{source, }{for event triggering to select genes}

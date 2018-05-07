@@ -5,7 +5,7 @@
 \title{selectConditions}
 \usage{
 selectConditions(Dataset = NULL, metadata = NULL, choicecounter = NULL,
-  input = NULL, session = NULL)
+  input = NULL)
 }
 \arguments{
 \item{Dataset, }{used dataset}

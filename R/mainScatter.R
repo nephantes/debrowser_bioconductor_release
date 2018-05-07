@@ -1,7 +1,7 @@
 #' getMainPlotUI
 #'
 #' main plot for volcano, scatter and maplot.  
-#'
+#' @param id, namespace id
 #' @note \code{getMainPlotUI}
 #' @return the panel for main plots;
 #'
@@ -86,7 +86,7 @@ debrowsermainplot <- function(input, output, session, data = NULL) {
 #'
 #' Creates the main scatter, volcano or MA plot to be displayed within the main
 #' panel.
-#'
+#' @param input, input params
 #' @param data, dataframe that has log2FoldChange and log10padj values
 #' @param source, for event triggering to select genes
 #' @param x, the name of the x coordinate
@@ -131,13 +131,15 @@ mainScatterNew <- function(input = NULL, data = NULL, source = NULL,
 #' prepare plot data for mainplots 
 #'
 #' @note \code{plotData}
-#' @param data, data
+#' @param pdata, data
+#' @param input, input
 #' @return prepdata
 #' @examples
-#'     x <- plotData(data)
+#'     x <- plotData()
 #' @export
 #'
-plotData <- function(pdata, input){
+plotData <- function(pdata = NULL, input = NULL){
+    if (is.null(pdata)) return(NULL)
     pdata$key <- pdata$ID
     data_rest <- pdata[ pdata$Legend!="NS",]
     data_NS <- pdata[ pdata$Legend=="NS",]
@@ -190,20 +192,20 @@ plotData <- function(pdata, input){
 #' @export
 #'
 mainPlotControlsUI <- function(id) {
-    getMainPlotsLeftMenu(id)
+    getMainPlotsLeftMenuNew(id)
 }
 
-#' getMainPlotsLeftMenu
+#' getMainPlotsLeftMenuNew
 #'
 #' Generates the Main PLots Left menu to be displayed within the DEBrowser.
 #'
-#' @note \code{getMainPlotsLeftMenu}
+#' @note \code{getMainPlotsLeftMenuNew}
 #' @return returns the left menu according to the selected tab;
 #' @examples
-#'     x <- getMainPlotsLeftMenu()
+#'     x <- getMainPlotsLeftMenuNew()
 #' @export
 #'
-getMainPlotsLeftMenu <- function(id) {
+getMainPlotsLeftMenuNew <- function(id) {
     ns <- NS(id)
     list(shinydashboard::menuItem(" Plot Type",
                                   startExpanded=TRUE,
@@ -220,16 +222,16 @@ getMainPlotsLeftMenu <- function(id) {
 #' generateTestData
 #'
 #' This generates a test data that is suitable to main plots in debrowser
-#'
+#' @param dat, DESeq results will be generated for loaded data
 #' @return testData
 #'
 #' @examples
-#'     x <- generateTestData(data)
+#'     x <- generateTestData()
 #'
 #' @export
 #'
-generateTestData <- function(dat) {
-    
+generateTestData <- function(dat = NULL) {
+    if (is.null(dat)) return (NULL)
     ##################################################
     columns <- dat$columns
     conds <- dat$conds

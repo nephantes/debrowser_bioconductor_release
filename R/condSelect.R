@@ -18,15 +18,11 @@
 #'     x <- debrowsercondselect()
 #'
 debrowsercondselect <- function(input, output, session, data, metadata=NULL) {
-
+    if (is.null(metadata)) return(NULL)
     choicecounter <- reactiveValues(nc = 0)
     
     output$conditionSelector <- renderUI({
-        selectConditions(Dataset = data,
-            metadata = metadata,
-            choicecounter = choicecounter,
-            input = input,
-            session = session)
+        selectConditions(data, metadata, choicecounter, input)
     })
     observeEvent(input$add_btn, {
         choicecounter$nc <- choicecounter$nc + 1
@@ -44,7 +40,6 @@ debrowsercondselect <- function(input, output, session, data, metadata=NULL) {
 #' condSelectUI
 #' Creates a panel to select samples for each condition
 #'
-#' @param id, namespace id
 #' @return panel
 #' @examples
 #'     x <- condSelectUI()
@@ -268,8 +263,7 @@ getSelectInputBox <- function(id = NULL, name = NULL,
 selectConditions<-function(Dataset = NULL,
                            metadata = NULL,
                            choicecounter = NULL,
-                           input = NULL,
-                           session = NULL) {
+                           input = NULL) {
     if (is.null(Dataset)) return(NULL)
     
     selectedSamples <- function(num){
@@ -281,9 +275,6 @@ selectConditions<-function(Dataset = NULL,
     nc <- choicecounter$nc
     
     if (nc >= 0) {
-        if(!exists("all_selections")){
-            all_selections <- ""
-        }
         allsamples <- getSampleNames( colnames(Dataset), "all" )
         
         lapply(seq_len(nc), function(i) {
@@ -417,7 +408,7 @@ getSampleNames <- function(cnames = NULL, part = 1) {
     m
 }
 
-#' prepDataContainer
+#' prepDataContainerNew
 #'
 #' Prepares the data container that stores values used within DESeq.
 #'
@@ -428,9 +419,9 @@ getSampleNames <- function(cnames = NULL, part = 1) {
 #' @export
 #'
 #' @examples
-#'     x <- prepDataContainer()
+#'     x <- prepDataContainerNew()
 #'
-prepDataContainer <- function(data = NULL, counter=NULL, 
+prepDataContainerNew <- function(data = NULL, counter=NULL, 
                               input = NULL) {
     if (is.null(data)) return(NULL)
     

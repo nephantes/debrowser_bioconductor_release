@@ -49,7 +49,7 @@ getSampleDetails<- function (output, summary, details, data) {
 #'
 #' Group info column selection. This can be used in batch effect
 #' or coloring the groups in the plots.
-#'
+#' @param metadata, metadata
 #' @param input, input values
 #' @param selectname, name of the select box
 #' @param label, label of the select box
@@ -116,16 +116,21 @@ getVariationData <- function(inputdata = NULL,
     data
 }
 
-#' getBSTableModal
+#' getBSTableUI
 #' prepares a Modal to put a table
-#'
+#' @param name, name 
+#' @param label, label
+#' @param trigger, trigger button for the modal
+#' @param size, size of the modal
+#' @param modal, modal yes/no
 #' @return the modal
 #'
 #' @examples
-#'     x<- getBSTableModal()
+#'     x<- getBSTableUI()
 #'
 #' @export
-getBSTableUI<-function(name,  label, trigger, size="large", modal = NULL){
+getBSTableUI<-function(name = NULL,  label = NULL, trigger = NULL, size="large", modal = NULL){
+    if (is.null(name)) return (NULL)
     ret <- div(style = "display:block;overflow-y:auto; overflow-x:auto;",
                wellPanel( DT::dataTableOutput(name)))
     if (!is.null(modal) && modal)

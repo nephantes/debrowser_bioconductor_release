@@ -1,13 +1,13 @@
-#' getHistogramPlotUI
+#' getHistogramUI
 #'
 #' Histogram plots UI.  
 #'
-#' @note \code{getHistogramPlotUI}
+#' @note \code{getHistogramUI}
 #' @param id, namespace id
 #' @return the panel for PCA plots;
 #'
 #' @examples
-#'     x <- getHistogramPlotUI("histogram")
+#'     x <- getHistogramUI("histogram")
 #'
 #' @export
 #'

@@ -6,6 +6,9 @@
 \usage{
 getLegendRadio(id)
 }
+\arguments{
+\item{id, }{namespace id}
+}
 \value{
 radio control
 }

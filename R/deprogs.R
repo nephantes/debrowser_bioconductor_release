@@ -6,21 +6,25 @@
 #' @param output, output objects
 #' @param session, session 
 #' @param data, a matrix that includes expression values
+#' @param columns, columns
+#' @param conds, conditions
+#' @param params, de parameters
 #' @return DE panel 
 #' @export
 #'
 #' @examples
-#'     x <- debrowserdeanalysis(data = data)
+#'     x <- debrowserdeanalysis()
 #'
 debrowserdeanalysis <- function(input, output, session, data = NULL, columns = NULL, conds = NULL, params = NULL) {
+    if(is.null(data)) return(NULL)
     deres <- reactive({
         runDE(data, columns, conds, params)
     })
     prepDat <- reactive({
-        applyFilters(addDataCols(data, deres(), columns, conds), input)
+        applyFiltersNew(addDataColsNew(data, deres(), columns, conds), input)
     })
     observe({
-        setFilterParams(session, isolate(input))
+        setFilterParamsNew(session, isolate(input))
         dat <-  prepDat()[prepDat()$Legend == input$legendradio,]
         getTableDetails(output, session, "DEResults", dat, modal=FALSE)
     })
@@ -55,11 +59,11 @@ getDEResultsUI<- function (id) {
 #'
 #' Gathers the cut off selection for DE analysis
 #'
-#' @param nc, total number of comparisons
+#' @param id, namespace id
 #' @note \code{cutOffSelectionUI}
 #' @return returns the left menu according to the selected tab;
 #' @examples
-#'     x <- cutOffSelectionUI()
+#'     x <- cutOffSelectionUI("cutoff")
 #' @export
 #'
 cutOffSelectionUI <- function(id){
@@ -77,7 +81,7 @@ cutOffSelectionUI <- function(id){
     )
 }
 
-#' setFilterParams
+#' setFilterParamsNew
 #'
 #' It sets the filter parameters 
 #'
@@ -86,9 +90,9 @@ cutOffSelectionUI <- function(id){
 #' @export
 #'
 #' @examples
-#'     x <- setFilterParams()
+#'     x <- setFilterParamsNew()
 #'
-setFilterParams <- function(session = NULL, input = NULL) {
+setFilterParamsNew <- function(session = NULL, input = NULL) {
     if (!is.null(input$padj)){
         if (input$padj %% 2)
             valpadj = (10 ^ (-1*as.integer(
@@ -116,7 +120,7 @@ setFilterParams <- function(session = NULL, input = NULL) {
     }
 }
 
-#' applyFilters
+#' applyFiltersNew
 #'
 #' Apply filters based on foldChange cutoff and padj value.
 #' This function adds a "Legend" column with "Up", "Down" or
@@ -128,9 +132,9 @@ setFilterParams <- function(session = NULL, input = NULL) {
 #' @export
 #'
 #' @examples
-#'     x <- applyFilters()
+#'     x <- applyFiltersNew()
 #'
-applyFilters <- function(data, input) {
+applyFiltersNew <- function(data = NULL, input = NULL) {
     if (is.null(data)) return(NULL)
     padj_cutoff <- as.numeric(input$padjtxt)
     foldChange_cutoff <- as.numeric(input$foldChangetxt)
@@ -212,12 +216,12 @@ runDE <- function(data = NULL, columns = NULL, conds = NULL, params = NULL) {
 #'     x <- runDESeq2()
 #'
 runDESeq2 <- function(data = NULL, columns = NULL, conds = NULL, params) {
+    if (is.null(data)) return(NULL)
     fitType <- if (!is.null(params[2])) params[2]
     betaPrior <-  if (!is.null(params[3])) params[3]
     testType <- if (!is.null(params[4])) params[4]
     rowsum.filter <-  if (!is.null(params[5])) as.integer(params[5])
 
-    if (is.null(data)) return (NULL)
     data <- data[, columns]
 
     data[, columns] <- apply(data[, columns], 2,
@@ -279,11 +283,12 @@ runDESeq2 <- function(data = NULL, columns = NULL, conds = NULL, params) {
 #'     x <- runEdgeR()
 #'
 runEdgeR<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
+    if (is.null(data)) return(NULL)
     normfact <- if (!is.null(params[2])) params[2]
     dispersion <- if (!is.null(params[3])) params[3]
     testType <- if (!is.null(params[4])) params[4]
     rowsum.filter <- if (!is.null(params[5])) params[5]
-    if (is.null(data)) return (NULL)
+
     data <- data[, columns]
     data[, columns] <- apply(data[, columns], 2,
         function(x) as.integer(x))
@@ -353,12 +358,13 @@ runEdgeR<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
 #' @examples
 #'     x <- runLimma()
 #'
-runLimma<- function(data = NULL, columns = NULL, conds = NULL){
+runLimma<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
+    if (is.null(data)) return(NULL)
     normfact = if (!is.null(params[2])) params[2]
     fitType = if (!is.null(params[3])) params[3]
     normBet = if (!is.null(params[4])) params[4]
     rowsum.filter <-if (!is.null(params[5])) params[5]
-    if (is.null(data)) return (NULL)
+
     data <- data[, columns]
     data[, columns] <- apply(data[, columns], 2,
         function(x) as.integer(x))
@@ -411,7 +417,7 @@ prepGroup <- function(conds = NULL, cols = NULL) {
     coldata
 }
 
-#' addDataCols
+#' addDataColsNew
 #'
 #' add aditional data columns to de results
 #'
@@ -423,16 +429,16 @@ prepGroup <- function(conds = NULL, cols = NULL) {
 #' @export
 #'
 #' @examples
-#'     x <- addDataCols()
+#'     x <- addDataColsNew()
 #'
-addDataCols <- function(data = NULL, de_res = NULL, cols = NULL, conds = NULL) {
+addDataColsNew <- function(data = NULL, de_res = NULL, cols = NULL, conds = NULL) {
     if (is.null(data) || is.null(de_res)) return (NULL)
     norm_data <- data[, cols]
     
     coldata <- prepGroup(conds, cols)
     
-    mean_cond_first <- getMean(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[1], "libname"]))
-    mean_cond_second <- getMean(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[2], "libname"]))
+    mean_cond_first <- getMeanNew(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[1], "libname"]))
+    mean_cond_second <- getMeanNew(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[2], "libname"]))
     
     m <- cbind(rownames(de_res), norm_data[rownames(de_res), cols],
                log10(unlist(mean_cond_second) + 1),
@@ -463,7 +469,7 @@ addDataCols <- function(data = NULL, de_res = NULL, cols = NULL, conds = NULL) {
 #' @examples
 #'     x <- getMean()
 #'
-getMean<-function(data = NULL, selcols=NULL) {
+getMeanNew<-function(data = NULL, selcols=NULL) {
     if (is.null(data)) return (NULL)
     mean_cond<-NULL
     if (length(selcols) > 1)
@@ -477,7 +483,7 @@ getMean<-function(data = NULL, selcols=NULL) {
 #' getLegendRadio
 #'
 #' Radio buttons for the types in the legend
-#'
+#' @param id, namespace id
 #' @note \code{getLegendRadio}
 #' @return radio control
 #'

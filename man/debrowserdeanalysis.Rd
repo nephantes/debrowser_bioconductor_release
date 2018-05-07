@@ -15,6 +15,12 @@ debrowserdeanalysis(input, output, session, data = NULL, columns = NULL,
 \item{session, }{session}
 
 \item{data, }{a matrix that includes expression values}
+
+\item{columns, }{columns}
+
+\item{conds, }{conditions}
+
+\item{params, }{de parameters}
 }
 \value{
 DE panel
@@ -23,6 +29,6 @@ DE panel
 Module to perform and visualize DE results.
 }
 \examples{
-    x <- debrowserdeanalysis(data = data)
+    x <- debrowserdeanalysis()
 
 }

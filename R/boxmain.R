@@ -25,6 +25,9 @@ getBoxMainPlotUI <- function(id) {
 #' @param output, output objects
 #' @param session, session 
 #' @param data, a matrix that includes expression values
+#' @param conds, conditions
+#' @param cols, columns
+#' @param key, the gene or region name
 #' @return density plot 
 #' @export
 #'

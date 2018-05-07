@@ -6,6 +6,9 @@
 \usage{
 getMainPlotUI(id)
 }
+\arguments{
+\item{id, }{namespace id}
+}
 \value{
 the panel for main plots;
 }
