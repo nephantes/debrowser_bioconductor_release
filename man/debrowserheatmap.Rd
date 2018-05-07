@@ -4,7 +4,7 @@
 \alias{debrowserheatmap}
 \title{debrowserheatmap}
 \usage{
-debrowserheatmap(input, output, session, data)
+debrowserheatmap(input, output, session, data = NULL)
 }
 \arguments{
 \item{input, }{input variables}
@@ -23,6 +23,6 @@ Heatmap module to create interactive heatmaps and get selected list from
 a heatmap
 }
 \examples{
-    x <- heatmaply(mtcars)
+    x <- debrowserheatmap()
 
 }

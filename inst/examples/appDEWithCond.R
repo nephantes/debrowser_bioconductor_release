@@ -4,9 +4,9 @@ library(DESeq2)
 library(edgeR)
 library(limma)
 library(shinydashboard)
-source("../R/funcs.R")
-source("../R/condSelect.R")
-source("../R/deprogs.R")
+source("../../R/funcs.R")
+source("../../R/condSelect.R")
+source("../../R/deprogs.R")
 
 header <- dashboardHeader(
   title = "DEBrowser DE Analysis"

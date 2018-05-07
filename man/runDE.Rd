@@ -4,7 +4,7 @@
 \alias{runDE}
 \title{runDE}
 \usage{
-runDE(data = NULL, columns = NULL, conds = NULL, pars = NULL)
+runDE(data = NULL, columns = NULL, conds = NULL, params = NULL)
 }
 \arguments{
 \item{data, }{A matrix that includes all the expression raw counts,
@@ -16,7 +16,7 @@ to be analyzed. These columns has to match with the given data.}
 \item{conds, }{experimental conditions. The order has to match
 with the column order}
 
-\item{pars, }{all params for the de methods}
+\item{params, }{all params for the DE methods}
 }
 \value{
 de results

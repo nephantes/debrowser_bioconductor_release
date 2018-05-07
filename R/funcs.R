@@ -49,7 +49,7 @@ getSampleDetails<- function (output, summary, details, data) {
 #'
 #' Group info column selection. This can be used in batch effect
 #' or coloring the groups in the plots.
-#' @param metadata, metadata
+#'
 #' @param input, input values
 #' @param selectname, name of the select box
 #' @param label, label of the select box
@@ -59,8 +59,8 @@ getSampleDetails<- function (output, summary, details, data) {
 #' @export
 #'
 selectGroupInfo <- function(metadata = NULL, input = NULL,
-                            selectname = "groupselect",
-                            label = "Group info") {
+                              selectname = "groupselect",
+                              label = "Group info") {
     if (is.null(metadata)) return (NULL)
     lst.choices <- as.list(c("None", colnames(metadata)))
     selectInput(selectname, label = label,
@@ -103,11 +103,11 @@ addID <- function(data = NULL) {
 #'     x <- getVariationData()
 #'
 getVariationData <- function(inputdata = NULL, 
-                             cols = NULL, conds = NULL, key = NULL) {
+    cols = NULL, conds = NULL, key = NULL) {
     # Pick out the gene with this ID
     vardata <- inputdata[key, ]
     bardata <- as.data.frame(cbind(key, cols,
-                                   t(vardata[, cols]), conds) )
+         t(vardata[, cols]), conds) )
     colnames(bardata) <- c("genename", "libs", "count", "conds")
     bardata$count <- as.numeric(as.character(bardata$count))
     data <- rbind(bardata[bardata$conds == levels(bardata$conds)[1], ],
@@ -118,20 +118,14 @@ getVariationData <- function(inputdata = NULL,
 
 #' getBSTableModal
 #' prepares a Modal to put a table
-#' @param name, name 
-#' @param label, label
-#' @param trigger, trigger button name
-#' @param size, size of the modal
-#' @param modal, table location (in the modal or not)
+#'
 #' @return the modal
 #'
 #' @examples
 #'     x<- getBSTableModal()
 #'
 #' @export
-getBSTableUI<-function(name = NULL,  label = NULL, 
-    trigger = NULL, size="large", modal = NULL){
-    if (is.null(name) ) return(NULL)
+getBSTableUI<-function(name,  label, trigger, size="large", modal = NULL){
     ret <- div(style = "display:block;overflow-y:auto; overflow-x:auto;",
                wellPanel( DT::dataTableOutput(name)))
     if (!is.null(modal) && modal)
@@ -176,50 +170,31 @@ getTableDetails <- function(output, session, tablename, data = NULL, modal = NUL
     output[[tablename]] <- renderUI({
         ret <- getBSTableUI( session$ns(tablenameUI), "Show Data", paste0("show",tablename), modal = modal) 
         if (!is.null(modal) && modal)
-            ret <- list( downloadButton(session$ns(paste(tablename, "Download")), "Download"),
-                         actionButton(paste0("show",tablename), "Show Data", styleclass = "primary", icon="show"),
-                         ret)
+           ret <- list( downloadButton(session$ns(paste(tablename, "Download")), "Download"),
+               actionButton(paste0("show",tablename), "Show Data", styleclass = "primary", icon="show"),
+               ret)
         ret    
     })
     
     output[[tablenameUI]] <- DT::renderDataTable({
         if (!is.null(data)){
             DT::datatable(data, extensions = 'Buttons',
-                          options = list( server = TRUE,
-                                          dom = "Blfrtip",
-                                          buttons = 
-                                              list("copy", list(
-                                                  extend = "collection"
-                                                  , buttons = c("csv", "excel", "pdf")
-                                                  , text = "Download"
-                                              ) ), # end of buttons customization
-                                          
-                                          # customize the length menu
-                                          lengthMenu = list( c(10, 20,  50, -1) # declare values
-                                                             , c(10, 20, 50, "All") # declare titles
-                                          ), # end of lengthMenu customization
-                                          pageLength = 10))
+            options = list( server = TRUE,
+            dom = "Blfrtip",
+            buttons = 
+              list("copy", list(
+                  extend = "collection"
+                  , buttons = c("csv", "excel", "pdf")
+                  , text = "Download"
+              ) ), # end of buttons customization
+            
+            # customize the length menu
+            lengthMenu = list( c(10, 20,  50, -1) # declare values
+                               , c(10, 20, 50, "All") # declare titles
+            ), # end of lengthMenu customization
+            pageLength = 10))
         }
     })
-}
-
-#' prepGroup
-#'
-#' prepare group table
-#'
-#' @param cols, columns
-#' @param conds, inputconds
-#' @return data
-#' @export
-#'
-#' @examples
-#'     x <- prepGroup()
-#'
-prepGroup <- function(conds = NULL, cols = NULL) {
-    coldata <- data.frame(cbind(cols, conds))
-    coldata$conds <- factor(coldata$conds)
-    colnames(coldata) <- c("libname", "group")
-    coldata
 }
 
 #' push
@@ -276,9 +251,9 @@ round_vals <- function(l) {
 #'     actionButton("goDE", "Go to DE Analysis!")
 #'
 actionButton <- function(inputId, label, styleclass = "", size = "",
-                         block = FALSE, icon = NULL, css.class = "", ...) {
+        block = FALSE, icon = NULL, css.class = "", ...) {
     if (styleclass %in% c("primary", "info", "success", "warning",
-                          "danger", "inverse", "link")) {
+        "danger", "inverse", "link")) {
         btn.css.class <- paste("btn", styleclass, sep = "-")
     } else btn.css.class = ""
     
@@ -294,8 +269,8 @@ actionButton <- function(inputId, label, styleclass = "", size = "",
         icon.code <- HTML(paste0("<i class='fa fa-", icon, "'></i>"))
     } else icon.code = ""
     tags$button(id = inputId, type = "button", class = paste("btn action-button",
-                                                             btn.css.class, btn.size.class, btn.block, css.class, collapse = " "),
-                icon.code, label, ...)
+        btn.css.class, btn.size.class, btn.block, css.class, collapse = " "),
+        icon.code, label, ...)
 }
 
 
@@ -324,15 +299,15 @@ getNormalizedMatrix <- function(M = NULL, method = "TMM") {
     if (!(method == "none" || method == "DESeq2")){
         norm.factors <- edgeR::calcNormFactors(M, method = method)
         norm <- edgeR::equalizeLibSizes(edgeR::DGEList(M,
-                                                       norm.factors = norm.factors))$pseudo.counts
+            norm.factors = norm.factors))$pseudo.counts
     }else if(method == "DESeq2"){
         columns <- colnames(M)
         conds <- columns
         coldata <- prepGroup(conds, columns)
         M[, columns] <- apply(M[, columns], 2,
-                              function(x) as.integer(x))
+            function(x) as.integer(x))
         dds <- DESeqDataSetFromMatrix(countData = as.matrix(M),
-                                      colData = coldata, design = ~group)
+            colData = coldata, design = ~group)
         dds <- estimateSizeFactors(dds)
         norm <- counts(dds, normalized=TRUE)
     }
@@ -345,6 +320,7 @@ getNormalizedMatrix <- function(M = NULL, method = "TMM") {
 #' DEBrowser.
 #'
 #' @param slidername, id of the slider
+#' @note \code{logSliderJScode}
 #' @return returns the slider values in log10 scale
 #' @examples
 #'     x <- logSliderJScode()
@@ -353,20 +329,20 @@ getNormalizedMatrix <- function(M = NULL, method = "TMM") {
 logSliderJScode <- function(slidername = NULL){
     if (is.null(slidername)) return (NULL)
     paste0("$(function() {
-           setTimeout(function(){
-           var vals = [0];
-           var powStart = 4;
-           var powStop = 0;
-           for (i = powStart; i >= powStop; i--) {
-           var val = Math.pow(10, -i)/2;
-           val = parseFloat(val.toFixed(8));
-           vals.push(val);
-           var val = Math.pow(10, -i);
-           val = parseFloat(val.toFixed(8));
-           vals.push(val);
-           }
-           $('#", slidername,"').data('ionRangeSlider').update({'values':vals})
-           }, 4)})")
+        setTimeout(function(){
+        var vals = [0];
+        var powStart = 4;
+        var powStop = 0;
+        for (i = powStart; i >= powStop; i--) {
+        var val = Math.pow(10, -i)/2;
+        val = parseFloat(val.toFixed(8));
+        vals.push(val);
+        var val = Math.pow(10, -i);
+        val = parseFloat(val.toFixed(8));
+        vals.push(val);
+        }
+        $('#", slidername,"').data('ionRangeSlider').update({'values':vals})
+        }, 4)})")
 }
 
 #' getCompSelection
@@ -384,8 +360,8 @@ getCompSelection <- function(count = NULL) {
     a <- NULL
     if (count>1){
         a <- list(selectInput("compselect",
-                              label = "Choose a comparison:",
-                              choices = c(1:count) ))
+            label = "Choose a comparison:",
+            choices = c(1:count) ))
     }
     a
 }
@@ -403,10 +379,10 @@ getCompSelection <- function(count = NULL) {
 getHelpButton<-function(name = NULL, link = NULL){
     if (is.null(name)) return(NULL)
     btn <- actionButton(paste0("info_",name),"",icon="info",
-                        styleclass="info", size="small")
+        styleclass="info", size="small")
     
     HTML(paste0("<a id=\"info_",name,"\" href=\"",link,"\" target=\"_blank\">",
-                btn,"</a>"))
+       btn,"</a>"))
     
 }
 
@@ -444,16 +420,16 @@ getColors <- function(domains = NULL){
     if (is.null(domains)) return (NULL)
     colors <- c()
     for ( dn in seq(1:length(domains)) ){
-    if (domains[dn] == "NS" || domains[dn] == "NA")
-        colors <- c(colors, "#aaa")
-    else if (domains[dn] == "Up")
-        colors <- c(colors, "green")
-    else if (domains[dn] == "Down")
-        colors <- c(colors, "red")
-    else if (domains[dn] == "MV")
-        colors <- c(colors, "orange")
-    else if (domains[dn] == "GS")
-        colors <- c(colors, "blue")
+        if (domains[dn] == "NS" || domains[dn] == "NA")
+            colors <- c(colors, "#aaa")
+        else if (domains[dn] == "Up")
+            colors <- c(colors, "green")
+        else if (domains[dn] == "Down")
+            colors <- c(colors, "red")
+        else if (domains[dn] == "MV")
+            colors <- c(colors, "orange")
+        else if (domains[dn] == "GS")
+            colors <- c(colors, "blue")
     } 
     colors
 }
@@ -560,4 +536,3 @@ whitelist <- function(user_info, whitelist = NULL){
     out
     
 }
-

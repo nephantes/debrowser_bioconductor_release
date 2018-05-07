@@ -16,6 +16,9 @@ returns the slider values in log10 scale
 Generates the log based slider to be used by the user within
 DEBrowser.
 }
+\note{
+\code{logSliderJScode}
+}
 \examples{
     x <- logSliderJScode()
 }

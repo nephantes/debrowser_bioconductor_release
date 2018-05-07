@@ -16,5 +16,5 @@ text on PCA plot on and off
 \code{getTextOnOff}
 }
 \examples{
-    x <- getTextOnOff()
+    x <- getTextOnOff("pca")
 }

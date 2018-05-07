@@ -14,17 +14,16 @@
 #' @examples
 #'     x <- debrowserbatcheffect()
 #'
-debrowserbatcheffect <- function(input, output, session, ldata) {
+debrowserbatcheffect <- function(input, output, session, ldata = NULL) {
     if(is.null(ldata)) return(NULL)
     batchdata <- reactiveValues(count=NULL, meta = NULL)
-  
     observeEvent(input$submitBatchEffect, {
     if (is.null(ldata$count)) return (NULL)
-    
+
     countData <- ldata$count
     withProgress(message = 'Normalization', detail = "Normalization", value = NULL, {
         if (input$norm_method != "none"){
-             countData <- getNormalizedMatrix(ldata$count, method=input$norm_method)
+            countData <- getNormalizedMatrix(ldata$count, method=input$norm_method)
         }
     })
     
@@ -124,11 +123,11 @@ batchEffectUI <- function (id) {
                     column(5,
                         getPCAPlotUI(ns("beforeCorrectionPCA"))),
                     column(2,  shinydashboard::box(title = "Before Correction",
-                        solidHeader = T, status = "info",
+                        solidHeader = TRUE, status = "info",
                         width = 12,
                         pcaPlotControlsUI(ns("beforeCorrectionPCA"))),
                         shinydashboard::box(title = "After Correction",
-                        solidHeader = T, status = "info",
+                        solidHeader = TRUE, status = "info",
                         width = 12,
                         pcaPlotControlsUI(ns("afterCorrectionPCA")))),
                     column(5,
