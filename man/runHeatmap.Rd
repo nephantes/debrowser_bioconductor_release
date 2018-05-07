@@ -4,34 +4,20 @@
 \alias{runHeatmap}
 \title{runHeatmap}
 \usage{
-runHeatmap(data, title = "Title", dend = "both", names = FALSE,
-  clustering_method = c("ward.D2", "complete", "single", "average",
-  "mcquitty", "median", "centroid"), distance_method = c("euclidean", "cor",
-  "maximum", "manhattan", "canberra", "binary", "minkowski"),
-  interactive = FALSE)
+runHeatmap(input, session, data)
 }
 \arguments{
-\item{data, }{a matrixthat includes expression values}
+\item{input, }{input variables}
 
-\item{title, }{title of the heatmap}
+\item{session, }{session}
 
-\item{dend, }{dendogram}
-
-\item{names, }{a flag to show the rownames}
-
-\item{clustering_method}{= c('complete', 'ward.D2', 'single', 'average',
-'mcquitty', 'median' , 'centroid')}
-
-\item{distance_method}{= c('cor','euclidean', 'maximum', 'manhattan',
-'canberra', 'binary' ,'minkowski')}
-
-\item{interactive, }{interactive heatmap}
+\item{data, }{a matrix that includes expression values}
 }
 \value{
-heatmap.2 plot
+heatmapply plot
 }
 \description{
-Creates a heatmap based on the user selected parameters within shiny.
+Creates a heatmap based on the user selected parameters within shiny
 }
 \examples{
     x <- runHeatmap(mtcars)

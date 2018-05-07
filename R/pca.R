@@ -1,3 +1,94 @@
+#' getPCAPlotUI
+#'
+#' PCA plots UI.  
+#' @param id, namespace id
+#' @note \code{getPCAPlotUI}
+#' @return the panel for PCA plots;
+#'
+#' @examples
+#'     x <- getPCAPlotUI()
+#'
+#' @export
+#'
+getPCAPlotUI <- function(id) {
+    ns <- NS(id)
+    uiOutput(ns("pcaplot"))
+}
+
+#' debrowserpcaplot
+#'
+#' Module for a pca plot with its loadings 
+#' as a mainplot in debrowser
+#' 
+#' @param input, input variables
+#' @param output, output objects
+#' @param session, session 
+#' @param pcadata, a matrix that includes expression values
+#' @param metadata, metadata to color the plots
+#' @return main plot
+#'
+#' @return panel
+#' @export
+#'
+#' @examples
+#'     x <- debrowserpcaplot(data = data)
+#'
+debrowserpcaplot <- function(input, output, session, pcadata = NULL, metadata = NULL) {
+    qcplots <-  reactive({ 
+        sc <- getShapeColor(input)
+        pcaplot <- plot_pca(pcadata, input$pcselx, input$pcsely,
+            metadata = metadata, color = sc$color,
+            size = 5, shape = sc$shape,
+            textonoff = sc$textonoff, 
+            legendSelect = sc$legendSelect, input = input )
+    })
+    output$pcaplot <- renderUI({
+        list(fluidRow(
+        column(12,
+        shinydashboard::box(
+        collapsible = TRUE, title = "PCA Plot", status = "primary", 
+        solidHeader = TRUE, width = NULL,
+        draggable = TRUE, plotlyOutput(session$ns("pca1"), 
+        height= input$plotheight, width=input$plotwidth) 
+        ),
+        shinydashboard::box(
+        collapsible = TRUE, title = "Loadings", status = "primary", 
+        solidHeader = TRUE, width = NULL,
+        draggable = TRUE,  plotlyOutput(session$ns("pca2"), 
+        height= input$plotheight, width=input$plotwidth) )) ) 
+        )
+    })
+    output$pca1 <- renderPlotly({
+        qcplots()$plot1
+    })
+    output$pca2 <- renderPlotly({
+        qcplots()$plot2
+    })
+    output$colorShapeSelect <- renderUI({
+        getColorShapeSelection(metadata, input, session)
+    })
+}
+
+#' pcaPlotControlsUI
+#'
+#' Generates the PCA PLots Left menu to be displayed within the DEBrowser.
+#'
+#' @param id, module id
+#' @note \code{pcaPlotControlsUI}
+#' @return returns the left menu according to the selected tab;
+#' @examples
+#'     x <- pcaPlotControlsUI()
+#' @export
+#'
+pcaPlotControlsUI <- function(id) {
+    ns <- NS(id)
+    list(fluidRow(column(6, getPCselection(id, 1, "x")), 
+         column(6, getPCselection(id, 2, "y"))),
+         fluidRow(column(6, getTextOnOff(id)),
+         column(6, getLegendSelect(id))),
+    uiOutput(ns("colorShapeSelect")))
+}
+
 #' run_pca
 #'
 #' Runs PCA on the selected dataset.
@@ -16,14 +107,14 @@
 #' @export
 #'
 run_pca <- function(x=NULL, retx = TRUE,
-                center = TRUE, scale = TRUE) {
+    center = TRUE, scale = TRUE) {
     if ( is.null(x) || ncol(x) < 2) return (NULL)
-    x <- x[rowSums(x)>0, ]
+    x <- subset(x, apply(x, 1, var, na.rm = TRUE) >  0)
     pca <- prcomp(t(x), retx = retx,
-        center = center, scale. = scale)
+         center = center, scale. = scale)
     variances <- pca$sdev ^ 2
     explained <- variances / sum(variances)
-   
+    
     return(list(PCs = pca$x, explained = explained, pca = pca))
 }
 
@@ -40,6 +131,7 @@ run_pca <- function(x=NULL, retx = TRUE,
 #' @param size, size of the plot
 #' @param textonoff, text on off
 #' @param legendSelect, select legend
+#' @param input, input param
 #' @return pca list
 #' @examples
 #'     load(system.file("extdata", "demo", "demodata.Rda",
@@ -48,7 +140,7 @@ run_pca <- function(x=NULL, retx = TRUE,
 #'             colnames(demodata[,2:7]),
 #'             c(rep("Cond1",3), rep("Cond2",3)))
 #'     colnames(metadata)<-c("samples", "color", "shape")
-#'
+#'     
 #'     a <- plot_pca(getNormalizedMatrix(
 #'             demodata[rowSums(demodata[,2:7])>10,2:7]),
 #'             metadata = metadata, color = "samples",
@@ -58,74 +150,107 @@ run_pca <- function(x=NULL, retx = TRUE,
 #'
 plot_pca <- function(dat = NULL, pcx = 1, pcy = 2,
     metadata = NULL, color = NULL, shape = NULL,
-    size = NULL, textonoff = "Off", legendSelect = "fill") {
-        if ( is.null(dat) || ncol(dat) < 2) return(NULL)
-    
-        pca_data <- run_pca(dat)
-        x <- pca_data$PCs
-        explained <- pca_data$explained
-        plot_data <- data.frame(x)
-        # Prepare data frame to pass to ggplot
-        if (!is.null(metadata)) {
-            plot_data <- cbind(plot_data, metadata)
-        } 
-        xaxis <- paste0("PC", pcx)
-        yaxis <- paste0("PC", pcy)
-        p_data <- plot_data[,c(xaxis, yaxis, "samples", "color", "shape")]
-        colnames(p_data) <- c("x", "y", "samples", "color", "shape")
-        # Prepare axis labels
-        xaxis <- sprintf("PC%d (%.2f%%)", pcx,
-            round(explained[pcx] * 100, 2))
-        yaxis <- sprintf("PC%d (%.2f%%)", pcy,
-            round(explained[pcy] * 100, 2))
+    size = NULL, textonoff = "Off", legendSelect = "samples", input = NULL) {
+    if ( is.null(dat) || ncol(dat) < 2) return(NULL)
 
-        a <- p_data %>% ggvis(x = ~x, y = ~y) %>% 
-            layer_points(size := 100, 
-                fill =~ color, shape =~ shape, key := ~samples) %>%
-            add_tooltip(getToolTipPCA, "hover") %>%
-            add_axis("x", title = xaxis) %>%
-            add_axis("y", title = yaxis) %>%
-            set_options(duration = 0, width = "auto", height = "auto", 
-                resizable = TRUE)
-        if (textonoff == "On")
-            a <- a %>% layer_text(text := ~samples,  fontSize := 12, 
-                       align := "left", baseline := "bottom", stroke := "black")
-        if (legendSelect == "color") {
-            a <- a %>% hide_legend("shape") %>%
-            add_legend("fill")
-        }
-        else{
-            a <- a %>% hide_legend("fill") %>%
-            add_legend("shape")
-        }
-        a
+    pca_data <- run_pca(dat)
+    p_data <- prepPCADat(pca_data, metadata, input, pcx, pcy)
+    
+    # Prepare axis labels
+    xaxis <- sprintf("PC%d (%.2f%%)", pcx,
+                     round(pca_data$explained[pcx] * 100, 2))
+    yaxis <- sprintf("PC%d (%.2f%%)", pcy,
+                     round(pca_data$explained[pcy] * 100, 2))
+    rgb.palette <- colorRampPalette(c("red", "orange", "blue"),
+                                    space = "rgb")
+    #plot1 <- plot_ly(data=p_data, x=~x, y=~y,
+    #             text=~color,
+    #             color=~color, type="scatter", mode = "markers",
+    #             marker=list(size=11),
+    #             width = input$width - 50, height = input$height - 50) %>%
+    #    plotly::layout(
+    #        xaxis = list(title = xaxis),
+    #        yaxis = list(title = yaxis),
+    #        margin = list(l = input$left,
+    #                      b = input$bottom,
+    #                      t = input$top,
+    #                      r = input$right
+    #        ))
+    #plot1$elementId <- NULL
+    
+    plot1 <- ggplot(data=p_data, aes(x=x, y=y))
+    
+    if (legendSelect == "color") {
+        plot1 <-  plot1 + geom_point(mapping=aes(shape=shape, color=color), size=3 )
+    }else{
+        plot1 <-  plot1 + geom_point(mapping=aes(shape=shape, color=shape), size=3 )
+    }
+    if (textonoff == "On")
+        plot1 <- plot1 + geom_text(aes(label=samples), vjust = 0, nudge_y = 1)
+    plot1 <- plot1 + theme(legend.title = element_blank())
+    plot1 <- plot1 +  labs(x = xaxis, y = yaxis)
+    #   theme( plot.margin = unit(unitInputs(), "pt"))
+    plot1$elementId <- NULL
+    
+    pcaExp <- getPCAexplained(dat, pca_data, input)
+    plot2 <- drawPCAExplained(pcaExp$plotdata)
+    plot2$elementId <- NULL
+    return (list(plot1 =  plot1, plot2 =  plot2, pcaset = pcaExp$pcaset))
 }
 
-#' getToolTipPCA
+#' prepPCADat
 #'
-#' Prepares tooltiptext for PCA plot
-#'
-#' @param dat, data
-#' @return tooltip text
-#'
+#' prepares pca data with metadata. If metadata doesn't exists
+#' it puts all the sampels into a signlge group; "Conds".
+#' 
+#' @param pca_data, pca run results
+#' @param metadata, additional meta data
+#' @param input, input
+#' @param pcx, x axis label
+#' @param pcy, y axis label
+#' @return Color and shape from selection boxes or defaults
+#' @examples
+#'     x <- prepPCADat()
 #' @export
 #'
-#' @examples
-#' x <- getToolTipPCA()
-#'
-getToolTipPCA <- function(dat=NULL){
-    if (is.null(dat)) return(NULL)
+prepPCADat <- function(pca_data = NULL, metadata = NULL, input = NULL, pcx = 1, pcy = 2){
+    if (is.null(pca_data)) return (NULL)
+    rownames(metadata) <- metadata[,1]
     
-    paste0("<b>", dat$samples, "</b>")
+    x <- pca_data$PCs
+    plot_data <- data.frame(x)
+    # Prepare data frame to pass to ggplot
+    xaxis <- paste0("PC", pcx)
+    yaxis <- paste0("PC", pcy)
+    if (!is.null(metadata)) {
+        samples <- rownames(plot_data)
+        color  <- rownames(plot_data)
+        shape <- "Conds"
+        if (!is.null(input$color_pca) && input$color_pca != "None")
+            color <- as.character(metadata[samples, input$color_pca])
+        if (!is.null(input$shape_pca) && input$shape_pca != "None")
+            shape <- as.character(metadata[samples, input$shape_pca])
+        
+        metadata <- cbind(samples, color, shape)
+        plot_data <- cbind(plot_data, metadata)
+        p_data <- plot_data[,c(xaxis, yaxis, "samples", "color", "shape")]
+    } else {
+        samples <- rownames(plot_data)
+        color  <- rownames(plot_data)
+        shape <- "Conds"
+        p_data <- cbind( plot_data[,c(xaxis, yaxis)], samples, color, shape)
+    }
+    colnames(p_data) <- c("x", "y", "samples", "color", "shape")
+    p_data
 }
-
 #' getPCAexplained
 #'
 #' Creates a more detailed plot using the PCA results from
 #' the selected dataset.
 #'
 #' @param datasetInput, selected data
-#' @param input, from user
+#' @param pca_data, from user
+#' @param input, input params
 #' @return explained plot
 #' @examples
 #' load(system.file("extdata", "demo", "demodata.Rda", 
@@ -139,40 +264,56 @@ getToolTipPCA <- function(dat=NULL){
 #' @export
 #'
 getPCAexplained <- function(datasetInput = NULL, 
-    input = NULL) {
+    pca_data = NULL, input = NULL) {
     if (is.null(datasetInput)) return(NULL)
     datexp <- NULL
     pcaset <- NULL
-    if (input$qcplot == "pca"){
-        if (!all(input$col_list %in% colnames(datasetInput), na.rm = FALSE)) return (NULL)
-        dataset <- datasetInput[,input$col_list[c(input$col_list)
-            %in% colnames(datasetInput)]]
-        if (dim(dataset)[2] == 0) return(NULL)
-        pca_data <- run_pca(dataset)
-        datexp <- data.frame(cbind(unlist(lapply(
-            c(1:length(pca_data$explained)), 
-            function(x){paste0("PC", x)})), 
-            round(pca_data$explained * 100, 2)))
-        colnames(datexp) <- c("PCs", "explained")
-        datexp$explained <- as.numeric( as.character(datexp$explained) )
-         
-        var <- pca_data$pca$sdev^2/sum(pca_data$pca$sdev^2)
-        
-        ## Select the genes for PCA, removing the least variable 
-
-        dThresh.pctile <- 1 - as.numeric(input$pctile)     # distance threshold
-        gList.dThresh <- c()
-
-        d <- pca_data$pca$rotation[,c(input$pcselx)]
-        dThresh<-quantile(d, dThresh.pctile)
-        gList.dThresh <- names(which(d>dThresh))
-        pcaset <-  datasetInput[gList.dThresh, ]
-    }
+    
+    datexp <- data.frame(cbind(unlist(lapply(
+        c(1:length(pca_data$explained)), 
+        function(x){paste0("PC", x)})), 
+        round(pca_data$explained * 100, 2)))
+    colnames(datexp) <- c("PCs", "explained")
+    datexp$explained <- as.numeric( as.character(datexp$explained) )
+    
+    var <- pca_data$pca$sdev^2/sum(pca_data$pca$sdev^2)
+    
+    ## Select the genes for PCA, removing the least variable 
+    
+    dThresh.pctile <- 1 - as.numeric(input$pctile)     # distance threshold
+    gList.dThresh <- c()
+    
+    d <- pca_data$pca$rotation[,c(input$pcselx)]
+    dThresh<-quantile(d, dThresh.pctile)
+    gList.dThresh <- names(which(d>dThresh))
+    pcaset <-  datasetInput[gList.dThresh, ]
     return (list(plotdata =  datexp, pcaset = pcaset))
 }
 
-#' drawPCAExplained
+#' getShapeColor
 #'
+#' Generates the fill and shape selection boxes for PCA plots.
+#' metadata file has to be loaded in this case
+#'
+#' @param input, input values
+#' @return Color and shape from selection boxes or defaults
+#' @examples
+#'     x <- getShapeColor()
+#' @export
+#'
+getShapeColor <- function(input = NULL) {
+    if (is.null(input)) return (NULL)
+    sc <-  c()
+    if (!is.null(input$color_pca))
+        sc$color <- input$color_pca
+    if (!is.null(input$shape_pca))
+        sc$shape <- input$shape_pca
+    
+    sc$textonoff <- input$textonoff
+    sc$legendSelect <- input$legendSelect
+    return(sc)
+}
+
 #' Creates a more detailed plot using the PCA results from
 #' the selected dataset.
 #'
@@ -184,12 +325,84 @@ getPCAexplained <- function(datasetInput = NULL,
 #' @export
 #'
 drawPCAExplained <- function(explainedData = NULL){
-    a <- NULL
+    p <- NULL
     if (is.null(explainedData)) return(NULL)
-    a <- explainedData %>% ggvis(x = ~PCs, y = ~explained) %>% 
-        layer_bars() %>%
-        set_options(width = "auto", height = "auto", resizable = TRUE ) %>%
-        scale_ordinal('x', domain=explainedData$PCs)
-    a
+    
+    p<- plot_ly(data=explainedData, x=~PCs, y=~explained,
+                type = 'bar')
+  
+    p$elementId <- NULL
+    p
 }
 
+
+#' getPCselection
+#'
+#' Generates the PC selection number to be used within DEBrowser.
+#' @param id, namespace id
+#' @param num, PC selection number
+#' @param xy, x or y coordinate
+#' @note \code{getPCselection}
+#' @return PC selection for PCA analysis
+#' @examples
+#'     x <- getPCselection(id)
+#' @export
+#'
+getPCselection <- function(id, num = 1, xy = "x" ) {
+    ns <- NS(id)
+    numericInput(ns(paste0("pcsel", xy)),
+        paste0("PC selection[", xy, "]"), num, 1, 6)
+}
+
+#' getColorShapeSelection
+#'
+#' Generates the fill and shape selection boxes for PCA plots.
+#' metadata file has to be loaded in this case
+#'
+#' @param metadata, metadata table
+#' @param input, input
+#' @param session, session
+#' @return Color and shape selection boxes
+#' @examples
+#'     x <- getColorShapeSelection()
+#' @export
+#'
+getColorShapeSelection <- function(metadata = NULL, input = NULL, session = NULL) {
+    if (is.null(metadata)) return (NULL)
+    list(fluidRow(column(6, selectGroupInfo(metadata, input, session$ns("color_pca"), "Color field")),
+    column(6, selectGroupInfo(metadata, input, session$ns("shape_pca"), "Shape field"))))
+}
+
+#' getLegendSelect
+#'
+#' select legend
+#' @param id, namespace id
+#' @note \code{getLegendSelect}
+#' @examples
+#'     x <- getLegendSelect()
+#' @export
+#'
+getLegendSelect <- function(id) {
+    ns <- NS(id)
+    lst.choices <- as.list(c("color", "shape"))
+    selectInput(ns("legendSelect"), label = "Select legend",
+                choices = lst.choices,
+                selected = "color")
+}
+
+#' getTextOnOff
+#'
+#' text on PCA plot on and off
+#' @param id, namespace id
+#' @note \code{getTextOnOff}
+#' @examples
+#'     x <- getTextOnOff()
+#' @export
+#'
+getTextOnOff <- function(id) {
+    ns <- NS(id)
+    lst.choices <- as.list(c("On", "Off"))
+    selectInput(ns("textonoff"), label = "Text On/Off",
+                choices = lst.choices,
+                selected = "Off")
+}

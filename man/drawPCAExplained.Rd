@@ -2,7 +2,8 @@
 % Please edit documentation in R/pca.R
 \name{drawPCAExplained}
 \alias{drawPCAExplained}
-\title{drawPCAExplained}
+\title{Creates a more detailed plot using the PCA results from
+the selected dataset.}
 \usage{
 drawPCAExplained(explainedData = NULL)
 }

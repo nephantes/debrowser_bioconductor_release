@@ -25,7 +25,8 @@
 #'             wellPanel checkboxInput br p checkboxGroupInput onRestore
 #'             reactiveValuesToList renderText onBookmark onBookmarked 
 #'             updateQueryString callModule enableBookmarking htmlOutput
-#'             onRestored NS
+#'             onRestored NS reactiveVal withProgress tableOutput
+#'             selectizeInput
 #' @importFrom shinyjs show hide enable disable useShinyjs extendShinyjs
 #'             js inlineCSS onclick
 #' @importFrom d3heatmap d3heatmap renderD3heatmap d3heatmapOutput
@@ -33,22 +34,24 @@
 #'             styleInterval formatRound
 #' @importFrom ggplot2 aes aes_string geom_bar geom_point ggplot
 #'             labs scale_x_discrete scale_y_discrete ylab
-#'             autoplot
+#'             autoplot theme_minimal theme 
 #' @importFrom ggvis add_axis add_legend add_tooltip axis_props
 #'             bind_shiny create_broker ggvis ggvisOutput handle_brush
 #'             hide_legend layer_bars layer_boxplots layer_points
 #'             scale_nominal set_options %>% group_by layer_rects
 #'             band scale_numeric hide_axis layer_densities scale_ordinal
 #'             layer_text
+#' @importFrom plotly renderPlotly plotlyOutput plot_ly
 #' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
-#' @importFrom grDevices dev.off pdf
-#' @importFrom graphics barplot hist pairs par rect text plot
+#' @importFrom grDevices dev.off pdf colorRampPalette 
+#' @importFrom graphics barplot hist pairs par rect text plot layout
 #' @importFrom stats aggregate as.dist cor cor.test dist
 #'             hclust kmeans na.omit prcomp var sd model.matrix
-#'             p.adjust runif cov mahalanobis quantile
+#'             p.adjust runif cov mahalanobis quantile as.dendrogram
+#'             density
 #' @importFrom utils read.csv read.table write.table update.packages
-#'             download.file
+#'             download.file read.delim
 #' @importFrom DOSE enrichDO enrichMap
 #' @importFrom enrichplot gseaplot dotplot
 #' @importMethodsFrom DOSE summary
@@ -84,6 +87,7 @@
 #' @import shinyBS
 #' @import pathview
 #' @import googleAuthR
+#' @import colourpicker
 
 deServer <- function(input, output, session) {
     #library(debrowser)

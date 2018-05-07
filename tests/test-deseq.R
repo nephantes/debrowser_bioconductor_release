@@ -65,8 +65,6 @@ updown <- rdata[rdata$Legend=="Up" | rdata$Legend=="Down",columns]
 test_that("Check the QC plots", {
     expect_silent( all2all(data) )
 
-    heatmap <- runHeatmap(mtcars)
-    expect_false( is.null(heatmap) )
     expect_silent( MAP <- MAPlot(dat, lb) )
     expect_false( is.null(MAP) )
 

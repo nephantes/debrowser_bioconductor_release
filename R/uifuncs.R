@@ -145,41 +145,6 @@ getGOLeftMenu <- function() {
 
 }
 
-#' getPCselection
-#'
-#' Generates the PC selection number to be used within DEBrowser.
-#'
-#' @param num, PC selection number
-#' @param xy, x or y coordinate
-#' @note \code{getPCselection}
-#' @return PC selection for PCA analysis
-#' @examples
-#'     x <- getPCselection()
-#' @export
-#'
-getPCselection <- function(num = 1, xy = "x" ) {
-    numericInput(paste0("pcsel", xy),
-        paste0("PC selection[", xy, "]"), num, 1, 6)
-}
-
-#' getColorShapeSelection
-#'
-#' Generates the fill and shape selection boxes for PCA plots.
-#' metadata file has to be loaded in this case
-#'
-#' @param input, input values
-#' @return Color and shape selection boxes
-#' @examples
-#'     x <- getColorShapeSelection()
-#' @export
-#'
-getColorShapeSelection <- function(input = NULL) {
-    if (is.null(input)) return (NULL)
-        list(selectBatchEffect(input, "color_pca", "Color field"),
-           selectBatchEffect(input, "shape_pca", "Shape field"))
-}
-
-
 #' getQCLeftMenu
 #'
 #' Generates the left menu to be used for QC plots within the
@@ -199,9 +164,9 @@ getQCLeftMenu <- function( input = NULL) {
             uiOutput("columnSelForQC")),
             shinydashboard::menuItem(" QC Options", icon = icon("star-o"), startExpanded=FALSE,
             conditionalPanel( (condition <- "input.qcplot=='heatmap'"),
-                 checkboxInput("interactive", "Interactive", value = FALSE)),
-            conditionalPanel( (condition <- "(input.qcplot=='all2all' ||
-            input.qcplot=='heatmap') && !(input.interactive)"),
+                plotSizeMarginsUI("heatmap"),
+                heatmapControlsUI("heatmap")),
+            conditionalPanel( condition <- "(input.qcplot=='all2all')",
             sliderInput("width", "width",
             min = 100, max = 2000, step = 10, value = 700),
             sliderInput("height", "height",
@@ -210,16 +175,8 @@ getQCLeftMenu <- function( input = NULL) {
                 sliderInput("cex", "corr font size",
                 min = 0.1, max = 10,
                 step = 0.1, value = 2)),
-            conditionalPanel( (condition <- "input.qcplot=='heatmap'"),
-                selectInput("clustering_method", "Clustering Method:",
-                choices <- c("complete", "ward.D2", "single", "average",
-                "mcquitty", "median", "centroid")),
-                selectInput("distance_method", "Distance Method:",
-                choices <- c("cor", "euclidean", "maximum", "manhattan",
-                "canberra", "binary", "minkowski")),
                 getHelpButton("method",
-                              "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#heat-maps")
-            ),
+                              "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#heat-maps"),
         conditionalPanel( (condition <- "input.qcplot=='pca'"),
             getPCselection(1, "x"),
             getPCselection(2, "y"),
@@ -230,37 +187,6 @@ getQCLeftMenu <- function( input = NULL) {
         ),
         downloadButton("downloadPlot", "Download Plot"))
     )
-}
-
-#' logSliderJScode
-#'
-#' Generates the log based slider to be used by the user within
-#' DEBrowser.
-#'
-#' @param slidername, id of the slider
-#' @note \code{logSliderJScode}
-#' @return returns the slider values in log10 scale
-#' @examples
-#'     x <- logSliderJScode()
-#' @export
-#'
-logSliderJScode <- function(slidername = NULL){
-    if (is.null(slidername)) return (NULL)
-    paste0("$(function() {
-    setTimeout(function(){
-    var vals = [0];
-    var powStart = 4;
-    var powStop = 0;
-    for (i = powStart; i >= powStop; i--) {
-    var val = Math.pow(10, -i)/2;
-    val = parseFloat(val.toFixed(8));
-    vals.push(val);
-    var val = Math.pow(10, -i);
-    val = parseFloat(val.toFixed(8));
-    vals.push(val);
-    }
-    $('#", slidername,"').data('ionRangeSlider').update({'values':vals})
-    }, 4)})")
 }
 
 #' getCutOffSelection
@@ -552,27 +478,6 @@ togglePanels <- function(num = NULL, nums = NULL, session = NULL){
             selected = paste0("panel", num))
 }
 
-#' getCompSelection
-#'
-#' Gathers the user selected comparison set to be used within the
-#' DEBrowser.
-#'
-#' @param count, comparison count
-#' @note \code{getCompSelection}
-#' @examples
-#'     x <- getCompSelection(count = 2)
-#' @export
-#'
-getCompSelection <- function(count = NULL) {
-  a <- NULL
-  if (count>1){
-        a <- list(selectInput("compselect",
-        label = "Choose a comparison:",
-        choices = c(1:count) ))
-  }
-  a
-}
-
 #' selectBatchEffect
 #'
 #' Batch effect column selection
@@ -613,39 +518,6 @@ if (is.null(input$file2)) return (NULL)
 metadata <- read.table(input$file2$datapath, sep = "\t",
                        header = TRUE, row.names = 1)
 }
-
-#' getTextOnOff
-#'
-#' text on PCA plot on and off
-#'
-#' @note \code{getTextOnOff}
-#' @examples
-#'     x <- getTextOnOff()
-#' @export
-#'
-getTextOnOff <- function() {
-    lst.choices <- as.list(c("On", "Off"))
-    selectInput("textonoff", label = "Text On/Off",
-                choices = lst.choices,
-                selected = "Off")
-}
-
-#' getLegendSelect
-#'
-#' select legend
-#'
-#' @note \code{getLegendSelect}
-#' @examples
-#'     x <- getLegendSelect()
-#' @export
-#'
-getLegendSelect <- function() {
-    lst.choices <- as.list(c("color", "shape"))
-    selectInput("legendSelect", label = "Select legend",
-                choices = lst.choices,
-                selected = "color")
-}
-
 
 #' getTableStyle
 #'
@@ -741,74 +613,6 @@ hideObj <- function(btns = NULL) {
     for (btn in seq(1:length(btns)))
         shinyjs::hide(btns[btn])
 }
-
-#' Buttons including Action Buttons and Event Buttons
-#'
-#' Creates an action button whose value is initially zero, and increments by one
-#' each time it is pressed.
-#'
-#' @param inputId Specifies the input slot that will be used to access the
-#'   value.
-#' @param label The contents of the button--usually a text label, but you could
-#'   also use any other HTML, like an image.
-#' @param styleclass The Bootstrap styling class of the button--options are
-#'   primary, info, success, warning, danger, inverse, link or blank
-#' @param size The size of the button--options are large, small, mini
-#' @param block Whehter the button should fill the block
-#' @param icon Display an icon for the button
-#' @param css.class Any additional CSS class one wishes to add to the action
-#'   button
-#' @param ... Other argument to feed into shiny::actionButton
-#'
-#' @export
-#'
-#' @examples
-#'     actionButton("goDE", "Go to DE Analysis!")
-#'
-actionButton <- function(inputId, label, styleclass = "", size = "",
-                         block = FALSE, icon = NULL, css.class = "", ...) {
-    if (styleclass %in% c("primary", "info", "success", "warning",
-                          "danger", "inverse", "link")) {
-        btn.css.class <- paste("btn", styleclass, sep = "-")
-    } else btn.css.class = ""
-
-    if (size %in% c("large", "small", "mini")) {
-        btn.size.class <- paste("btn", size, sep = "-")
-    } else btn.size.class = ""
-
-    if (block) {
-        btn.block = "btn-block"
-    } else btn.block = ""
-
-    if (!is.null(icon)) {
-        icon.code <- HTML(paste0("<i class='fa fa-", icon, "'></i>"))
-    } else icon.code = ""
-    tags$button(id = inputId, type = "button", class = paste("btn action-button",
-        btn.css.class, btn.size.class, btn.block, css.class, collapse = " "),
-        icon.code, label, ...)
-}
-
-#' getHelpButton
-#' prepares a helpbutton for to go to a specific site in the documentation
-#'
-#' @param name, name that are going to come after info
-#' @param link, link of the help
-#' @return the info button
-#'
-#' @examples
-#'     x<- getHelpButton()
-#'
-#' @export
-getHelpButton<-function(name = NULL, link = NULL){
-if (is.null(name)) return(NULL)
-btn <- actionButton(paste0("info_",name),"",icon="info",
-                  styleclass="info", size="small")
-
-a <- HTML(paste0("<a id=\"info_",name,"\" href=\"",link,"\" target=\"_blank\">",
-                 btn,"</a>"))
-
-}
-
 
 #' getKEGGModal
 #' prepares a helpbutton for to go to a specific site in the documentation

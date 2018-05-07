@@ -1,6 +1,6 @@
 ---
 title: "DEBrowser user guide"
-author: "Alper Kucukural, Manuel Garber"
+author: "Alper Kucukural, Onur Yukselen, Manuel Garber"
 output: BiocStyle::html_document
 fig_caption: true
 vignette: >

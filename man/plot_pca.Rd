@@ -5,7 +5,8 @@
 \title{plot_pca}
 \usage{
 plot_pca(dat = NULL, pcx = 1, pcy = 2, metadata = NULL, color = NULL,
-  shape = NULL, size = NULL, textonoff = "Off", legendSelect = "fill")
+  shape = NULL, size = NULL, textonoff = "Off",
+  legendSelect = "samples", input = NULL)
 }
 \arguments{
 \item{dat, }{data}
@@ -25,6 +26,8 @@ plot_pca(dat = NULL, pcx = 1, pcy = 2, metadata = NULL, color = NULL,
 \item{textonoff, }{text on off}
 
 \item{legendSelect, }{select legend}
+
+\item{input, }{input param}
 }
 \value{
 pca list
@@ -39,7 +42,7 @@ Plots the PCA results for the selected dataset.
             colnames(demodata[,2:7]),
             c(rep("Cond1",3), rep("Cond2",3)))
     colnames(metadata)<-c("samples", "color", "shape")
-
+    
     a <- plot_pca(getNormalizedMatrix(
             demodata[rowSums(demodata[,2:7])>10,2:7]),
             metadata = metadata, color = "samples",

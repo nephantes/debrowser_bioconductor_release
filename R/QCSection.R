@@ -30,44 +30,15 @@ getQCPanel <- function(input = NULL) {
             column(12, ggvisOutput("ggvisQC2"))
         ),
         conditionalPanel(condition = 
-            "(!(input.interactive && input.qcplot == 'heatmap'))",
+            "(input.qcplot != 'heatmap')",
             column(12, plotOutput("qcplotout",
             height = height, width = width))),    
-        conditionalPanel(condition = "(input.interactive && input.qcplot == 'heatmap')",
-            d3heatmap::d3heatmapOutput("intheatmap", width = width, height=height),
-            tags$script('
-                $(document).ready(function() {
-                    $("#heatmap").on("shiny:recalculating", function(event) {
-                    $(".d3heatmap-tip").remove();
-                    });
-                });
-        '))
+        conditionalPanel(condition = "(input.qcplot == 'heatmap')",
+                         getHeatmapUI("heatmap"))
        )
     return(qcPanel)
 }
 
-#' getIntHeatmapVis
-#'
-#' Gathers the conditional panel for interactive heatmap
-#'
-#' @param randstr, randstr
-#' @note \code{getIntHeatmapVis}
-#' @return the panel interactive heatmap
-#'
-#' @examples
-#'     x <- getIntHeatmapVis()
-#'
-#' @export
-#'
-getIntHeatmapVis <- function(randstr = NULL) {
-    if (is.null(randstr)) return(NULL)
-    intHeatmap <- list(
-    conditionalPanel(condition = 
-        "(input.qcplot == 'heatmap' && input.interactive)",
-        column(12, ggvisOutput(paste0("heatmapplot-", randstr)))
-    ))
-    return(intHeatmap)
-}
 #' getQCPlots
 #'
 #' Gathers the plot data to be displayed within the
@@ -94,9 +65,7 @@ getQCPlots <- function(dataset = NULL, input = NULL,
         if (input$qcplot == "all2all") {
             qcPlots <- all2all(dat, input$cex)
         } else if (input$qcplot == "heatmap") {
-            qcPlots <- runHeatmap(dat, title = paste("Dataset:", input$dataset),
-                clustering_method = inputQCPlot$clustering_method,
-                distance_method = inputQCPlot$distance_method,  interactive = FALSE)
+            callModule(debrowserheatmap, "heatmap", dat)
         } else if (input$qcplot == "pca") {
             sc <- getShapeColor(input)
             pcaplot <- plot_pca(dat, input$pcselx, input$pcsely,
@@ -114,29 +83,6 @@ getQCPlots <- function(dataset = NULL, input = NULL,
     return(qcPlots)
 }
 
-#' getShapeColor
-#'
-#' Generates the fill and shape selection boxes for PCA plots.
-#' metadata file has to be loaded in this case
-#'
-#' @param input, input values
-#' @return Color and shape from selection boxes or defaults
-#' @examples
-#'     x <- getShapeColor()
-#' @export
-#'
-getShapeColor <- function(input = NULL) {
-    if (is.null(input)) return (NULL)
-    sc <-  c()
-    if (!is.null(input$color_pca))
-        sc$color <- input$color_pca
-    if (!is.null(input$shape_pca))
-        sc$shape <- input$shape_pca
-    
-    sc$textonoff = input$textonoff
-    sc$legendSelect = input$legendSelect
-    return(sc)
-}
 
 #' getQCReplot
 #'
@@ -227,71 +173,6 @@ saveQCPlot <- function(filename = NULL, input = NULL, datasetInput = NULL,
     dev.off()
 }
 
-#' getIQRPlot
-#'
-#' Makes IQR boxplot plot
-#'
-#' @param data, count or normalized data
-#' @param cols, columns
-#' @param title, title
-#'
-#' @export
-#'
-#' @examples
-#'     getIQRPlot()
-#'
-getIQRPlot <- function(data=NULL, cols=NULL, title = ""){
-    if (is.null(data)) return(NULL)
-    data <- as.data.frame(data)
-    data[, cols] <- apply(data[, cols], 2,
-        function(x) log10(as.integer(x) + 1))
-    
-    data <- addID(data)
-    mdata <- melt(as.data.frame(data[,c("ID", cols)]),"ID")
-    colnames(mdata)<-c("ID", "samples", "logcount")
-    ypos <- -5 * max(nchar(as.vector(mdata$samples)))
-    visIQR <- mdata %>%
-        ggvis(x = ~samples, y = ~logcount, fill := "green") %>%
-        layer_boxplots() %>% 
-        set_options(width = "auto", height = 350, resizable=TRUE) %>%
-        add_title_pos(title = "", angle = 310,
-            dy = ypos, dx = 0) %>%
-        add_tooltip(getToolTipPCA, "hover") %>%
-        add_axis("y", title = "logcount")
-}
-
-#' getDensityPlot
-#'
-#' Makes Density plots
-#'
-#' @param data, count or normalized data
-#' @param cols, columns
-#' @param title, title
-#'
-#' @export
-#'
-#' @examples
-#'     getDensityPlot()
-#'
-getDensityPlot <- function(data=NULL, cols=NULL, title = ""){
-    if (is.null(data)) return(NULL)
-    data <- as.data.frame(data)
-    data[, cols] <- apply(data[, cols], 2,
-          function(x) log10(as.integer(x) + 1))
-    
-    data <- addID(data)
-    mdata <- melt(as.data.frame(data[,c("ID", cols)]),"ID")
-    colnames(mdata)<-c("ID", "samples", "density")
-    ypos <- -5 * max(nchar(as.vector(mdata$samples)))
-    visDensity <- mdata %>%
-        ggvis(~density, fill = ~samples) %>%
-        group_by(samples) %>%
-        set_options(width = "auto", height = 350, resizable=TRUE) %>%
-        layer_densities() %>% 
-        add_axis("x", title = "logcount") %>%
-        add_tooltip(getToolTipPCA, "hover") %>%
-        add_axis("y", title = "density")
-}
 
 #' prepAddQCPlots
 #'
