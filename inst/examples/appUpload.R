@@ -1,7 +1,7 @@
 library(debrowser)
-source("../R/plotSize.R")
-source("../R/funcs.R")
-source("../R/dataLoad.R")
+source("../../R/plotSize.R")
+source("../../R/funcs.R")
+source("../../R/dataLoad.R")
 
 options(shiny.maxRequestSize = 30*1024^2)
 

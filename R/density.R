@@ -7,7 +7,7 @@
 #' @return the panel for Density plots;
 #'
 #' @examples
-#'     x <- getDensityPlotUI()
+#'     x <- getDensityPlotUI("density")
 #'
 #' @export
 #'
@@ -29,9 +29,10 @@ getDensityPlotUI <- function(id) {
 #' @export
 #'
 #' @examples
-#'     x <- debrowserdensityplot(data = data)
+#'     x <- debrowserdensityplot()
 #'
 debrowserdensityplot <- function(input, output, session, data = NULL) {
+    if(is.null(data)) return(NULL)
     output$Density <- renderPlotly({
         getDensityPlot(data, input)
     })
@@ -52,7 +53,7 @@ debrowserdensityplot <- function(input, output, session, data = NULL) {
 #' @param id, namespace id
 #' @return returns the left menu
 #' @examples
-#'     x <- densityPlotControlsUI()
+#'     x <- densityPlotControlsUI("density")
 #' @export
 #'
 densityPlotControlsUI <- function(id) {

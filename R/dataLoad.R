@@ -158,7 +158,7 @@ fileUploadBox <- function(id = NULL, inputId = NULL, label = NULL) {
   ns <- NS(id)
   
   shinydashboard::box(title = paste0(label, " File"),
-                      solidHeader = T, status = "info",
+                      solidHeader = TRUE, status = "info",
                       width = 6,
                       helpText(paste0("Upload your '", label," File'")),
                       fileInput(inputId=ns(inputId), 

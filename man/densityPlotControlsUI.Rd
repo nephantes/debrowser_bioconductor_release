@@ -19,5 +19,5 @@ Generates the controls in the left menu for a densityPlot
 \code{densityPlotControlsUI}
 }
 \examples{
-    x <- densityPlotControlsUI()
+    x <- densityPlotControlsUI("density")
 }

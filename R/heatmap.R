@@ -9,13 +9,13 @@
 #' @return heatmapply plot
 #'
 #' @examples
-#'     x <- heatmaply(mtcars)
+#'     x <- debrowserheatmap()
 #'
 #' @export
 #'
 #'
-debrowserheatmap <- function( input, output, session, data){
-    
+debrowserheatmap <- function( input, output, session, data = NULL){
+    if(is.null(data)) return(NULL)
     output$heatmap <- renderPlotly({
         shinyjs::onevent("mousemove", "heatmap", js$getHoverName(session$ns("hoveredgenename")))
         shinyjs::onevent("click", "heatmap", js$getHoverName(session$ns("hoveredgenenameclick")))
@@ -254,8 +254,8 @@ runHeatmap2 <- function(input, session, data){
         data <- as.matrix(data [, -match("class",names(data))])
     }
     if (input$kmeansControl){
-        m <- heatmap.2(as.matrix(data), Rowv = F, main = input$main, dendrogram = input$dendrogram,
-                       Colv = F, col = heatmapColors, labRow = input$labRow,
+        m <- heatmap.2(as.matrix(data), Rowv = FALSE, main = input$main, dendrogram = input$dendrogram,
+                       Colv = FALSE, col = heatmapColors, labRow = input$labRow,
                        distfun = distfun_row, hclustfun = hclustfun_row, density.info = "none",
                        trace = "none", margins = c(10,10))
     }else{

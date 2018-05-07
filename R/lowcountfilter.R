@@ -14,26 +14,27 @@
 #' @examples
 #'     x <- debrowserlowcountfilter()
 #'
-debrowserlowcountfilter <- function(input, output, session, ldata) {
-  
-  fdata <- reactiveValues(count=NULL, meta = NULL)
-  observeEvent(input$submitLCF, {
-    if (is.null(ldata$count)) return (NULL)
-    filtd <- ldata$count
-    filtd[, colnames(filtd)] <- apply(filtd[, colnames(filtd)], 2, function(x) as.integer(x))
-
-    if (input$lcfmethod == "Max"){
-      filtd <- subset(filtd, apply(filtd, 1, max, na.rm = TRUE)  >=  as.numeric(input$maxCutoff))
-    } else if (input$lcfmethod == "Mean") {
-      filtd <- subset(filtd, rowMeans(filtd, na.rm = TRUE) >= as.numeric(input$meanCutoff))
-    }
-    else if (input$lcfmethod == "CPM") {
-      cpmcount <- edgeR::cpm(filtd)
-      filtd <- subset(filtd, rowSums(cpmcount > as.numeric(input$CPMCutoff) , na.rm = TRUE) >= as.numeric(input$numSample))
-    }
-    fdata$count <- filtd
-    fdata$meta <- ldata$meta
-  })
+debrowserlowcountfilter <- function(input, output, session, ldata = NULL) {
+    if (is.null(ldata)) return(NULL)
+    fdata <- reactiveValues(count=NULL, meta = NULL)
+    observeEvent(input$submitLCF, {
+        if (is.null(ldata$count)) return (NULL)
+        filtd <- ldata$count
+        filtd[, colnames(filtd)] <- apply(filtd[, colnames(filtd)], 2, function(x) as.integer(x))
+    
+        if (input$lcfmethod == "Max"){
+          filtd <- subset(filtd, apply(filtd, 1, max, na.rm = TRUE)  >=  as.numeric(input$maxCutoff))
+        } else if (input$lcfmethod == "Mean") {
+          filtd <- subset(filtd, rowMeans(filtd, na.rm = TRUE) >= as.numeric(input$meanCutoff))
+        }
+        else if (input$lcfmethod == "CPM") {
+            cpmcount <- edgeR::cpm(filtd)
+            filtd <- subset(filtd, rowSums(cpmcount > as.numeric(input$CPMCutoff), 
+            na.rm = TRUE) >= as.numeric(input$numSample))
+        }
+        fdata$count <- filtd
+        fdata$meta <- ldata$meta
+    })
   
   output$cutoffLCFMet <- renderUI({
     ret<-textInput(session$ns("maxCutoff"), "Filter features where Max Value <", value = "10" )
@@ -112,7 +113,7 @@ dataLCFUI<- function (id) {
                           actionButton("Batch", label = "Batch Effect Correction", styleclass = "primary")
       ),
       shinydashboard::box(title = "Histograms",
-                          solidHeader = T, status = "info",  width = 12, 
+                          solidHeader = TRUE, status = "info",  width = 12, 
       fluidRow(
           column(6,histogramControlsUI(ns("beforeFiltering")),
                  getHistogramUI(ns("beforeFiltering"))),

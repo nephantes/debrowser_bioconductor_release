@@ -5,19 +5,7 @@
 \title{getBSTableModal
 prepares a Modal to put a table}
 \usage{
-getBSTableUI(name = NULL, label = NULL, trigger = NULL, size = "large",
-  modal = NULL)
-}
-\arguments{
-\item{name, }{name}
-
-\item{label, }{label}
-
-\item{trigger, }{trigger button name}
-
-\item{size, }{size of the modal}
-
-\item{modal, }{table location (in the modal or not)}
+getBSTableUI(name, label, trigger, size = "large", modal = NULL)
 }
 \value{
 the modal

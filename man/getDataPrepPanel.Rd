@@ -4,13 +4,10 @@
 \alias{getDataPrepPanel}
 \title{getDataPrepPanel}
 \usage{
-getDataPrepPanel(flag = FALSE)
-}
-\arguments{
-\item{flag, }{flag to show the element in the ui}
+getDataPrepPanel()
 }
 \value{
-returns the left menu according to the selected tab;
+returns the prep panel;
 }
 \description{
 Create and show the Condition selection screen to the user

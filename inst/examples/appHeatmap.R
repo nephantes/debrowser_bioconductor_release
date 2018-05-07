@@ -4,8 +4,8 @@ library(heatmaply)
 library(shinyjs)
 library(gplots)
 library(colourpicker)
-source("../R/plotSize.R")
-source("../R/heatmap.R")
+source("../../R/plotSize.R")
+source("../../R/heatmap.R")
 options(warn=-1)
 header <- dashboardHeader(
     title = "DEBrowser Heatmap"

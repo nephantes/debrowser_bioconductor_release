@@ -7,7 +7,7 @@
 #' @return the panel for PCA plots;
 #'
 #' @examples
-#'     x <- getHistogramPlotUI()
+#'     x <- getHistogramPlotUI("histogram")
 #'
 #' @export
 #'
@@ -29,11 +29,12 @@ getHistogramUI <- function(id) {
 #' @export
 #'
 #' @examples
-#'     x <- debrowserhistogramplot(data = data)
+#'     x <- debrowserhistogram()
 #'
 debrowserhistogram <- function(input, output, session, data = NULL) {
+    if(is.null(data)) return(NULL)
     output$histogram <- renderPlotly({
-       
+
       h <- hist(log10(rowSums(data)), breaks = as.numeric(input$breaks), plot = FALSE)
       
       p <- plot_ly(x = h$mids, y = h$counts, 

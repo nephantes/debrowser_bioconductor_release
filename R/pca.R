@@ -31,12 +31,13 @@ getPCAPlotUI <- function(id) {
 #' @export
 #'
 #' @examples
-#'     x <- debrowserpcaplot(data = data)
+#'     x <- debrowserpcaplot()
 #'
 debrowserpcaplot <- function(input, output, session, pcadata = NULL, metadata = NULL) {
+    if(is.null(pcadata)) return(NULL)
     qcplots <-  reactive({ 
         sc <- getShapeColor(input)
-        pcaplot <- plot_pca(pcadata, input$pcselx, input$pcsely,
+        plot_pca(pcadata, input$pcselx, input$pcsely,
             metadata = metadata, color = sc$color,
             size = 5, shape = sc$shape,
             textonoff = sc$textonoff, 
@@ -73,11 +74,11 @@ debrowserpcaplot <- function(input, output, session, pcadata = NULL, metadata = 
 #'
 #' Generates the PCA PLots Left menu to be displayed within the DEBrowser.
 #'
-#' @param id, module id
+#' @param id, namespace id
 #' @note \code{pcaPlotControlsUI}
 #' @return returns the left menu according to the selected tab;
 #' @examples
-#'     x <- pcaPlotControlsUI()
+#'     x <- pcaPlotControlsUI("pca")
 #' @export
 #'
 pcaPlotControlsUI <- function(id) {
@@ -161,23 +162,7 @@ plot_pca <- function(dat = NULL, pcx = 1, pcy = 2,
                      round(pca_data$explained[pcx] * 100, 2))
     yaxis <- sprintf("PC%d (%.2f%%)", pcy,
                      round(pca_data$explained[pcy] * 100, 2))
-    rgb.palette <- colorRampPalette(c("red", "orange", "blue"),
-                                    space = "rgb")
-    #plot1 <- plot_ly(data=p_data, x=~x, y=~y,
-    #             text=~color,
-    #             color=~color, type="scatter", mode = "markers",
-    #             marker=list(size=11),
-    #             width = input$width - 50, height = input$height - 50) %>%
-    #    plotly::layout(
-    #        xaxis = list(title = xaxis),
-    #        yaxis = list(title = yaxis),
-    #        margin = list(l = input$left,
-    #                      b = input$bottom,
-    #                      t = input$top,
-    #                      r = input$right
-    #        ))
-    #plot1$elementId <- NULL
-    
+
     plot1 <- ggplot(data=p_data, aes(x=x, y=y))
     
     if (legendSelect == "color") {
@@ -396,7 +381,7 @@ getLegendSelect <- function(id) {
 #' @param id, namespace id
 #' @note \code{getTextOnOff}
 #' @examples
-#'     x <- getTextOnOff()
+#'     x <- getTextOnOff("pca")
 #' @export
 #'
 getTextOnOff <- function(id) {

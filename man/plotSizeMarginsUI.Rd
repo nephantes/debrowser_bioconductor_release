@@ -13,14 +13,6 @@ plotSizeMarginsUI(id, w = 800, h = 640, t = 20, b = 100, l = 100,
 \item{w, }{width}
 
 \item{h, }{height}
-
-\item{t, }{top margin}
-
-\item{b, }{bottom margin}
-
-\item{l, }{left margin}
-
-\item{r, }{right margin}
 }
 \value{
 size and margins controls

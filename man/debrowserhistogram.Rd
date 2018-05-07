@@ -23,6 +23,6 @@ Module for a histogram that can be used in data prep and
 low count removal modules
 }
 \examples{
-    x <- debrowserhistogramplot(data = data)
+    x <- debrowserhistogram()
 
 }

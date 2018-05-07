@@ -3,9 +3,9 @@ library(shinyjs)
 library(DESeq2)
 library(edgeR)
 library(limma)
-source("../R/plotSize.R")
-source("../R/funcs.R")
-source("../R/deprogs.R")
+source("../../R/plotSize.R")
+source("../../R/funcs.R")
+source("../../R/deprogs.R")
 
 header <- dashboardHeader(
   title = "DEBrowser DE Analysis"
