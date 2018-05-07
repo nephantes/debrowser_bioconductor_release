@@ -1,7 +1,7 @@
 library(shiny)
 library(shinyjs)
-source("../R/funcs.R")
-source("../R/condSelect.R")
+source("../../R/funcs.R")
+source("../../R/condSelect.R")
 
 header <- dashboardHeader(
   title = "DEBrowser Condition Selector"

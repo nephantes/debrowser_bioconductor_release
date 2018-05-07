@@ -23,6 +23,6 @@ Module for a density plot that can be used in data prep and
 low count removal modules
 }
 \examples{
-    x <- debrowserdensityplot(data = data)
+    x <- debrowserdensityplot()
 
 }

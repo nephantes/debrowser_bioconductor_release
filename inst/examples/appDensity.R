@@ -1,9 +1,9 @@
 library(shiny)
 library(heatmaply)
 library(shinyjs)
-source("../R/plotSize.R")
-source("../R/funcs.R")
-source("../R/density.R")
+source("../../R/plotSize.R")
+source("../../R/funcs.R")
+source("../../R/density.R")
 
 options(warn =-1)
 

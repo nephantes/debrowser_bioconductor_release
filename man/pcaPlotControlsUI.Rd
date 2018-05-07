@@ -7,7 +7,7 @@
 pcaPlotControlsUI(id)
 }
 \arguments{
-\item{id, }{module id}
+\item{id, }{namespace id}
 }
 \value{
 returns the left menu according to the selected tab;
@@ -19,5 +19,5 @@ Generates the PCA PLots Left menu to be displayed within the DEBrowser.
 \code{pcaPlotControlsUI}
 }
 \examples{
-    x <- pcaPlotControlsUI()
+    x <- pcaPlotControlsUI("pca")
 }

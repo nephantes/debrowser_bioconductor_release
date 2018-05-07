@@ -1,9 +1,9 @@
 library(shiny)
 library(heatmaply)
 library(shinyjs)
-source("../R/plotSize.R")
-source("../R/funcs.R")
-source("../R/pca.R")
+source("../../R/plotSize.R")
+source("../../R/funcs.R")
+source("../../R/pca.R")
 
 header <- dashboardHeader(
     title = "DEBrowser PCA Plots"

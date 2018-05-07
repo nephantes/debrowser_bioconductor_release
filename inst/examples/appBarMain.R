@@ -1,9 +1,9 @@
 library(shiny)
 library(plotly)
 library(shinyjs)
-source("../R/plotSize.R")
-source("../R/funcs.R")
-source("../R/barmain.R")
+source("../../R/plotSize.R")
+source("../../R/funcs.R")
+source("../../R/barmain.R")
 
 options(warn =-1)
 

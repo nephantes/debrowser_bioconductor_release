@@ -26,7 +26,8 @@
 #'             reactiveValuesToList renderText onBookmark onBookmarked 
 #'             updateQueryString callModule enableBookmarking htmlOutput
 #'             onRestored NS reactiveVal withProgress tableOutput
-#'             selectizeInput
+#'             selectizeInput fluidRow div renderPrint renderImage
+#'             verbatimTextOutput imageOutput renderTable
 #' @importFrom shinyjs show hide enable disable useShinyjs extendShinyjs
 #'             js inlineCSS onclick
 #' @importFrom d3heatmap d3heatmap renderD3heatmap d3heatmapOutput
@@ -34,14 +35,15 @@
 #'             styleInterval formatRound
 #' @importFrom ggplot2 aes aes_string geom_bar geom_point ggplot
 #'             labs scale_x_discrete scale_y_discrete ylab
-#'             autoplot theme_minimal theme 
+#'             autoplot theme_minimal theme geom_density
+#'             geom_text element_blank
 #' @importFrom ggvis add_axis add_legend add_tooltip axis_props
 #'             bind_shiny create_broker ggvis ggvisOutput handle_brush
 #'             hide_legend layer_bars layer_boxplots layer_points
 #'             scale_nominal set_options %>% group_by layer_rects
 #'             band scale_numeric hide_axis layer_densities scale_ordinal
 #'             layer_text
-#' @importFrom plotly renderPlotly plotlyOutput plot_ly
+#' @importFrom plotly renderPlotly plotlyOutput plot_ly add_bars
 #' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
 #' @importFrom grDevices dev.off pdf colorRampPalette 
@@ -51,7 +53,7 @@
 #'             p.adjust runif cov mahalanobis quantile as.dendrogram
 #'             density
 #' @importFrom utils read.csv read.table write.table update.packages
-#'             download.file read.delim
+#'             download.file read.delim data
 #' @importFrom DOSE enrichDO enrichMap
 #' @importFrom enrichplot gseaplot dotplot
 #' @importMethodsFrom DOSE summary
@@ -74,7 +76,8 @@
 #'             getPriors getPriors.NB nbinomDensity
 #' @importMethodsFrom baySeq "densityFunction<-" "libsizes<-"
 #' @importFrom clusterProfiler compareCluster enrichKEGG enrichGO
-#' @importFrom DESeq2 DESeq DESeqDataSetFromMatrix results
+#' @importFrom DESeq2 DESeq DESeqDataSetFromMatrix results estimateSizeFactors
+#'             counts
 #' @importFrom edgeR calcNormFactors equalizeLibSizes DGEList glmLRT
 #'             exactTest estimateCommonDisp glmFit
 #' @importFrom limma lmFit voom eBayes topTable
@@ -88,6 +91,7 @@
 #' @import pathview
 #' @import googleAuthR
 #' @import colourpicker
+#' @import RColorBrewer
 
 deServer <- function(input, output, session) {
     #library(debrowser)
@@ -203,6 +207,38 @@ deServer <- function(input, output, session) {
             togglePanels(0, c(0), session)
             getProgramTitle(session)
         })
+        
+        filtd <- reactiveVal()
+        batch <- reactiveVal()
+        observe({
+            updata <- reactive({ 
+                ret <- callModule(debrowserdataload, "load")
+                ret
+            })
+            observeEvent (input$Filter, {
+                if(!is.null(updata()$load())){ 
+                    updateTabItems(session, "DataPrep", "Filter")
+                    filtd(callModule(debrowserlowcountfilter, "lcf", updata()$load()))
+                }
+            })
+            observeEvent (input$Batch, {
+                if(!is.null(filtd()$filter())){ 
+                    updateTabItems(session, "DataPrep", "BatchEffect")
+                    batch(callModule(debrowserbatcheffect, "batcheffect", filtd()$filter()))
+                }
+            })
+            
+            output$loadedtable <- renderPrint({
+                head( updata()$load()$count )
+            })
+            output$filtertable <- renderPrint({
+                head( filtd()$filter()$count  )
+            })
+            output$batcheffecttable <- renderPrint({
+                head( batch()$BatchEffect()$count )
+            })
+        })
+        
         output$mainpanel <- renderUI({
             debrowser_mainpanel <- NULL
             if (!is.null(randstr()))
@@ -230,13 +266,10 @@ deServer <- function(input, output, session) {
             getDownloadSection(TRUE, choices)
         })
         output$preppanel <- renderUI({
-            getDataPrepPanel(!is.null(init_data))
+            getDataPrepPanel()
         })
         output$leftMenu  <- renderUI({
             getLeftMenu(input)
-        })
-        output$initialmenu <-renderUI({
-            getInitialMenu(input, output, session)
         })
         output$loading <- renderUI({
             getLoadingMsg()
@@ -270,7 +303,7 @@ deServer <- function(input, output, session) {
         output$definished <- reactive({
             return(!is.null(filt_data()))
         })
-        outputOptions(output, "definished", 
+        outputOptions(output, "definished",
                       suspendWhenHidden = FALSE)
         
         observeEvent(input$gotoanalysis, {
@@ -536,7 +569,7 @@ deServer <- function(input, output, session) {
             pv.out <- pathview::pathview(gene.data = genedata, 
                       pathway.id = inputGOstart()$table$ID[i],
                       species = substr(inputGOstart()$table$ID[i],0,3), 
-                      out.suffix = "b.2layer", kegg.native = T)
+                      out.suffix = "b.2layer", kegg.native = TRUE)
             list(src = paste0(inputGOstart()$table$ID[i],".b.2layer.png"),
                  contentType = 'image/png')
         }, deleteFile = TRUE)

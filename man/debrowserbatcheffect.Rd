@@ -4,7 +4,7 @@
 \alias{debrowserbatcheffect}
 \title{debrowserbatcheffect}
 \usage{
-debrowserbatcheffect(input, output, session, ldata)
+debrowserbatcheffect(input, output, session, ldata = NULL)
 }
 \arguments{
 \item{input, }{input variables}

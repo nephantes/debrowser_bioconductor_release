@@ -1,6 +1,6 @@
 library(debrowser)
-source("../R/plotSize.R")
-source("../R/mainScatter.R")
+source("../../R/plotSize.R")
+source("../../R/mainScatter.R")
 
 header <- dashboardHeader(
     title = "DEBrowser Main Plots"

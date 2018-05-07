@@ -3,38 +3,24 @@
 #' Create and show the Condition selection screen to the user
 #' within the DEBrowser.
 #'
-#' @param flag, flag to show the element in the ui
 #' @note \code{getDataPrepPanel}
-#' @return returns the left menu according to the selected tab;
+#' @return returns the prep panel;
 #' @examples
 #'     x <- getDataPrepPanel()
 #' @export
 #'
-getDataPrepPanel <- function(flag = FALSE){
-    dataPrepPanel <- NULL
-    if(flag)
-        dataPrepPanel <- list(
-        conditionalPanel(condition = "input.demo || output.dataready",
-        wellPanel(
-        uiOutput("sampleSelector"),
-        actionButton("goDE", "Go to DE Analysis!"),
-        actionButton("goQCplots", "Go to QC plots!"),
-        actionButton("resetsamples", "Reset!"),
-        conditionalPanel(condition = "(input.goDE) || (output.restore_DE > 0)",
-            helpText( "Please add new comparisons for DE analysis!" ),
-            uiOutput("conditionSelector"),
-            column(12,actionButton("add_btn", "Add New Comparison"),
-            actionButton("rm_btn", "Remove"),
-            getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/deseq/deseq.html")),
-            br(),
-            actionButton("startDE", "Submit!"),
-            br(),
-           tags$style(type='text/css', "#startDE { margin-top: 10px;}")  ))),
-        conditionalPanel(condition = "!input.demo &&
-            !output.fileUploaded",
-            uiOutput("startup"))
+getDataPrepPanel <- function(){
+    tabItems(
+        tabItem(tabName="Upload", dataLoadUI("load"),
+                column(4, verbatimTextOutput("loadedtable")
+                )),
+        tabItem(tabName="Filter",dataLCFUI("lcf"),                
+                column(4, verbatimTextOutput("filtertable")
+                )),
+        tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
+                column(4, verbatimTextOutput("batcheffecttable")
+                ))
     )
-    return(dataPrepPanel)
 }
 
 #' getLeftMenu

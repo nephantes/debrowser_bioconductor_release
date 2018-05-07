@@ -101,7 +101,11 @@ enableBookmarking("server")
                 googleAuthR::googleAuthUI("initial_google_button")),
             conditionalPanel(condition = "output.user_name",
                 uiOutput("loading"),
-                uiOutput("initialmenu"),
+                sidebarMenu(id="DataPrep",
+                            menuItem("Upload", tabName = "Upload"),
+                            menuItem("Filter", tabName = "Filter"),
+                            menuItem("BatchEffect", tabName = "BatchEffect")
+                ),
                 conditionalPanel(condition = "(output.dataready)",
                     uiOutput("leftMenu")),
                 conditionalPanel(condition = "(output.dataready)",

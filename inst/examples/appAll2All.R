@@ -3,9 +3,9 @@ library(shinydashboard)
 library(GGally)
 library(plotly)
 library(shinyjs)
-source("../R/plotSize.R")
-source("../R/funcs.R")
-source("../R/all2all.R")
+source("../../R/plotSize.R")
+source("../../R/funcs.R")
+source("../../R/all2all.R")
 
 options(warn =-1)
 
