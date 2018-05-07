@@ -4,9 +4,7 @@
 \alias{runDESeq2}
 \title{runDESeq2}
 \usage{
-runDESeq2(data = NULL, columns = NULL, conds = NULL,
-  fitType = c("parametric", "local", "mean"), betaPrior = 0,
-  testType = c("Wald", "LRT"), rowsum.filter = 10)
+runDESeq2(data = NULL, columns = NULL, conds = NULL, params)
 }
 \arguments{
 \item{data, }{A matrix that includes all the expression raw counts,
@@ -18,23 +16,20 @@ to be analyzed. These columns has to match with the given data.}
 \item{conds, }{experimental conditions. The order has to match
 with the column order}
 
-\item{fitType, }{either "parametric", "local", or "mean" for the type 
-of fitting of dispersions to the mean intensity. 
-See estimateDispersions for description.}
-
-\item{betaPrior, }{whether or not to put a zero-mean normal prior
-on the non-intercept coefficients See nbinomWaldTest for 
-description of the calculation of the beta prior. By default, 
-the beta prior is used only for the Wald test, but can also be 
-specified for the likelihood ratio test.}
-
-\item{testType, }{either "Wald" or "LRT", which will then use either 
-Wald significance tests (defined by nbinomWaldTest), or the 
-likelihood ratio test on the difference in deviance between a 
-full and reduced model formula (defined by nbinomLRT)}
-
-\item{rowsum.filter, }{regions/genes/isoforms with total count 
-(across all samples) below this value will be filtered out}
+\item{params, }{fitType: either "parametric", "local", or "mean" for the type 
+    of fitting of dispersions to the mean intensity. 
+    See estimateDispersions for description.
+ betaPrior: whether or not to put a zero-mean normal prior
+    on the non-intercept coefficients See nbinomWaldTest for 
+    description of the calculation of the beta prior. By default, 
+    the beta prior is used only for the Wald test, but can also be 
+    specified for the likelihood ratio test.
+testType: either "Wald" or "LRT", which will then use either 
+    Wald significance tests (defined by nbinomWaldTest), or the 
+    likelihood ratio test on the difference in deviance between a 
+    full and reduced model formula (defined by nbinomLRT)
+rowsum.filter: regions/genes/isoforms with total count 
+     (across all samples) below this value will be filtered out}
 }
 \value{
 deseq2 results

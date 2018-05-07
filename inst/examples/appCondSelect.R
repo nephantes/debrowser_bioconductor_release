@@ -30,7 +30,6 @@ server <- function(input, output, session) {
          head( sel$cc())
      })
   })
-  
 }
 
 shinyApp(ui, server)

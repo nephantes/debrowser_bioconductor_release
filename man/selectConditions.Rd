@@ -4,17 +4,17 @@
 \alias{selectConditions}
 \title{selectConditions}
 \usage{
-selectConditions(Dataset = NULL, choicecounter, input = NULL,
-  loadingJSON = NULL)
+selectConditions(Dataset = NULL, metadata = NULL, choicecounter = NULL,
+  input = NULL, session = NULL)
 }
 \arguments{
 \item{Dataset, }{used dataset}
 
-\item{choicecounter, }{total number of comparisons}
+\item{metadata, }{metadatatable to select from metadata}
+
+\item{choicecounter, }{choicecounter to add multiple comparisons}
 
 \item{input, }{input params}
-
-\item{loadingJSON, }{loads from json}
 }
 \value{
 the panel for go plots;

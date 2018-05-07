@@ -4,10 +4,7 @@
 \alias{runLimma}
 \title{runLimma}
 \usage{
-runLimma(data = NULL, columns = NULL, conds = NULL, normfact = c("none",
-  "TMM", "RLE", "upperquartile"), fitType = c("ls", "robust"),
-  normBet = c("none", "scale", "quantile", "cyclicloess", "Aquantile",
-  "Gquantile", "Rquantile", "Tquantile"), rowsum.filter = 10)
+runLimma(data = NULL, columns = NULL, conds = NULL)
 }
 \arguments{
 \item{data, }{A matrix that includes all the expression raw counts,
@@ -19,17 +16,14 @@ to be analyzed. These columns has to match with the given data.}
 \item{conds, }{experimental conditions. The order has to match
 with the column order}
 
-\item{normfact, }{Calculate normalization factors to scale the raw 
-library sizes. Values can be "TMM","RLE","upperquartile","none".}
-
-\item{fitType, }{fitting method; "ls" for least squares or "robust" 
-for robust regression}
-
-\item{normBet, }{Normalizes expression intensities so that the 
-intensities or log-ratios have similar distributions across a set of arrays.}
-
-\item{rowsum.filter, }{regions/genes/isoforms with total count 
-(across all samples) below this value will be filtered out}
+\item{params, }{normfact: Calculate normalization factors to scale the raw 
+    library sizes. Values can be "TMM","RLE","upperquartile","none".
+fitType, fitting method; "ls" for least squares or "robust" 
+    for robust regression
+normBet: Normalizes expression intensities so that the 
+    intensities or log-ratios have similar distributions across a set of arrays.
+rowsum.filter: regions/genes/isoforms with total count 
+    (across all samples) below this value will be filtered out}
 }
 \value{
 Limma results
