@@ -31,7 +31,7 @@ getHistogramUI <- function(id) {
 #' @examples
 #'     x <- debrowserhistogram()
 #'
-debrowserhistogram <- function(input, output, session, data = NULL) {
+debrowserhistogram <- function(input = NULL, output = NULL, session = NULL, data = NULL) {
     if(is.null(data)) return(NULL)
     output$histogram <- renderPlotly({
 
@@ -66,7 +66,7 @@ debrowserhistogram <- function(input, output, session, data = NULL) {
 #' @param id, namespace id
 #' @return returns the left menu
 #' @examples
-#'     x <- histogramControlsUI()
+#'     x <- histogramControlsUI("histogram")
 #' @export
 #'
 histogramControlsUI <- function(id) {

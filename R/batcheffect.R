@@ -162,14 +162,14 @@ batchEffectUI <- function (id) {
 #'
 #' @examples
 #'    
-#'     x <- normalizationMethods()
+#'     x <- normalizationMethods("batch")
 #'
 #' @export
 #'
 normalizationMethods <- function(id) {
     ns <- NS(id)
     selectInput(ns("norm_method"), "Normalization Method:",
-        choices <- c("none", "DESeq2", "TMM", "RLE", "upperquartile"))
+        choices = c("none", "DESeq2", "TMM", "RLE", "upperquartile"))
 }
 
 #' batchMethod

@@ -15,7 +15,8 @@
 #' @examples
 #'     x <- debrowserdeanalysis()
 #'
-debrowserdeanalysis <- function(input, output, session, data = NULL, columns = NULL, conds = NULL, params = NULL) {
+debrowserdeanalysis <- function(input = NULL, output = NULL, session = NULL, 
+    data = NULL, columns = NULL, conds = NULL, params = NULL) {
     if(is.null(data)) return(NULL)
     deres <- reactive({
         runDE(data, columns, conds, params)
@@ -411,6 +412,7 @@ runLimma<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
 #'     x <- prepGroup()
 #'
 prepGroup <- function(conds = NULL, cols = NULL) {
+    if (is.null(conds) || is.null(cols)) return (NULL)
     coldata <- data.frame(cbind(cols, conds))
     coldata$conds <- factor(coldata$conds)
     colnames(coldata) <- c("libname", "group")
@@ -489,7 +491,7 @@ getMeanNew<-function(data = NULL, selcols=NULL) {
 #'
 #' @examples
 #'    
-#'     x <- getLegendRadio()
+#'     x <- getLegendRadio("deprog")
 #'
 #' @export
 #'

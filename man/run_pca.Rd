@@ -25,6 +25,6 @@ Runs PCA on the selected dataset.
     load(system.file("extdata", "demo", "demodata.Rda", 
         package="debrowser"))
     pca_data<-run_pca(getNormalizedMatrix(
-        demodata[rowSums(demodata[,2:7])>10,2:7]))
+        demodata[rowSums(demodata[,1:6])>10,1:6]))
 
 }

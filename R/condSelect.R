@@ -17,8 +17,8 @@
 #' @examples
 #'     x <- debrowsercondselect()
 #'
-debrowsercondselect <- function(input, output, session, data, metadata=NULL) {
-    if (is.null(metadata)) return(NULL)
+debrowsercondselect <- function(input = NULL, output = NULL, session = NULL, data = NULL, metadata = NULL) {
+    if (is.null(data)) return(NULL)
     choicecounter <- reactiveValues(nc = 0)
     
     output$conditionSelector <- renderUI({
@@ -73,7 +73,7 @@ list(
 #'
 getMethodDetails <- function(num = 0, input = NULL) {
     if (num > 0)
-        a <- list(
+        list(
             conditionalPanel(
                 (condition <- paste0("input.demethod",num," == 'DESeq2'")),
                 getSelectInputBox("fitType", "Fit Type", num, 
@@ -128,7 +128,7 @@ getMethodDetails <- function(num = 0, input = NULL) {
 #'
 getConditionSelector<- function(num=0, choices = NULL, selected = NULL) {
     if (!is.null(choices))
-        a <- list(column(6, selectInput(paste0("condition", num),
+        list(column(6, selectInput(paste0("condition", num),
             label = paste0("Condition ", num),
             choices = choices, multiple = TRUE,
             selected = selected)))
@@ -236,7 +236,7 @@ getSelectInputBox <- function(id = NULL, name = NULL,
                               cw = 2) {
     if (is.null(id)) return(NULL)
     if (!is.null(choices))
-        a <- list(column(cw, selectInput(paste0(id, num),
+        list(column(cw, selectInput(paste0(id, num),
             label = name,
             choices = choices, multiple = FALSE,
             selected = selected)))
@@ -343,38 +343,37 @@ getMetaSelector <- function(metadata = NULL, input = NULL, n = 0){
 #'     x<-get_conditions_given_selection()
 #' @export
 #'
-get_conditions_given_selection <- function(metadata = NULL, selection){		
-	
-    if(!is.null(metadata)){		
-        df <- metadata	
-        if(selection == "No Selection"){		
-            return(NULL)		
-        }		
-        if(length(levels(factor(df[,selection]))) != 2){		
-            return("There must be exactly 2 groups.")		
-        } else {		
-            # Assuming the first column has samples		
-            sample_col_name <- colnames(df)[1]		
-            
-            condition1 <- levels(df[,selection])[1]		
-            condition2 <- levels(df[,selection])[2]		
-            
-            # In case the conditions are integers		
-            if(is.null(condition2)){		
-                condition1 <- levels(factor(df[,selection]))[1]		
-                condition2 <- levels(factor(df[,selection]))[2]		
-            }		
-            
-            condition1_filtered <- df[df[,selection] == condition1, ]		
-            a <- condition1_filtered[,sample_col_name]		
-            
-            condition2_filtered <- df[df[,selection] == condition2, ]		
-            b <- condition2_filtered[,sample_col_name]		
-            
-            both_groups <- list(a, b)
-            return(both_groups)		
-        }		
+get_conditions_given_selection <- function(metadata = NULL, selection = NULL){		
+    if(is.null(metadata)) return(NULL)		
+    df <- metadata	
+    if(selection == "No Selection"){		
+        return(NULL)		
     }		
+    if(length(levels(factor(df[,selection]))) != 2){		
+        return("There must be exactly 2 groups.")		
+    } else {		
+        # Assuming the first column has samples		
+        sample_col_name <- colnames(df)[1]		
+        
+        condition1 <- levels(df[,selection])[1]		
+        condition2 <- levels(df[,selection])[2]		
+        
+        # In case the conditions are integers		
+        if(is.null(condition2)){		
+            condition1 <- levels(factor(df[,selection]))[1]		
+            condition2 <- levels(factor(df[,selection]))[2]		
+        }		
+        
+        condition1_filtered <- df[df[,selection] == condition1, ]		
+        a <- condition1_filtered[,sample_col_name]		
+        
+        condition2_filtered <- df[df[,selection] == condition2, ]		
+        b <- condition2_filtered[,sample_col_name]		
+        
+        both_groups <- list(a, b)
+        return(both_groups)		
+    }		
+    		
 }
 
 #' getSampleNames

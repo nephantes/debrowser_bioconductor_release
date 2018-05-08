@@ -4,7 +4,7 @@
 \alias{niceKmeans}
 \title{niceKmeans}
 \usage{
-niceKmeans(df, input, iter.max = 1000, nstart = 100)
+niceKmeans(df = NULL, input = NULL, iter.max = 1000, nstart = 100)
 }
 \arguments{
 \item{df, }{data}
@@ -25,5 +25,5 @@ Generates hierarchially clustered K-means clusters
 \code{niceKmeans}
 }
 \examples{
-    x <- niceKmeans("heatmap")
+    x <- niceKmeans()
 }

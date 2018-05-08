@@ -20,6 +20,6 @@ Select box to select normalization method prior to batch effect correction
 }
 \examples{
    
-    x <- normalizationMethods()
+    x <- normalizationMethods("batch")
 
 }

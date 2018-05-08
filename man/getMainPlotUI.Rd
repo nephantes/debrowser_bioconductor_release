@@ -19,6 +19,6 @@ main plot for volcano, scatter and maplot.
 \code{getMainPlotUI}
 }
 \examples{
-    x <- getMainPlotUI()
+    x <- getMainPlotUI("main")
 
 }

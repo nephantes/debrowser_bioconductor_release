@@ -27,6 +27,6 @@ panel.
 }
 \examples{
     
-    x <- mainScatterNew(input, data, source, x, y)
+    x <- mainScatterNew()
 
 }

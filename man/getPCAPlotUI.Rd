@@ -19,6 +19,6 @@ PCA plots UI.
 \code{getPCAPlotUI}
 }
 \examples{
-    x <- getPCAPlotUI()
+    x <- getPCAPlotUI("pca")
 
 }

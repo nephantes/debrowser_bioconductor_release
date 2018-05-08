@@ -31,7 +31,7 @@ getDensityPlotUI <- function(id) {
 #' @examples
 #'     x <- debrowserdensityplot()
 #'
-debrowserdensityplot <- function(input, output, session, data = NULL) {
+debrowserdensityplot <- function(input = NULL, output = NULL, session = NULL, data = NULL) {
     if(is.null(data)) return(NULL)
     output$Density <- renderPlotly({
         getDensityPlot(data, input)

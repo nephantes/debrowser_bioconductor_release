@@ -4,7 +4,7 @@
 \alias{getPlotArea}
 \title{getPlotArea}
 \usage{
-getPlotArea(input, session)
+getPlotArea(input = NULL, session = NULL)
 }
 \arguments{
 \item{input, }{input variables}

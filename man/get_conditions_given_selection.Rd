@@ -4,7 +4,7 @@
 \alias{get_conditions_given_selection}
 \title{get_conditions_given_selection}
 \usage{
-get_conditions_given_selection(metadata = NULL, selection)
+get_conditions_given_selection(metadata = NULL, selection = NULL)
 }
 \arguments{
 \item{metadata, }{meta data table}

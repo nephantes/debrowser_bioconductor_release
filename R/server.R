@@ -47,7 +47,7 @@
 #' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
 #' @importFrom grDevices dev.off pdf colorRampPalette 
-#' @importFrom graphics barplot hist pairs par rect text plot layout
+#' @importFrom graphics barplot hist pairs par rect text plot
 #' @importFrom stats aggregate as.dist cor cor.test dist
 #'             hclust kmeans na.omit prcomp var sd model.matrix
 #'             p.adjust runif cov mahalanobis quantile as.dendrogram

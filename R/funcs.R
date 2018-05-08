@@ -8,12 +8,12 @@
 #' @param data, data 
 #' @return panel
 #' @examples
-#'     x <- getSampleDetails(output, data)
+#'     x <- getSampleDetails()
 #'
 #' @export
 #'
-getSampleDetails<- function (output, summary, details, data) {
-    if (is.null(data$count)) return(NULL)
+getSampleDetails<- function (output = NULL, summary = NULL, details = NULL, data = NULL) {
+    if (is.null(data)) return(NULL)
     
     output[[summary]]<- renderTable({ 
         countdata <-  data$count
@@ -104,6 +104,7 @@ addID <- function(data = NULL) {
 #'
 getVariationData <- function(inputdata = NULL, 
     cols = NULL, conds = NULL, key = NULL) {
+    if (is.null(inputdata)) return (NULL)
     # Pick out the gene with this ID
     vardata <- inputdata[key, ]
     bardata <- as.data.frame(cbind(key, cols,
@@ -158,7 +159,7 @@ getBSTableUI<-function(name = NULL,  label = NULL, trigger = NULL, size="large",
 #'
 #' @export
 #'
-getTableDetails <- function(output, session, tablename, data = NULL, modal = NULL){
+getTableDetails <- function(output  = NULL, session  = NULL, tablename  = NULL, data = NULL, modal = NULL){
     if (is.null(data)) return(NULL)
     tablenameUI <-  paste0(tablename,"Table")
     output[[paste(tablename, "Download")]] <- downloadHandler(

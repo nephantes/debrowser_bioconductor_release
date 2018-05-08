@@ -4,7 +4,8 @@
 \alias{debrowsermainplot}
 \title{debrowsermainplot}
 \usage{
-debrowsermainplot(input, output, session, data = NULL)
+debrowsermainplot(input = NULL, output = NULL, session = NULL,
+  data = NULL)
 }
 \arguments{
 \item{input, }{input variables}
@@ -25,10 +26,6 @@ Module for a scatter, volcano and ma plots that are going to be used
 as a mainplot in debrowser
 }
 \examples{
-    data <- generateTestData()
-    input <- c()
-    input$backperc <- 10
-    input$mainplot <- "scatter"
-    x <- debrowsermainplot(data = data)
+    x <- debrowsermainplot()
 
 }

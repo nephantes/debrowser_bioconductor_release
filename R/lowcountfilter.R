@@ -14,7 +14,7 @@
 #' @examples
 #'     x <- debrowserlowcountfilter()
 #'
-debrowserlowcountfilter <- function(input, output, session, ldata = NULL) {
+debrowserlowcountfilter <- function(input = NULL, output = NULL, session = NULL, ldata = NULL) {
     if (is.null(ldata)) return(NULL)
     fdata <- reactiveValues(count=NULL, meta = NULL)
     observeEvent(input$submitLCF, {
@@ -133,7 +133,7 @@ dataLCFUI<- function (id) {
 #'
 #' @examples
 #'    
-#'     x <- lcfMetRadio()
+#'     x <- lcfMetRadio("lcf")
 #'
 #' @export
 #'
