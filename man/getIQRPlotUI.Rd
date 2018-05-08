@@ -19,6 +19,6 @@ IQR plot UI.
 \code{getIQRPlotUI}
 }
 \examples{
-    x <- getIQRPlotUI()
+    x <- getIQRPlotUI("IQR")
 
 }

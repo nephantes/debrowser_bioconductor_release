@@ -1,20 +1,3 @@
-#' getMainPlotUI
-#'
-#' main plot for volcano, scatter and maplot.  
-#'
-#' @note \code{getMainPlotUI}
-#' @return the panel for main plots;
-#'
-#' @examples
-#'     x <- getMainPlotUI()
-#'
-#' @export
-#'
-getMainPlotUI <- function(id) {
-    ns <- NS(id)
-    uiOutput(ns("mainplot"))
-}
-
 #' debrowsermainplot
 #'
 #' Module for a scatter, volcano and ma plots that are going to be used 
@@ -30,13 +13,9 @@ getMainPlotUI <- function(id) {
 #' @export
 #'
 #' @examples
-#'     data <- generateTestData()
-#'     input <- c()
-#'     input$backperc <- 10
-#'     input$mainplot <- "scatter"
-#'     x <- debrowsermainplot(data = data)
+#'     x <- debrowsermainplot()
 #'
-debrowsermainplot <- function(input, output, session, data = NULL) {
+debrowsermainplot <- function(input = NULL, output = NULL, session = NULL, data = NULL) {
     if (is.null(data)) return(NULL)
     
     plotdata <-  reactive({ 
@@ -81,12 +60,28 @@ debrowsermainplot <- function(input, output, session, data = NULL) {
     list( shg = (selectedPoint), shgClicked=(selectedPoint), selGenes=(getSelected))
 }
 
+#' getMainPlotUI
+#'
+#' main plot for volcano, scatter and maplot.  
+#' @param id, namespace id
+#' @note \code{getMainPlotUI}
+#' @return the panel for main plots;
+#'
+#' @examples
+#'     x <- getMainPlotUI("main")
+#'
+#' @export
+#'
+getMainPlotUI <- function(id) {
+    ns <- NS(id)
+    uiOutput(ns("mainplot"))
+}
 
 #' mainScatterNew
 #'
 #' Creates the main scatter, volcano or MA plot to be displayed within the main
 #' panel.
-#'
+#' @param input, input params
 #' @param data, dataframe that has log2FoldChange and log10padj values
 #' @param source, for event triggering to select genes
 #' @param x, the name of the x coordinate
@@ -95,7 +90,7 @@ debrowsermainplot <- function(input, output, session, data = NULL) {
 #'
 #' @examples
 #'     
-#'     x <- mainScatterNew(input, data, source, x, y)
+#'     x <- mainScatterNew()
 #'
 #' @export
 #'
@@ -113,7 +108,7 @@ mainScatterNew <- function(input = NULL, data = NULL, source = NULL,
                              "<br>", "log2FC=", round(log2FoldChange, digits = 2), " ",
                              "foldChange=", round(foldChange, digits = 2),
                              "<br>", sep = " ")) %>%
-        layout(xaxis = list(title = x),
+        plotly::layout(xaxis = list(title = x),
                yaxis = list(title = y)) %>% 
         plotly::layout(
             margin = list(l = input$left,
@@ -131,13 +126,15 @@ mainScatterNew <- function(input = NULL, data = NULL, source = NULL,
 #' prepare plot data for mainplots 
 #'
 #' @note \code{plotData}
-#' @param data, data
+#' @param pdata, data
+#' @param input, input
 #' @return prepdata
 #' @examples
-#'     x <- plotData(data)
+#'     x <- plotData()
 #' @export
 #'
-plotData <- function(pdata, input){
+plotData <- function(pdata = NULL, input = NULL){
+    if (is.null(pdata)) return(NULL)
     pdata$key <- pdata$ID
     data_rest <- pdata[ pdata$Legend!="NS",]
     data_NS <- pdata[ pdata$Legend=="NS",]
@@ -190,46 +187,32 @@ plotData <- function(pdata, input){
 #' @export
 #'
 mainPlotControlsUI <- function(id) {
-    getMainPlotsLeftMenu(id)
-}
-
-#' getMainPlotsLeftMenu
-#'
-#' Generates the Main PLots Left menu to be displayed within the DEBrowser.
-#'
-#' @note \code{getMainPlotsLeftMenu}
-#' @return returns the left menu according to the selected tab;
-#' @examples
-#'     x <- getMainPlotsLeftMenu()
-#' @export
-#'
-getMainPlotsLeftMenu <- function(id) {
     ns <- NS(id)
     list(shinydashboard::menuItem(" Plot Type",
-                                  startExpanded=TRUE,
-                                  radioButtons(ns("mainplot"), "Main Plots:",
-                                               c(Scatter = "scatter", VolcanoPlot = "volcano",
-                                                 MAPlot = "maplot"))
+        startExpanded=TRUE,
+        radioButtons(ns("mainplot"), "Main Plots:",
+        c(Scatter = "scatter", VolcanoPlot = "volcano",
+        MAPlot = "maplot"))
     ),
     shinydashboard::menuItem("Main Options",
-                             sliderInput(ns("backperc"), "Background Data(%):",
-                                         min=10, max=100, value=10, sep = "",
-                                         animate = FALSE)))
+        sliderInput(ns("backperc"), "Background Data(%):",
+        min=10, max=100, value=10, sep = "",
+        animate = FALSE)))
 }
 
 #' generateTestData
 #'
 #' This generates a test data that is suitable to main plots in debrowser
-#'
+#' @param dat, DESeq results will be generated for loaded data
 #' @return testData
 #'
 #' @examples
-#'     x <- generateTestData(data)
+#'     x <- generateTestData()
 #'
 #' @export
 #'
-generateTestData <- function(dat) {
-    
+generateTestData <- function(dat = NULL) {
+    if (is.null(dat)) return (NULL)
     ##################################################
     columns <- dat$columns
     conds <- dat$conds

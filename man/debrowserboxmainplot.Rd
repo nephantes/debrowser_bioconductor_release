@@ -4,8 +4,8 @@
 \alias{debrowserboxmainplot}
 \title{debrowserboxmainplot}
 \usage{
-debrowserboxmainplot(input, output, session, data = NULL, conds = NULL,
-  cols = NULL, key = NULL)
+debrowserboxmainplot(input = NULL, output = NULL, session = NULL,
+  data = NULL, conds = NULL, cols = NULL, key = NULL)
 }
 \arguments{
 \item{input, }{input variables}
@@ -15,6 +15,12 @@ debrowserboxmainplot(input, output, session, data = NULL, conds = NULL,
 \item{session, }{session}
 
 \item{data, }{a matrix that includes expression values}
+
+\item{conds, }{conditions}
+
+\item{cols, }{columns}
+
+\item{key, }{the gene or region name}
 }
 \value{
 density plot

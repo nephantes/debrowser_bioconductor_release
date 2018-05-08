@@ -21,12 +21,12 @@ Creates a more detailed plot using the PCA results from
 the selected dataset.
 }
 \examples{
-load(system.file("extdata", "demo", "demodata.Rda", 
-package="debrowser"))
+load(system.file("extdata", "demo", "demodata.Rda", package="debrowser"))
 input<-c()
 input$qcplot<-"pca"
-input$col_list<-colnames(demodata[,2:7])
-x <- getPCAexplained(getNormalizedMatrix(demodata[,2:7]), 
-    input)
+input$col_list<-colnames(demodata[,1:6])
+dat <- getNormalizedMatrix(demodata[,1:6])
+pca_data <- run_pca(dat)
+x <- getPCAexplained(dat, pca_data, input)
 
 }

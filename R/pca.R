@@ -6,7 +6,7 @@
 #' @return the panel for PCA plots;
 #'
 #' @examples
-#'     x <- getPCAPlotUI()
+#'     x <- getPCAPlotUI("pca")
 #'
 #' @export
 #'
@@ -33,7 +33,7 @@ getPCAPlotUI <- function(id) {
 #' @examples
 #'     x <- debrowserpcaplot()
 #'
-debrowserpcaplot <- function(input, output, session, pcadata = NULL, metadata = NULL) {
+debrowserpcaplot <- function(input = NULL, output = NULL, session = NULL, pcadata = NULL, metadata = NULL) {
     if(is.null(pcadata)) return(NULL)
     qcplots <-  reactive({ 
         sc <- getShapeColor(input)
@@ -81,7 +81,7 @@ debrowserpcaplot <- function(input, output, session, pcadata = NULL, metadata = 
 #'     x <- pcaPlotControlsUI("pca")
 #' @export
 #'
-pcaPlotControlsUI <- function(id) {
+pcaPlotControlsUI <- function(id  = "pca") {
     ns <- NS(id)
     list(fluidRow(column(6, getPCselection(id, 1, "x")), 
          column(6, getPCselection(id, 2, "y"))),
@@ -103,7 +103,7 @@ pcaPlotControlsUI <- function(id) {
 #'     load(system.file("extdata", "demo", "demodata.Rda", 
 #'         package="debrowser"))
 #'     pca_data<-run_pca(getNormalizedMatrix(
-#'         demodata[rowSums(demodata[,2:7])>10,2:7]))
+#'         demodata[rowSums(demodata[,1:6])>10,1:6]))
 #'
 #' @export
 #'
@@ -137,13 +137,13 @@ run_pca <- function(x=NULL, retx = TRUE,
 #' @examples
 #'     load(system.file("extdata", "demo", "demodata.Rda",
 #'             package="debrowser"))
-#'     metadata<-cbind(colnames(demodata[,2:7]), 
-#'             colnames(demodata[,2:7]),
+#'     metadata<-cbind(colnames(demodata[,1:6]), 
+#'             colnames(demodata[,1:6]),
 #'             c(rep("Cond1",3), rep("Cond2",3)))
 #'     colnames(metadata)<-c("samples", "color", "shape")
 #'     
 #'     a <- plot_pca(getNormalizedMatrix(
-#'             demodata[rowSums(demodata[,2:7])>10,2:7]),
+#'             demodata[rowSums(demodata[,1:6])>10,1:6]),
 #'             metadata = metadata, color = "samples",
 #'             size = 5, shape = "shape")
 #'
@@ -238,13 +238,13 @@ prepPCADat <- function(pca_data = NULL, metadata = NULL, input = NULL, pcx = 1, 
 #' @param input, input params
 #' @return explained plot
 #' @examples
-#' load(system.file("extdata", "demo", "demodata.Rda", 
-#' package="debrowser"))
+#' load(system.file("extdata", "demo", "demodata.Rda", package="debrowser"))
 #' input<-c()
 #' input$qcplot<-"pca"
-#' input$col_list<-colnames(demodata[,2:7])
-#' x <- getPCAexplained(getNormalizedMatrix(demodata[,2:7]), 
-#'     input)
+#' input$col_list<-colnames(demodata[,1:6])
+#' dat <- getNormalizedMatrix(demodata[,1:6])
+#' pca_data <- run_pca(dat)
+#' x <- getPCAexplained(dat, pca_data, input)
 #'
 #' @export
 #'
@@ -330,7 +330,7 @@ drawPCAExplained <- function(explainedData = NULL){
 #' @note \code{getPCselection}
 #' @return PC selection for PCA analysis
 #' @examples
-#'     x <- getPCselection(id)
+#'     x <- getPCselection("pca")
 #' @export
 #'
 getPCselection <- function(id, num = 1, xy = "x" ) {
@@ -353,7 +353,7 @@ getPCselection <- function(id, num = 1, xy = "x" ) {
 #' @export
 #'
 getColorShapeSelection <- function(metadata = NULL, input = NULL, session = NULL) {
-    if (is.null(metadata)) return (NULL)
+    if (is.null(metadata) ||  is.null(session)) return (NULL)
     list(fluidRow(column(6, selectGroupInfo(metadata, input, session$ns("color_pca"), "Color field")),
     column(6, selectGroupInfo(metadata, input, session$ns("shape_pca"), "Shape field"))))
 }
@@ -364,10 +364,10 @@ getColorShapeSelection <- function(metadata = NULL, input = NULL, session = NULL
 #' @param id, namespace id
 #' @note \code{getLegendSelect}
 #' @examples
-#'     x <- getLegendSelect()
+#'     x <- getLegendSelect("pca")
 #' @export
 #'
-getLegendSelect <- function(id) {
+getLegendSelect <- function(id = "pca") {
     ns <- NS(id)
     lst.choices <- as.list(c("color", "shape"))
     selectInput(ns("legendSelect"), label = "Select legend",
@@ -384,7 +384,7 @@ getLegendSelect <- function(id) {
 #'     x <- getTextOnOff("pca")
 #' @export
 #'
-getTextOnOff <- function(id) {
+getTextOnOff <- function(id = "pca") {
     ns <- NS(id)
     lst.choices <- as.list(c("On", "Off"))
     selectInput(ns("textonoff"), label = "Text On/Off",

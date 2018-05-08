@@ -7,11 +7,14 @@
 #' @param output, output objects
 #' @param session, session 
 #' @param data, a matrix that includes expression values
+#' @param conds, conditions
+#' @param cols, columns
+#' @param key, the gene or region name
 #' @return density plot 
 #' @export
 #'
 #' @examples
-#'     x <- debrowserbarmainplot(data = data)
+#'     x <- debrowserbarmainplot()
 #'
 debrowserbarmainplot <- function(input, output, session, data = NULL,
                                  conds=NULL, cols = NULL, key=NULL) {

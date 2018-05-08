@@ -13,8 +13,8 @@
 #' @examples
 #'     x <- debrowserdataload()
 #'
-debrowserdataload <- function(input, output, session) {
-    
+debrowserdataload <- function(input = NULL, output = NULL, session = NULL) {
+    if (is.null(input)) return(NULL)
     ldata <- reactiveValues(count=NULL, meta=NULL)
 
     observe({

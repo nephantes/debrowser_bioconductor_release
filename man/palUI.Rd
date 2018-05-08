@@ -7,7 +7,7 @@
 palUI(id)
 }
 \arguments{
-\item{id, }{module ID}
+\item{id, }{namespace ID}
 }
 \value{
 pals

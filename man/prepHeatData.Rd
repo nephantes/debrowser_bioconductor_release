@@ -4,7 +4,7 @@
 \alias{prepHeatData}
 \title{prepHeatData}
 \usage{
-prepHeatData(data)
+prepHeatData(data = NULL)
 }
 \arguments{
 \item{data, }{a matrixthat includes expression values}

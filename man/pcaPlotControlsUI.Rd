@@ -4,7 +4,7 @@
 \alias{pcaPlotControlsUI}
 \title{pcaPlotControlsUI}
 \usage{
-pcaPlotControlsUI(id)
+pcaPlotControlsUI(id = "pca")
 }
 \arguments{
 \item{id, }{namespace id}

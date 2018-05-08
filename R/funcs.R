@@ -8,12 +8,12 @@
 #' @param data, data 
 #' @return panel
 #' @examples
-#'     x <- getSampleDetails(output, data)
+#'     x <- getSampleDetails()
 #'
 #' @export
 #'
-getSampleDetails<- function (output, summary, details, data) {
-    if (is.null(data$count)) return(NULL)
+getSampleDetails<- function (output = NULL, summary = NULL, details = NULL, data = NULL) {
+    if (is.null(data)) return(NULL)
     
     output[[summary]]<- renderTable({ 
         countdata <-  data$count
@@ -49,7 +49,7 @@ getSampleDetails<- function (output, summary, details, data) {
 #'
 #' Group info column selection. This can be used in batch effect
 #' or coloring the groups in the plots.
-#'
+#' @param metadata, metadata
 #' @param input, input values
 #' @param selectname, name of the select box
 #' @param label, label of the select box
@@ -104,6 +104,7 @@ addID <- function(data = NULL) {
 #'
 getVariationData <- function(inputdata = NULL, 
     cols = NULL, conds = NULL, key = NULL) {
+    if (is.null(inputdata)) return (NULL)
     # Pick out the gene with this ID
     vardata <- inputdata[key, ]
     bardata <- as.data.frame(cbind(key, cols,
@@ -116,16 +117,21 @@ getVariationData <- function(inputdata = NULL,
     data
 }
 
-#' getBSTableModal
+#' getBSTableUI
 #' prepares a Modal to put a table
-#'
+#' @param name, name 
+#' @param label, label
+#' @param trigger, trigger button for the modal
+#' @param size, size of the modal
+#' @param modal, modal yes/no
 #' @return the modal
 #'
 #' @examples
-#'     x<- getBSTableModal()
+#'     x<- getBSTableUI()
 #'
 #' @export
-getBSTableUI<-function(name,  label, trigger, size="large", modal = NULL){
+getBSTableUI<-function(name = NULL,  label = NULL, trigger = NULL, size="large", modal = NULL){
+    if (is.null(name)) return (NULL)
     ret <- div(style = "display:block;overflow-y:auto; overflow-x:auto;",
                wellPanel( DT::dataTableOutput(name)))
     if (!is.null(modal) && modal)
@@ -153,7 +159,7 @@ getBSTableUI<-function(name,  label, trigger, size="large", modal = NULL){
 #'
 #' @export
 #'
-getTableDetails <- function(output, session, tablename, data = NULL, modal = NULL){
+getTableDetails <- function(output  = NULL, session  = NULL, tablename  = NULL, data = NULL, modal = NULL){
     if (is.null(data)) return(NULL)
     tablenameUI <-  paste0(tablename,"Table")
     output[[paste(tablename, "Download")]] <- downloadHandler(

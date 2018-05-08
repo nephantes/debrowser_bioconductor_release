@@ -4,7 +4,10 @@
 \alias{generateTestData}
 \title{generateTestData}
 \usage{
-generateTestData(dat)
+generateTestData(dat = NULL)
+}
+\arguments{
+\item{dat, }{DESeq results will be generated for loaded data}
 }
 \value{
 testData
@@ -13,6 +16,6 @@ testData
 This generates a test data that is suitable to main plots in debrowser
 }
 \examples{
-    x <- generateTestData(data)
+    x <- generateTestData()
 
 }

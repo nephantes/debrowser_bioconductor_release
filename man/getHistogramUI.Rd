@@ -2,7 +2,7 @@
 % Please edit documentation in R/histogram.R
 \name{getHistogramUI}
 \alias{getHistogramUI}
-\title{getHistogramPlotUI}
+\title{getHistogramUI}
 \usage{
 getHistogramUI(id)
 }
@@ -16,9 +16,9 @@ the panel for PCA plots;
 Histogram plots UI.
 }
 \note{
-\code{getHistogramPlotUI}
+\code{getHistogramUI}
 }
 \examples{
-    x <- getHistogramPlotUI("histogram")
+    x <- getHistogramUI("histogram")
 
 }

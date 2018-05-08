@@ -4,10 +4,12 @@
 \alias{plotData}
 \title{plotData}
 \usage{
-plotData(pdata, input)
+plotData(pdata = NULL, input = NULL)
 }
 \arguments{
-\item{data, }{data}
+\item{pdata, }{data}
+
+\item{input, }{input}
 }
 \value{
 prepdata
@@ -19,5 +21,5 @@ prepare plot data for mainplots
 \code{plotData}
 }
 \examples{
-    x <- plotData(data)
+    x <- plotData()
 }

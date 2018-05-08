@@ -19,5 +19,5 @@ Generates the controls in the left menu for a histogram
 \code{histogramControlsUI}
 }
 \examples{
-    x <- histogramControlsUI()
+    x <- histogramControlsUI("histogram")
 }

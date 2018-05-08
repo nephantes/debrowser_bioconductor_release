@@ -4,7 +4,8 @@
 \alias{debrowserpcaplot}
 \title{debrowserpcaplot}
 \usage{
-debrowserpcaplot(input, output, session, pcadata = NULL, metadata = NULL)
+debrowserpcaplot(input = NULL, output = NULL, session = NULL,
+  pcadata = NULL, metadata = NULL)
 }
 \arguments{
 \item{input, }{input variables}

@@ -25,14 +25,17 @@ getBoxMainPlotUI <- function(id) {
 #' @param output, output objects
 #' @param session, session 
 #' @param data, a matrix that includes expression values
+#' @param conds, conditions
+#' @param cols, columns
+#' @param key, the gene or region name
 #' @return density plot 
 #' @export
 #'
 #' @examples
 #'     x <- debrowserboxmainplot()
 #'
-debrowserboxmainplot <- function(input, output, session, data = NULL,
-                                  conds=NULL, cols = NULL, key=NULL) {
+debrowserboxmainplot <- function(input = NULL, output = NULL, session = NULL, data = NULL,
+                                  conds = NULL, cols = NULL, key=NULL) {
   if(is.null(data)) return(NULL)
   output$BoxMain <- renderPlotly({
     getBoxMainPlot(data, conds, cols, key)

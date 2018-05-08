@@ -13,7 +13,7 @@
 #' @examples
 #'     x <- debrowserIQRplot()
 #'
-debrowserIQRplot <- function(input, output, session, data = NULL) {
+debrowserIQRplot <- function(input = NULL, output = NULL, session = NULL, data = NULL) {
     if (is.null(data)) return(NULL)
     output$IQR <- renderPlotly({
       getIQRPlot(data, input)
@@ -35,7 +35,7 @@ debrowserIQRplot <- function(input, output, session, data = NULL) {
 #' @return the panel for IQR plots;
 #'
 #' @examples
-#'     x <- getIQRPlotUI()
+#'     x <- getIQRPlotUI("IQR")
 #'
 #' @export
 #'
@@ -92,7 +92,7 @@ getIQRPlot <- function(data=NULL, input=NULL, title = ""){
                              outliercolor = 'rgba(219, 64, 82, 0.6)',
                              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
                                          outlierwidth = 2))) %>%
-    layout(title = title,
+      plotly::layout(title = title,
            xaxis = list(title = "samples"),
            yaxis = list(title = "logcount")) 
     if (!is.null(input$left))

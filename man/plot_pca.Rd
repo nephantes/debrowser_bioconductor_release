@@ -38,13 +38,13 @@ Plots the PCA results for the selected dataset.
 \examples{
     load(system.file("extdata", "demo", "demodata.Rda",
             package="debrowser"))
-    metadata<-cbind(colnames(demodata[,2:7]), 
-            colnames(demodata[,2:7]),
+    metadata<-cbind(colnames(demodata[,1:6]), 
+            colnames(demodata[,1:6]),
             c(rep("Cond1",3), rep("Cond2",3)))
     colnames(metadata)<-c("samples", "color", "shape")
     
     a <- plot_pca(getNormalizedMatrix(
-            demodata[rowSums(demodata[,2:7])>10,2:7]),
+            demodata[rowSums(demodata[,1:6])>10,1:6]),
             metadata = metadata, color = "samples",
             size = 5, shape = "shape")
 

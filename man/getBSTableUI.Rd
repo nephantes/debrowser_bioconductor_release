@@ -2,19 +2,31 @@
 % Please edit documentation in R/funcs.R
 \name{getBSTableUI}
 \alias{getBSTableUI}
-\title{getBSTableModal
+\title{getBSTableUI
 prepares a Modal to put a table}
 \usage{
-getBSTableUI(name, label, trigger, size = "large", modal = NULL)
+getBSTableUI(name = NULL, label = NULL, trigger = NULL, size = "large",
+  modal = NULL)
+}
+\arguments{
+\item{name, }{name}
+
+\item{label, }{label}
+
+\item{trigger, }{trigger button for the modal}
+
+\item{size, }{size of the modal}
+
+\item{modal, }{modal yes/no}
 }
 \value{
 the modal
 }
 \description{
-getBSTableModal
+getBSTableUI
 prepares a Modal to put a table
 }
 \examples{
-    x<- getBSTableModal()
+    x<- getBSTableUI()
 
 }

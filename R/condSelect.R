@@ -17,16 +17,12 @@
 #' @examples
 #'     x <- debrowsercondselect()
 #'
-debrowsercondselect <- function(input, output, session, data, metadata=NULL) {
-
+debrowsercondselect <- function(input = NULL, output = NULL, session = NULL, data = NULL, metadata = NULL) {
+    if (is.null(data)) return(NULL)
     choicecounter <- reactiveValues(nc = 0)
     
     output$conditionSelector <- renderUI({
-        selectConditions(Dataset = data,
-            metadata = metadata,
-            choicecounter = choicecounter,
-            input = input,
-            session = session)
+        selectConditions(data, metadata, choicecounter, input)
     })
     observeEvent(input$add_btn, {
         choicecounter$nc <- choicecounter$nc + 1
@@ -44,7 +40,6 @@ debrowsercondselect <- function(input, output, session, data, metadata=NULL) {
 #' condSelectUI
 #' Creates a panel to select samples for each condition
 #'
-#' @param id, namespace id
 #' @return panel
 #' @examples
 #'     x <- condSelectUI()
@@ -78,7 +73,7 @@ list(
 #'
 getMethodDetails <- function(num = 0, input = NULL) {
     if (num > 0)
-        a <- list(
+        list(
             conditionalPanel(
                 (condition <- paste0("input.demethod",num," == 'DESeq2'")),
                 getSelectInputBox("fitType", "Fit Type", num, 
@@ -133,7 +128,7 @@ getMethodDetails <- function(num = 0, input = NULL) {
 #'
 getConditionSelector<- function(num=0, choices = NULL, selected = NULL) {
     if (!is.null(choices))
-        a <- list(column(6, selectInput(paste0("condition", num),
+        list(column(6, selectInput(paste0("condition", num),
             label = paste0("Condition ", num),
             choices = choices, multiple = TRUE,
             selected = selected)))
@@ -241,7 +236,7 @@ getSelectInputBox <- function(id = NULL, name = NULL,
                               cw = 2) {
     if (is.null(id)) return(NULL)
     if (!is.null(choices))
-        a <- list(column(cw, selectInput(paste0(id, num),
+        list(column(cw, selectInput(paste0(id, num),
             label = name,
             choices = choices, multiple = FALSE,
             selected = selected)))
@@ -268,8 +263,7 @@ getSelectInputBox <- function(id = NULL, name = NULL,
 selectConditions<-function(Dataset = NULL,
                            metadata = NULL,
                            choicecounter = NULL,
-                           input = NULL,
-                           session = NULL) {
+                           input = NULL) {
     if (is.null(Dataset)) return(NULL)
     
     selectedSamples <- function(num){
@@ -281,9 +275,6 @@ selectConditions<-function(Dataset = NULL,
     nc <- choicecounter$nc
     
     if (nc >= 0) {
-        if(!exists("all_selections")){
-            all_selections <- ""
-        }
         allsamples <- getSampleNames( colnames(Dataset), "all" )
         
         lapply(seq_len(nc), function(i) {
@@ -352,38 +343,37 @@ getMetaSelector <- function(metadata = NULL, input = NULL, n = 0){
 #'     x<-get_conditions_given_selection()
 #' @export
 #'
-get_conditions_given_selection <- function(metadata = NULL, selection){		
-	
-    if(!is.null(metadata)){		
-        df <- metadata	
-        if(selection == "No Selection"){		
-            return(NULL)		
-        }		
-        if(length(levels(factor(df[,selection]))) != 2){		
-            return("There must be exactly 2 groups.")		
-        } else {		
-            # Assuming the first column has samples		
-            sample_col_name <- colnames(df)[1]		
-            
-            condition1 <- levels(df[,selection])[1]		
-            condition2 <- levels(df[,selection])[2]		
-            
-            # In case the conditions are integers		
-            if(is.null(condition2)){		
-                condition1 <- levels(factor(df[,selection]))[1]		
-                condition2 <- levels(factor(df[,selection]))[2]		
-            }		
-            
-            condition1_filtered <- df[df[,selection] == condition1, ]		
-            a <- condition1_filtered[,sample_col_name]		
-            
-            condition2_filtered <- df[df[,selection] == condition2, ]		
-            b <- condition2_filtered[,sample_col_name]		
-            
-            both_groups <- list(a, b)
-            return(both_groups)		
-        }		
+get_conditions_given_selection <- function(metadata = NULL, selection = NULL){		
+    if(is.null(metadata)) return(NULL)		
+    df <- metadata	
+    if(selection == "No Selection"){		
+        return(NULL)		
     }		
+    if(length(levels(factor(df[,selection]))) != 2){		
+        return("There must be exactly 2 groups.")		
+    } else {		
+        # Assuming the first column has samples		
+        sample_col_name <- colnames(df)[1]		
+        
+        condition1 <- levels(df[,selection])[1]		
+        condition2 <- levels(df[,selection])[2]		
+        
+        # In case the conditions are integers		
+        if(is.null(condition2)){		
+            condition1 <- levels(factor(df[,selection]))[1]		
+            condition2 <- levels(factor(df[,selection]))[2]		
+        }		
+        
+        condition1_filtered <- df[df[,selection] == condition1, ]		
+        a <- condition1_filtered[,sample_col_name]		
+        
+        condition2_filtered <- df[df[,selection] == condition2, ]		
+        b <- condition2_filtered[,sample_col_name]		
+        
+        both_groups <- list(a, b)
+        return(both_groups)		
+    }		
+    		
 }
 
 #' getSampleNames
@@ -417,7 +407,7 @@ getSampleNames <- function(cnames = NULL, part = 1) {
     m
 }
 
-#' prepDataContainer
+#' prepDataContainerNew
 #'
 #' Prepares the data container that stores values used within DESeq.
 #'
@@ -428,9 +418,9 @@ getSampleNames <- function(cnames = NULL, part = 1) {
 #' @export
 #'
 #' @examples
-#'     x <- prepDataContainer()
+#'     x <- prepDataContainerNew()
 #'
-prepDataContainer <- function(data = NULL, counter=NULL, 
+prepDataContainerNew <- function(data = NULL, counter=NULL, 
                               input = NULL) {
     if (is.null(data)) return(NULL)
     

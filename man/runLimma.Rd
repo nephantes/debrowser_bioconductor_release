@@ -4,7 +4,7 @@
 \alias{runLimma}
 \title{runLimma}
 \usage{
-runLimma(data = NULL, columns = NULL, conds = NULL)
+runLimma(data = NULL, columns = NULL, conds = NULL, params = NULL)
 }
 \arguments{
 \item{data, }{A matrix that includes all the expression raw counts,

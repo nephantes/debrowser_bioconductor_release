@@ -7,7 +7,7 @@
 cutOffSelectionUI(id)
 }
 \arguments{
-\item{nc, }{total number of comparisons}
+\item{id, }{namespace id}
 }
 \value{
 returns the left menu according to the selected tab;
@@ -19,5 +19,5 @@ Gathers the cut off selection for DE analysis
 \code{cutOffSelectionUI}
 }
 \examples{
-    x <- cutOffSelectionUI()
+    x <- cutOffSelectionUI("cutoff")
 }

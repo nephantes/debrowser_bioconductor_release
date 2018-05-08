@@ -4,8 +4,8 @@
 \alias{debrowserdeanalysis}
 \title{debrowserdeanalysis}
 \usage{
-debrowserdeanalysis(input, output, session, data = NULL, columns = NULL,
-  conds = NULL, params = NULL)
+debrowserdeanalysis(input = NULL, output = NULL, session = NULL,
+  data = NULL, columns = NULL, conds = NULL, params = NULL)
 }
 \arguments{
 \item{input, }{input variables}
@@ -15,6 +15,12 @@ debrowserdeanalysis(input, output, session, data = NULL, columns = NULL,
 \item{session, }{session}
 
 \item{data, }{a matrix that includes expression values}
+
+\item{columns, }{columns}
+
+\item{conds, }{conditions}
+
+\item{params, }{de parameters}
 }
 \value{
 DE panel
@@ -23,6 +29,6 @@ DE panel
 Module to perform and visualize DE results.
 }
 \examples{
-    x <- debrowserdeanalysis(data = data)
+    x <- debrowserdeanalysis()
 
 }

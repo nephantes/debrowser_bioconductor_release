@@ -4,7 +4,7 @@
 \alias{getTextOnOff}
 \title{getTextOnOff}
 \usage{
-getTextOnOff(id)
+getTextOnOff(id = "pca")
 }
 \arguments{
 \item{id, }{namespace id}

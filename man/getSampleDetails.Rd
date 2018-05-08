@@ -4,7 +4,8 @@
 \alias{getSampleDetails}
 \title{getSampleDetails}
 \usage{
-getSampleDetails(output, summary, details, data)
+getSampleDetails(output = NULL, summary = NULL, details = NULL,
+  data = NULL)
 }
 \arguments{
 \item{output, }{output}
@@ -22,6 +23,6 @@ panel
 get sample details
 }
 \examples{
-    x <- getSampleDetails(output, data)
+    x <- getSampleDetails()
 
 }

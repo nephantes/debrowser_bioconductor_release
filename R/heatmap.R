@@ -98,7 +98,8 @@ debrowserheatmap <- function( input, output, session, data = NULL){
 #' @export
 #'
 #'
-getPlotArea <- function(input, session){
+getPlotArea <- function(input = NULL, session = NULL){
+    if (is.null(input)) return(NULL)
     ret <- c()
     
     if (input$interactive){
@@ -121,12 +122,13 @@ getPlotArea <- function(input, session){
 #' @return heatmapply plot
 #'
 #' @examples
-#'     x <- runHeatmap(mtcars)
+#'     x <- runHeatmap()
 #'
 #' @export
 #'
 #'
-runHeatmap <- function(input, session, data){
+runHeatmap <- function(input = NULL, session = NULL, data = NULL){
+    if (is.null(data)) return(NULL)
     cld <-data
     hclustfun_row <- function(x, ...) hclust(x, method = input$hclustFun_Row)
     hclustfun_col <- function(x, ...) hclust(x, method = input$hclustFun_Col)
@@ -220,12 +222,12 @@ runHeatmap <- function(input, session, data){
 #' @return heatmap.2
 #'
 #' @examples
-#'     x <- runHeatmap2(mtcars)
+#'     x <- runHeatmap2()
 #'
 #' @export
 #'
 #'
-runHeatmap2 <- function(input, session, data){
+runHeatmap2 <- function(input = NULL, session = NULL, data = NULL){
     if(is.null(data)) return(NULL)
     if (nrow(data)>5000)
         data <- data[1:5000, ]
@@ -303,10 +305,11 @@ changeClusterOrder <- function(order = NULL, cld = NULL){
 #' @param nstart, n for kmeans clustering
 #' @return heatmap plot area
 #' @examples
-#'     x <- niceKmeans("heatmap")
+#'     x <- niceKmeans()
 #' @export
 #'
-niceKmeans <-function (df, input, iter.max = 1000, nstart=100) {
+niceKmeans <-function (df = NULL, input = NULL, iter.max = 1000, nstart=100) {
+    if(is.null(df)) return(NULL)
     source <-df
     kmeans <- kmeans(source, centers = input$knum, iter.max = iter.max, algorithm=input$kmeansalgo, nstart=nstart)
     clustered <- data.frame()
@@ -368,7 +371,7 @@ getHeatmapUI <- function(id) {
 #' @param id, module ID
 #' @return HeatmapControls
 #' @examples
-#'     x <- heatmapControlsUI(1)
+#'     x <- heatmapControlsUI("heatmap")
 #' @export
 #'
 heatmapControlsUI <- function(id) {
@@ -492,7 +495,7 @@ distFunParamsUI <- function() {
 #' get pallete 
 #'
 #' @note \code{palUI}
-#' @param id, module ID
+#' @param id, namespace ID
 #' @return pals
 #' @examples
 #'     x <- palUI("heatmap")
@@ -523,7 +526,7 @@ palUI <- function(id) {
 #' get Custom Color controls
 #'
 #' @note \code{getColRng}
-#' @param id, module ID
+#' @param id, namespace ID
 #' @return color range
 #' @examples
 #'     x <- customColorsUI("heatmap")
@@ -551,7 +554,7 @@ customColorsUI <- function(id) {
 #'
 #' @export
 #'
-prepHeatData <- function(data) 
+prepHeatData <- function(data = NULL) 
 {
     if(is.null(data)) return(NULL)
     ld <- data
@@ -573,10 +576,10 @@ prepHeatData <- function(data)
 #' @examples
 #'     x <- getSelHeat()
 #'
-getSelHeat <- function(data=NULL, input = NULL) {
+getSelHeat <- function(data = NULL, input = NULL) {
     if (is.null(input)) return(NULL)
     getSelected <- reactive({
-        selectedData <- data[unlist(strsplit(input, ",")), ]
+        data[unlist(strsplit(input, ",")), ]
     })
     list( getSelected = isolate(getSelected) )
 }
@@ -609,27 +612,26 @@ heatmapJScode <- function() {
     }
     }
     Shiny.onInputChange(params.controlname, $("#heatmap-heatmap").attr("gname"));
-}
-
-shinyjs.getSelectedGenes = function(params){
-var defaultParams = {
-plotId : "heatmap",
-controlname : "selgenenames"
-};
-params = shinyjs.getParams(params, defaultParams);
-var count = document.getElementById(params.plotId).querySelectorAll("g.y2tick").length
-var start = 0
-var out = ""
-
-for (i = start; i < count; i++)
-{
-    if (typeof document.getElementById(params.plotId).querySelectorAll("g.y2tick")[i] != "undefined"){
-    out += document.getElementById(params.plotId).querySelectorAll("g.y2tick")[i].innerHTML.match(">(.*)</text>")[1]  + ","
     }
-}
-Shiny.onInputChange(params.controlname, out);
-}
-'
+    
+    shinyjs.getSelectedGenes = function(params){
+    var defaultParams = {
+    plotId : "heatmap",
+    controlname : "selgenenames"
+    };
+    params = shinyjs.getParams(params, defaultParams);
+    var count = document.getElementById(params.plotId).querySelectorAll("g.y2tick").length
+    var start = 0
+    var out = ""
+    
+    for (i = start; i < count; i++)
+    {
+        if (typeof document.getElementById(params.plotId).querySelectorAll("g.y2tick")[i] != "undefined"){
+        out += document.getElementById(params.plotId).querySelectorAll("g.y2tick")[i].innerHTML.match(">(.*)</text>")[1]  + ","
+        }
+    }
+    Shiny.onInputChange(params.controlname, out);
+    }'
 }
 
 #' getJSLine

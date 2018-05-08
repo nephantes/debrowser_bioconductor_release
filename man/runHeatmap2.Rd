@@ -4,7 +4,7 @@
 \alias{runHeatmap2}
 \title{runHeatmap2}
 \usage{
-runHeatmap2(input, session, data)
+runHeatmap2(input = NULL, session = NULL, data = NULL)
 }
 \arguments{
 \item{input, }{input variables}
@@ -20,6 +20,6 @@ heatmap.2
 Creates a heatmap based on the user selected parameters within shiny
 }
 \examples{
-    x <- runHeatmap2(mtcars)
+    x <- runHeatmap2()
 
 }

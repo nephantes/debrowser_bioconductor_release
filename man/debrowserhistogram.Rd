@@ -4,7 +4,8 @@
 \alias{debrowserhistogram}
 \title{debrowserhistogram}
 \usage{
-debrowserhistogram(input, output, session, data = NULL)
+debrowserhistogram(input = NULL, output = NULL, session = NULL,
+  data = NULL)
 }
 \arguments{
 \item{input, }{input variables}

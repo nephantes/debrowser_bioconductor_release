@@ -4,7 +4,7 @@
 \alias{getLegendSelect}
 \title{getLegendSelect}
 \usage{
-getLegendSelect(id)
+getLegendSelect(id = "pca")
 }
 \arguments{
 \item{id, }{namespace id}
@@ -16,5 +16,5 @@ select legend
 \code{getLegendSelect}
 }
 \examples{
-    x <- getLegendSelect()
+    x <- getLegendSelect("pca")
 }
