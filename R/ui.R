@@ -41,12 +41,12 @@ deUI <- function() {
     
 enableBookmarking("server")
 
-    dbHeader <- shinydashboard::dashboardHeader(titleWidth = 350,
-        shinydashboard::dropdownMenu(type = "notifications", 
+    dbHeader <- dashboardHeader(titleWidth = 250,
+        dropdownMenu(type = "notifications", 
             badgeStatus = "primary", icon = shiny::icon("cog"),
-            shinydashboard::messageItem("Sign Out", "",
+            messageItem("Sign Out", "",
                                         icon = shiny::icon("sign-out")),
-            shinydashboard::messageItem("Refresh", "", 
+            messageItem("Refresh", "", 
                                         icon = shiny::icon("refresh"))
             ))
    dbHeader$children[[2]]$children <- tags$a(style='color: white;',
@@ -93,18 +93,18 @@ enableBookmarking("server")
         tags$link(rel = "stylesheet", type = "text/css",
         href = "www/shinydashboard_additional.css")
     ),
-    shinydashboard::dashboardPage(
+    dashboardPage(
         dbHeader,
-        shinydashboard::dashboardSidebar(
-            width = 350,
+        dashboardSidebar(
+            width = 250,
             conditionalPanel(condition = "!output.user_name",
                 googleAuthR::googleAuthUI("initial_google_button")),
             conditionalPanel(condition = "output.user_name",
                 uiOutput("loading"),
                 sidebarMenu(id="DataPrep",
-                            menuItem("Upload", tabName = "Upload"),
-                            menuItem("Filter", tabName = "Filter"),
-                            menuItem("BatchEffect", tabName = "BatchEffect")
+                    menuItem("Upload", tabName = "Upload"),
+                    menuItem("Filter", tabName = "Filter"),
+                    menuItem("BatchEffect", tabName = "BatchEffect")
                 ),
                 conditionalPanel(condition = "(output.dataready)",
                     uiOutput("leftMenu")),
@@ -113,19 +113,28 @@ enableBookmarking("server")
                 conditionalPanel(condition = "(output.dataready)",
                     uiOutput('cutoffSelection')),
                     debrowser::bookmarkUI("bm")
-            )
+            ), p("Logged in as: ", textOutput("user_name"))
         ),
-    shinydashboard::dashboardBody(
+    dashboardBody(
         conditionalPanel(condition = "output.user_name",
         mainPanel(
-            width = 10,
+            width = 12,
             tags$head(
                 tags$style(type = "text/css",
                         "#methodtabs.nav-tabs {font-size: 14px} ")),
-            
                 tabsetPanel(id = "methodtabs", type = "tabs",
                     tabPanel(title = "Data Prep", value = "panel0", id="panel0",
-                            uiOutput("preppanel")),
+                             tabItems(
+                                 tabItem(tabName="Upload", dataLoadUI("load"),
+                                         column(4, verbatimTextOutput("loadedtable")
+                                         )),
+                                 tabItem(tabName="Filter",dataLCFUI("lcf"),                
+                                         column(4, verbatimTextOutput("filtertable")
+                                         )),
+                                 tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
+                                         column(4, verbatimTextOutput("batcheffecttable")
+                                         ))
+                             )),
                     tabPanel(title = "Main Plots", value = "panel1", id="panel1",
                             uiOutput("mainmsgs"),
                             conditionalPanel(condition = "input.demo || output.dataready", uiOutput("mainpanel"))),
@@ -134,10 +143,9 @@ enableBookmarking("server")
                     tabPanel(title = "GO Term", value = "panel3", id="panel3",
                             uiOutput("gopanel")),
                     tabPanel(title = "Tables", value = "panel4", id="panel4",
-                            DT::dataTableOutput("tables")))
+                            dataTableOutput("tables")))
         ),
-        p("Logged in as: ", textOutput("user_name")),
-        shinyjs::extendShinyjs(text = getUrlJSCode)
+        extendShinyjs(text = getUrlJSCode)
         )))
     )
     )

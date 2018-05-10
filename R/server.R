@@ -80,13 +80,15 @@
 #'             counts
 #' @importFrom edgeR calcNormFactors equalizeLibSizes DGEList glmLRT
 #'             exactTest estimateCommonDisp glmFit
+#' @importFrom shinydashboard dashboardHeader dropdownMenu messageItem
+#'             dashboardPage dashboardSidebar sidebarMenu dashboardBody
+#'             
 #' @importFrom limma lmFit voom eBayes topTable
 #' @importFrom sva ComBat
 #' @importFrom RCurl getURL
 #' @import org.Hs.eg.db
 #' @import org.Mm.eg.db
 #' @import V8
-#' @import shinydashboard
 #' @import shinyBS
 #' @import pathview
 #' @import googleAuthR
@@ -102,7 +104,7 @@ deServer <- function(input, output, session) {
         if (!interactive()) {
             options( shiny.maxRequestSize = 30 * 1024 ^ 2,
                     shiny.fullstacktrace = FALSE, shiny.trace=FALSE, 
-                     shiny.autoreload=TRUE)
+                    shiny.autoreload=TRUE, warn =-1)
             debrowser::loadpack(debrowser)
         }
         shinyjs::hide("dropdown-toggle")
@@ -266,7 +268,17 @@ deServer <- function(input, output, session) {
             getDownloadSection(TRUE, choices)
         })
         output$preppanel <- renderUI({
-            getDataPrepPanel()
+            tabItems(
+                tabItem(tabName="Upload", dataLoadUI("load"),
+                        column(4, verbatimTextOutput("loadedtable")
+                        )),
+                tabItem(tabName="Filter",dataLCFUI("lcf"),                
+                        column(4, verbatimTextOutput("filtertable")
+                        )),
+                tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
+                        column(4, verbatimTextOutput("batcheffecttable")
+                        ))
+            )
         })
         output$leftMenu  <- renderUI({
             getLeftMenu(input)
@@ -310,22 +322,9 @@ deServer <- function(input, output, session) {
             buttonValues$gotoanalysis <- TRUE
         })
         Dataset <- reactive({
-            tmpDataset <- NULL
-            query <- parseQueryString(session$clientData$url_search)
-            jsonobj<-query$jsonobject
-            if (buttonValues$gotoanalysis == TRUE || (!is.null(input$demo) && 
-                input$demo == TRUE) || !is.null(jsonobj) ){
-                tmpDataset <- load_data(input, session)
-                tmpDataset[is.na(tmpDataset)] <- 0
-                tmpDataset <-tmpDataset[rowSums(tmpDataset)>0, ] 
-                if (!is.null(input$batchselect) && input$batchselect!="None")
-                {
-                    tmpDataset<-correctBatchEffect(tmpDataset, input)
-                }
-            }
-            if (!is.null(jsonobj))
-                hide(id = "loading-debrowser", anim = TRUE, animType = "fade")
-            return(tmpDataset)
+            dat <- batch()$BatchEffect()$count
+            print(head(dat))
+            dat
         })
         observeEvent(input$add_btn, {
             shinyjs::enable("startDE")
@@ -374,11 +373,7 @@ deServer <- function(input, output, session) {
             )
             return(tmpSamples)
         })
-        output$batchEffect <- renderUI({
-            if(!is.null(input$file2)){
-                selectBatchEffect(input)
-            }
-        })
+
         output$conditionSelector <- renderUI({
             selectConditions(Dataset(), choicecounter, input, loadingJSON())
         })
@@ -429,7 +424,7 @@ deServer <- function(input, output, session) {
             if (!is.null(comparison()$init_data))
                 comparison()$init_data 
             else
-                qcdata()
+                batch()$BatchEffect()$count
         })
         filt_data <- reactive({
             if (!is.null(comparison()$init_data) &&
@@ -479,9 +474,6 @@ deServer <- function(input, output, session) {
         observeEvent(input$startPlots, {
             startPlots()
         })
-        qcdata <- reactive({
-            prepDataForQC(Dataset()[,input$samples], input)
-        })
         edat <- reactiveValues(val = NULL)
         observeEvent(input$qcplot, {
             shinyjs::js$showQCPlot()
@@ -501,15 +493,6 @@ deServer <- function(input, output, session) {
             getSelectedCols(Dataset(), datasetInput(), input)
         })
         
-        v <- c()
-        output$intheatmap <- d3heatmap::renderD3heatmap({
-            shinyjs::onclick("intheatmap", js$getNames(v))
-            dat <- df_select()
-            if (!is.null(cols()))
-                dat <- dat[,cols()]
-            getIntHeatmap(dat, input, inputQCPlot())
-        })
-        
         output$columnSelForQC <- renderUI({
             existing_cols <- input$samples
             if (!is.null(cols()))
@@ -521,17 +504,10 @@ deServer <- function(input, output, session) {
                 selected=existing_cols)
             )
         })
-        explainedData <- reactive({
-            getPCAexplained( df_select(), input )
-        })
-        
-        inputQCPlot <- reactiveValues(clustering_method = "ward.D2",
-            distance_method = "cor", interactive = FALSE, width = 700, height = 500)
+
+        inputQCPlot <- reactiveValues(width = 700, height = 500)
         inputQCPlot <- eventReactive(input$startQCPlot, {
             tmpDat <- c()
-            tmpDat$clustering_method <- input$clustering_method
-            tmpDat$distance_method <- input$distance_method
-            tmpDat$interactive <- input$interactive
             tmpDat$width <- input$width
             tmpDat$height <- input$height
             return(tmpDat)
@@ -641,8 +617,8 @@ deServer <- function(input, output, session) {
                 mostVaried <- filt_data()[filt_data()$Legend=="MV" | 
                     filt_data()$Legend=="GS", ]
             else
-                mostVaried <- getMostVariedList(data.frame(init_data()), 
-                    c(input$samples), input)
+                mostVaried <- getMostVariedList(init_data(), 
+                    colnames(init_data()), input)
             mostVaried
         })
         output$gotable <- DT::renderDataTable({
