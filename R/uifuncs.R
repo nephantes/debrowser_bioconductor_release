@@ -205,44 +205,6 @@ getCutOffSelection <- function(nc = 1){
     ) )
 }
 
-#' getInitialMenu
-#'
-#' Displays the initial menu within DEBrowser.
-#'
-#' @param input, input from user
-#' @param output, output to user
-#' @param session, session info
-#' @note \code{getInitialMenu}
-#' @return returns the initial menu
-#' @examples
-#'     x <- getInitialMenu()
-#' @export
-#'
-getInitialMenu <- function(input = NULL, output = NULL, session = NULL) {
-    if (is.null(input)) return (NULL)
-    initialMenu <- NULL
-    if (is.null(parseQueryString(session$clientData$url_search)$jsonobject))
-    {
-        initialMenu <- list(
-            conditionalPanel(condition = "!input.demo &&
-                !output.dataready",
-                actionLink("demo", "Load Demo!"),
-                #getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html"),
-                fileInput("file1", "Choose TSV File",
-                    accept = c("text/tsv",
-                        "text/comma-separated-values,text/plain",
-                        ".tsv")),
-                fileInput("file2", "Choose Meta Data File (Optional)",
-                          accept = c("text/tsv",
-                                     "text/comma-separated-values,text/plain",
-                        ".tsv"))
-                ,
-                uiOutput("batchEffect"),
-                actionButton("gotoanalysis", "Go to Analysis!"))
-            )
-    }
-    return(initialMenu)
-}
 
 #' getProgramTitle
 #'
@@ -464,46 +426,6 @@ togglePanels <- function(num = NULL, nums = NULL, session = NULL){
             selected = paste0("panel", num))
 }
 
-#' selectBatchEffect
-#'
-#' Batch effect column selection
-#'
-#' @param input, input values
-#' @param selectname, name of the select box
-#' @param label, label of the select box
-#' @note \code{selectBatchEffect}
-#' @examples
-#'     x <- selectBatchEffect()
-#' @export
-#'
-selectBatchEffect <- function(input = NULL,
-    selectname = "batchselect",
-    label = "Batch effect correction column") {
-    if (is.null(input$file2)) return (NULL)
-
-     metadata <- readMetaData(input)
-     lst.choices <- as.list(c("None", colnames(metadata)))
-     selectInput(selectname, label = label,
-            choices = lst.choices,
-            selected = 1)
-}
-
-#' readMetaData
-#'
-#' read metadata file
-#'
-#' @param input, input values
-#' @note \code{readMetaData}
-#' @examples
-#'     x <- readMetaData()
-#' @export
-#'
-readMetaData <- function(input = NULL) {
-if (is.null(input$file2)) return (NULL)
-
-metadata <- read.table(input$file2$datapath, sep = "\t",
-                       header = TRUE, row.names = 1)
-}
 
 #' getTableStyle
 #'

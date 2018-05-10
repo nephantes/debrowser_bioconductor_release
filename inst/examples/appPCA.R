@@ -1,23 +1,22 @@
-library(shiny)
-library(heatmaply)
-library(shinyjs)
+library(debrowser)
 source("../../R/plotSize.R")
 source("../../R/funcs.R")
 source("../../R/pca.R")
 
-header <- dashboardHeader(
+header <- shinydashboard::dashboardHeader(
     title = "DEBrowser PCA Plots"
 )
-sidebar <- dashboardSidebar(  sidebarMenu(id="DataAssessment",
-    menuItem("PCA", tabName = "PCA"),
-    menuItem("PCA Options",
+sidebar <- shinydashboard::dashboardSidebar(  
+    shinydashboard::sidebarMenu(id="DataAssessment",
+        shinydashboard::menuItem("PCA", tabName = "PCA"),
+        shinydashboard::menuItem("PCA Options",
     pcaPlotControlsUI("pca")),
     plotSizeMarginsUI("pca", w=600, h=400, t=50, b=50, l=60, r=0)
     ))
 
-body <- dashboardBody(
-    tabItems(
-        tabItem(tabName="PCA", getPCAPlotUI("pca"),
+body <- shinydashboard::dashboardBody(
+    shinydashboard::tabItems(
+        shinydashboard::tabItem(tabName="PCA", getPCAPlotUI("pca"),
                 column(4,
                        verbatimTextOutput("pca_hover"),
                        verbatimTextOutput("pca_selected")
@@ -25,22 +24,13 @@ body <- dashboardBody(
         )
     ))
 
-ui <- dashboardPage(header, sidebar, body, skin = "blue")
+ui <- shinydashboard::dashboardPage(header, sidebar, body, skin = "blue")
 
 
 server <- function(input, output, session) {
     load(system.file("extdata", "demo", "demodata.Rda",
                      package = "debrowser"))
     selected <- callModule(debrowserpcaplot, "pca", demodata)
-    
-    #output$main_hover <- renderPrint({
-    #    selected$shgClicked()
-    #})
-
-    #output$main_selected <- renderPrint({
-    #     selected$selGenes()
-    #})
-
 }
 
 shinyApp(ui, server)

@@ -345,31 +345,6 @@ getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL,
     m
 }
 
-#' prepDataForQC
-#'
-#' Prepares selected data for QC plots.
-#'
-#' @param dataset, loaded dataset
-#' @param input, input
-#' @return data
-#' @export
-#'
-#' @examples
-#'     x <- prepDataForQC()
-#'
-prepDataForQC<-function(dataset = NULL, input = NULL){
-    if (is.null(dataset)) return (NULL)
-    columns <-colnames(dataset)
-    dataset <- data.frame(dataset[,columns])
-    dataset[, columns] <- apply(dataset[, columns], 2,
-        function(x) as.integer(x))
-    dataset1 <- rowSums(dataset[,1:ncol(dataset)])
-    filtd <- data.frame(subset(dataset, 
-        rowSums(dataset[,1:ncol(dataset)]) > 10))
-    norm_data <- getNormalizedMatrix(filtd, 
-        input$norm_method)
-    return(norm_data)
-}
 
 #' getMostVariedList
 #'

@@ -21,7 +21,9 @@ Depends:
     shiny,
     ggvis,
     jsonlite,
-    shinyjs
+    shinyjs,
+    shinydashboard,
+    shinyBS
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports:
@@ -54,7 +56,6 @@ Imports:
     V8,
     methods,
     sva,
-    shinydashboard,
     RCurl,
     pathview,
     shinyBS,
