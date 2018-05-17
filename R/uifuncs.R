@@ -164,12 +164,9 @@ getQCLeftMenu <- function( input = NULL) {
                 getHelpButton("method",
                               "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#heat-maps"),
         conditionalPanel( (condition <- "input.qcplot=='pca'"),
-            getPCselection(1, "x"),
-            getPCselection(2, "y"),
-            textInput("pctile", "Top %", value = "0.05" ),
-            getTextOnOff(),
-            getLegendSelect(),
-            getColorShapeSelection(input)
+            shinydashboard::menuItem("PCA Options",
+            pcaPlotControlsUI("qcpca")),
+            plotSizeMarginsUI("qcpca", w=600, h=400, t=50, b=50, l=60, r=0)
         ),
         downloadButton("downloadPlot", "Download Plot"))
     )
