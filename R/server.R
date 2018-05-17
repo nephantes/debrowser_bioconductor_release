@@ -322,6 +322,7 @@ deServer <- function(input, output, session) {
             buttonValues$gotoanalysis <- TRUE
         })
         Dataset <- reactive({
+            #if (is.null(isolate(batch()))) return(NULL)
             dat <- batch()$BatchEffect()$count
             print(head(dat))
             dat
@@ -459,6 +460,9 @@ deServer <- function(input, output, session) {
             }
         })
         condmsg <- reactiveValues(text = NULL)
+        explainedData <- reactive({
+            getPCAexplained( df_select(), input )
+        })
         startPlots <- reactive({
             compselect <- 1
             if (!is.null(input$compselect) ) 
@@ -480,21 +484,24 @@ deServer <- function(input, output, session) {
         })
         output$qcplotout <- renderPlot({
             if (is.null(input$col_list) && is.null(df_select())) return(NULL)
+            if (!is.null(df_select()))
+                callModule(debrowserpcaplot, "qcpca", df_select(), batch()$BatchEffect()$meta)
+
             updateTextInput(session, "dataset", 
                 value =  choicecounter$lastselecteddataset)
-            edat$val <- explainedData()
             #if(input$qcplot=="pca" || input$qcplot=="IQR" || input$qcplot=="Density")
             #    shinyjs::js$hideQCPlot()
             getQCReplot(isolate(cols()), isolate(conds()), 
                 df_select(), input, inputQCPlot(),
-                drawPCAExplained(edat$val$plotdata) )
+               drawPCAExplained(edat$val$plotdata) )
         })
+        
         df_select <- reactive({
             getSelectedCols(Dataset(), datasetInput(), input)
         })
         
         output$columnSelForQC <- renderUI({
-            existing_cols <- input$samples
+            existing_cols <- colnames(datasetInput())
             if (!is.null(cols()))
                 existing_cols <- cols()
             wellPanel(id = "tPanel",

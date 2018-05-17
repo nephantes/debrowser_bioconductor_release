@@ -24,17 +24,18 @@ getQCPanel <- function(input = NULL) {
         getHelpButton("method", 
         "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#quality-control-plots")),
         conditionalPanel(condition = "input.qcplot == 'IQR' 
-                         || input.qcplot == 'Density'
-                         || input.qcplot == 'pca'",
+                         || input.qcplot == 'Density'",
             column(12, ggvisOutput("ggvisQC1")),
             column(12, ggvisOutput("ggvisQC2"))
         ),
-        conditionalPanel(condition = 
-            "(input.qcplot != 'heatmap')",
-            column(12, plotOutput("qcplotout",
-            height = height, width = width))),    
+        conditionalPanel(condition = "input.qcplot == 'pca'",
+                         getPCAPlotUI("qcpca")),    
         conditionalPanel(condition = "(input.qcplot == 'heatmap')",
-                         getHeatmapUI("heatmap"))
+                         getHeatmapUI("heatmap")),
+        conditionalPanel(condition = 
+                             "(input.qcplot != 'heatmap')",
+                         column(12, plotOutput("qcplotout",
+                                               height = height, width = width)))
        )
     return(qcPanel)
 }
@@ -121,13 +122,7 @@ getQCReplot <- function(cols = NULL, conds = NULL,
         color  <- colnames(dataset)
         shape <- "Conds"
     }
-    mdata <- readMetaData(input)
-    if (!is.null(input$color_pca) && input$color_pca != "None")
-        color <- as.character(mdata[samples, input$color_pca])
-    if (!is.null(input$shape_pca) && input$shape_pca != "None")
-        shape <- as.character(mdata[samples, input$shape_pca])
-    
-    metadata <- cbind(samples, color, shape)
+    metadata <- c()
 
     if (nrow(dataset)<3) return(NULL)
         getQCPlots(dataset, input, metadata,
