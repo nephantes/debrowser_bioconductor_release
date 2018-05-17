@@ -83,10 +83,10 @@ debrowserpcaplot <- function(input = NULL, output = NULL, session = NULL, pcadat
 #'
 pcaPlotControlsUI <- function(id  = "pca") {
     ns <- NS(id)
-    list(fluidRow(column(6, getPCselection(id, 1, "x")), 
-         column(6, getPCselection(id, 2, "y"))),
-         fluidRow(column(6, getTextOnOff(id)),
-         column(6, getLegendSelect(id))),
+    list(fluidRow(column(12, getPCselection(id, 1, "x")), 
+         column(12, getPCselection(id, 2, "y"))),
+         fluidRow(column(12, getTextOnOff(id)),
+         column(12, getLegendSelect(id))),
     uiOutput(ns("colorShapeSelect")))
 }
 

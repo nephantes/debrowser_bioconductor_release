@@ -322,8 +322,7 @@ deServer <- function(input, output, session) {
             buttonValues$gotoanalysis <- TRUE
         })
         Dataset <- reactive({
-            #if (is.null(isolate(batch()))) return(NULL)
-            dat <- batch()$BatchEffect()$count
+            dat <- init_data()
             print(head(dat))
             dat
         })
