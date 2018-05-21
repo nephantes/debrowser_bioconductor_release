@@ -130,9 +130,8 @@ batchEffectUI <- function (id) {
                         tabsetPanel(
                         tabPanel ("<== Before",
                         pcaPlotControlsUI(ns("beforeCorrectionPCA"))),
-                        conditionalPanel(paste0("input['", ns("submitBatchEffect"), "']"), 
                         tabPanel ( "After ==>",
-                        pcaPlotControlsUI(ns("afterCorrectionPCA"))))))),
+                        pcaPlotControlsUI(ns("afterCorrectionPCA")))))),
                     column(5,
                         getPCAPlotUI(ns("afterCorrectionPCA")))
                 ),

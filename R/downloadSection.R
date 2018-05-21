@@ -23,7 +23,7 @@ getDownloadSection <- function(flag = FALSE, choices=NULL) {
                     selectInput("dataset", "Choose a dataset:",
                     choices = choices), 
                     selectInput("norm_method", "Normalization Method:",
-                        choices <- c("TMM", "RLE", "upperquartile", "none")),
+                        c("none", "DESeq2", "TMM", "RLE", "upperquartile")),
                     downloadButton("downloadData", "Download Data"),
                     conditionalPanel(condition = "input.dataset=='most-varied'",
                     textInput("topn", "top-n", value = "500" ), 

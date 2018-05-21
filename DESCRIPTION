@@ -58,11 +58,11 @@ Imports:
     sva,
     RCurl,
     pathview,
-    shinyBS,
     googleAuthR,
     enrichplot,
     colourpicker,
-    plotly
+    plotly,
+    heatmaply
 RoxygenNote: 6.0.1
 Suggests: testthat,
     rmarkdown,

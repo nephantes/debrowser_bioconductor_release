@@ -104,14 +104,17 @@ enableBookmarking("server")
                 sidebarMenu(id="DataPrep",
                     menuItem("Upload", tabName = "Upload"),
                     menuItem("Filter", tabName = "Filter"),
-                    menuItem("BatchEffect", tabName = "BatchEffect")
+                    menuItem("BatchEffect", tabName = "BatchEffect"),
+                    menuItem("CondSelect", tabName = "CondSelect"),
+                    menuItem("DEAnalysis", tabName = "DEAnalysis"),
+                    menuItem("DEFilter", tabName = "DEAnalysis", startExpanded = TRUE,
+                             uiOutput("cutOffUI"),
+                             uiOutput("compselectUI"))
                 ),
                 conditionalPanel(condition = "(output.dataready)",
                     uiOutput("leftMenu")),
                 conditionalPanel(condition = "(output.dataready)",
                     uiOutput("downloadSection")),
-                conditionalPanel(condition = "(output.dataready)",
-                    uiOutput('cutoffSelection')),
                     debrowser::bookmarkUI("bm")
             ), p("Logged in as: ", textOutput("user_name"))
         ),
@@ -133,6 +136,10 @@ enableBookmarking("server")
                                          )),
                                  tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
                                          column(4, verbatimTextOutput("batcheffecttable")
+                                         )),
+                                 tabItem(tabName="CondSelect", condSelectUI()),
+                                 tabItem(tabName="DEAnalysis", uiOutput("deresUI"),
+                                         column(4, verbatimTextOutput("dcres")
                                          ))
                              )),
                     tabPanel(title = "Main Plots", value = "panel1", id="panel1",

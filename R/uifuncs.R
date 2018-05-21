@@ -19,6 +19,10 @@ getDataPrepPanel <- function(){
                 )),
         tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
                 column(4, verbatimTextOutput("batcheffecttable")
+                )),
+        tabItem(tabName="CondSelect", condSelectUI()),
+        tabItem(tabName="DEAnalysis", uiOutput("deresUI"),
+                column(4, verbatimTextOutput("dcres")
                 ))
     )
 }
@@ -46,10 +50,6 @@ if (is.null(input)) return(NULL)
                 ),
             getMainPlotsLeftMenu()),
         conditionalPanel( (condition <- "input.methodtabs=='panel2'"),
-                          
-            conditionalPanel( condition <- "input.qcplot=='heatmap'",
-                actionButton("startQCPlot", "Submit!")),
-                          
         shinydashboard::menuItem(" Plot Type", icon = icon("star-o"), startExpanded = TRUE,
         wellPanel(radioButtons("qcplot",
                 paste("QC Plots:", sep = ""),
