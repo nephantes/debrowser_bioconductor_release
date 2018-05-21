@@ -32,6 +32,12 @@ getQCPanel <- function(input = NULL) {
                          getPCAPlotUI("qcpca")),    
         conditionalPanel(condition = "(input.qcplot == 'heatmap')",
                          getHeatmapUI("heatmap")),
+        conditionalPanel(condition = "(input.qcplot == 'IQR')",
+                         getIQRPlotUI("IQR"),
+                         getIQRPlotUI("normIQR")),
+        conditionalPanel(condition = "(input.qcplot == 'Density')",
+                         getDensityPlotUI("density"),
+                         getDensityPlotUI("normdensity")),
         conditionalPanel(condition = 
                              "(input.qcplot != 'heatmap')",
                          column(12, plotOutput("qcplotout",
@@ -63,22 +69,17 @@ getQCPlots <- function(dataset = NULL, input = NULL,
     qcPlots <- NULL
     if (nrow(dataset) > 0) {
         dat <- dataset
+        normdat <-  getNormalizedMatrix(dat, input$norm_method)
         if (input$qcplot == "all2all") {
             qcPlots <- all2all(dat, input$cex)
         } else if (input$qcplot == "heatmap") {
             callModule(debrowserheatmap, "heatmap", dat)
-        } else if (input$qcplot == "pca") {
-            sc <- getShapeColor(input)
-            pcaplot <- plot_pca(dat, input$pcselx, input$pcsely,
-                metadata = metadata, color = sc$color,
-                size = 5, shape = sc$shape,
-                textonoff = sc$textonoff, 
-                legendSelect = sc$legendSelect )
-            pcaplot %>% bind_shiny("ggvisQC1")
-            drawPCAExplained %>%  bind_shiny("ggvisQC2")
-            
-        } else if (input$qcplot == "IQR" || input$qcplot == "Density" ) {
-            prepAddQCPlots(dataset, input)
+        } else if (input$qcplot == "IQR") {
+            callModule(debrowserIQRplot, "IQR", dat)
+            callModule(debrowserIQRplot, "normIQR", normdat)
+        } else if (input$qcplot == "Density"){
+            callModule(debrowserdensityplot, "density", dat)
+            callModule(debrowserIQRplot, "normdensity", normdat)
         }
     }
     return(qcPlots)
@@ -169,40 +170,6 @@ saveQCPlot <- function(filename = NULL, input = NULL, datasetInput = NULL,
 }
 
 
-#' prepAddQCPlots
-#'
-#' prepares IQR and density plots
-#'
-#' @param data, barplot data
-#' @param input, user input params 
-#'
-#' @export
-#'
-#' @examples
-#'     prepAddQCPlots()
-#'
-#'
-prepAddQCPlots <- function(data=NULL, input=NULL){
-    if(is.null(data)) return(NULL)
-    if(!is.null(input$qcplot)){
-        if (input$qcplot == "IQR"){
-            getIQRPlot(data, colnames(data), 
-                "IQR Plot(Before Normalization)") %>% 
-                bind_shiny("ggvisQC1")
-            getIQRPlot(getNormalizedMatrix(data, input$norm_method), 
-                colnames(data), "IQR Plot(After Normalization)") %>% 
-                bind_shiny("ggvisQC2")
-        }
-        else if (input$qcplot == "Density"){
-            getDensityPlot(data, colnames(data), 
-                "Density Plot(Before Normalization)") %>% 
-                bind_shiny("ggvisQC1")
-            getDensityPlot(getNormalizedMatrix(data, input$norm_method), 
-                colnames(data), "Density Plot(After Normalization)") %>% 
-                bind_shiny("ggvisQC2")    
-        }
-    }
-}
 
 #' getSelectedCols
 #'

@@ -94,6 +94,7 @@
 #' @import googleAuthR
 #' @import colourpicker
 #' @import RColorBrewer
+#' @import heatmaply
 
 deServer <- function(input, output, session) {
     #library(debrowser)
@@ -212,6 +213,7 @@ deServer <- function(input, output, session) {
         
         filtd <- reactiveVal()
         batch <- reactiveVal()
+        sel <- c()
         observe({
             updata <- reactive({ 
                 ret <- callModule(debrowserdataload, "load")
@@ -229,7 +231,42 @@ deServer <- function(input, output, session) {
                     batch(callModule(debrowserbatcheffect, "batcheffect", filtd()$filter()))
                 }
             })
+            observeEvent (input$goDE, {
+                    updateTabItems(session, "DataPrep", "CondSelect")
+                    sel <- debrowsercondselect(input, output, session, batch()$BatchEffect()$count, batch()$BatchEffect()$meta)
+            })
             
+            dc <- reactive({
+                dc <- NULL
+                if (buttonValues$startDE == TRUE){
+                    print(sel$cc())
+                    dc <- prepDataContainer(batch()$BatchEffect()$count, sel$cc(), input)
+                }
+                dc
+            })
+            
+            output$compselectUI <- renderUI({
+                if (is.null(dc())) return(NULL)
+                getCompSelection(sel$cc())
+            })
+            compsel <- reactive({
+                cp <- 1
+                if (!is.null(input$compselect))
+                    cp <- input$compselect
+                cp
+            })
+            output$cutOffUI <- renderUI({
+                if (is.null(dc())) return(NULL)
+                cutOffSelectionUI(paste0("DEResults", compsel()))
+            })  
+            output$deresUI <- renderUI({
+                if (is.null(dc())) return(NULL)
+                column(12, getDEResultsUI(paste0("DEResults",compsel())))
+            })
+            output$dcres <- renderPrint({
+                if (is.null(dc())) return("")
+                print(head(sel$cc()))
+            })
             output$loadedtable <- renderPrint({
                 head( updata()$load()$count )
             })
@@ -322,9 +359,7 @@ deServer <- function(input, output, session) {
             buttonValues$gotoanalysis <- TRUE
         })
         Dataset <- reactive({
-            dat <- init_data()
-            print(head(dat))
-            dat
+            init_data()
         })
         observeEvent(input$add_btn, {
             shinyjs::enable("startDE")
@@ -338,12 +373,7 @@ deServer <- function(input, output, session) {
             if (choicecounter$nc == 0) 
                 shinyjs::disable("startDE")
         })
-        observeEvent(input$goDE, {
-            shinyjs::disable("startDE")
-            hideObj(c("goQCplots", "goDE"))
-            showObj(c("add_btn","rm_btn","startDE", "fittype"))
-            query <- parseQueryString(session$clientData$url_search)
-        })
+
         observeEvent(input$resetsamples, {
             buttonValues$startDE <- FALSE
             showObj(c("goQCplots", "goDE"))
@@ -377,20 +407,14 @@ deServer <- function(input, output, session) {
         output$conditionSelector <- renderUI({
             selectConditions(Dataset(), choicecounter, input, loadingJSON())
         })
-        dc <- reactive({
-            dc <- NULL
-            if (buttonValues$startDE == TRUE){
-                dc <- prepDataContainer(Dataset(), choicecounter$nc, 
-                     isolate(input))
-            }
-            dc
-        })
+
         observeEvent(input$save_state, {
             shinyjs::hide("save_state")
             shinyjs::show("bookmark_special_name")
             shinyjs::show("name_bookmark")
         })
         observeEvent(input$startDE, {
+            updateTabItems(session, "DataPrep", "DEAnalysis")
             buttonValues$startDE <- TRUE
             buttonValues$goQCplots <- FALSE
             init_data <- NULL 

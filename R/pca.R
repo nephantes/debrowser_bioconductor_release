@@ -354,8 +354,8 @@ getPCselection <- function(id, num = 1, xy = "x" ) {
 #'
 getColorShapeSelection <- function(metadata = NULL, input = NULL, session = NULL) {
     if (is.null(metadata) ||  is.null(session)) return (NULL)
-    list(fluidRow(column(6, selectGroupInfo(metadata, input, session$ns("color_pca"), "Color field")),
-    column(6, selectGroupInfo(metadata, input, session$ns("shape_pca"), "Shape field"))))
+    list(fluidRow(column(12, selectGroupInfo(metadata, input, session$ns("color_pca"), "Color field")),
+    column(12, selectGroupInfo(metadata, input, session$ns("shape_pca"), "Shape field"))))
 }
 
 #' getLegendSelect
