@@ -22,7 +22,7 @@ debrowserdeanalysis <- function(input = NULL, output = NULL, session = NULL,
         runDE(data, columns, conds, params)
     })
     prepDat <- reactive({
-        applyFiltersNew(addDataColsNew(data, deres(), columns, conds), input)
+        applyFiltersNew(addDataCols(data, deres(), columns, conds), input)
     })
     observe({
         setFilterParamsNew(session, isolate(input))
@@ -175,11 +175,11 @@ runDE <- function(data = NULL, columns = NULL, conds = NULL, params = NULL) {
     if (is.null(data)) return(NULL)
     de_res <- NULL
 
-    if (params[1] == "DESeq2")     
+    if (startsWith(params[1], "DESeq2"))    
         de_res <- runDESeq2(data, columns, conds, params)
-    else if (params[1]  == "EdgeR")     
+    else if (startsWith(params[1], "EdgeR"))    
         de_res <- runEdgeR(data, columns, conds, params)
-    else if (params[1] == "Limma")
+    else if (startsWith(params[1], "Limma"))
         de_res <- runLimma(data, columns, conds, params)
     data.frame(de_res)
 }
@@ -216,13 +216,16 @@ runDE <- function(data = NULL, columns = NULL, conds = NULL, params = NULL) {
 #' @examples
 #'     x <- runDESeq2()
 #'
-runDESeq2 <- function(data = NULL, columns = NULL, conds = NULL, params) {
+runDESeq2 <- function(data = NULL, columns = NULL, conds = NULL, params = NULL) {
     if (is.null(data)) return(NULL)
+    if (length(params)<3)
+        params <- strsplit(params, ",")[[1]]
+    
     fitType <- if (!is.null(params[2])) params[2]
     betaPrior <-  if (!is.null(params[3])) params[3]
     testType <- if (!is.null(params[4])) params[4]
     rowsum.filter <-  if (!is.null(params[5])) as.integer(params[5])
-
+    
     data <- data[, columns]
 
     data[, columns] <- apply(data[, columns], 2,
@@ -285,10 +288,12 @@ runDESeq2 <- function(data = NULL, columns = NULL, conds = NULL, params) {
 #'
 runEdgeR<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
     if (is.null(data)) return(NULL)
+    if (length(params)<3)
+        params <- strsplit(params, ",")[[1]]
     normfact <- if (!is.null(params[2])) params[2]
     dispersion <- if (!is.null(params[3])) params[3]
     testType <- if (!is.null(params[4])) params[4]
-    rowsum.filter <- if (!is.null(params[5])) params[5]
+    rowsum.filter <-  if (!is.null(params[5])) as.integer(params[5])
 
     data <- data[, columns]
     data[, columns] <- apply(data[, columns], 2,
@@ -361,10 +366,12 @@ runEdgeR<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
 #'
 runLimma<- function(data = NULL, columns = NULL, conds = NULL, params = NULL){
     if (is.null(data)) return(NULL)
+    if (length(params)<3)
+        params <- strsplit(params, ",")[[1]]
     normfact = if (!is.null(params[2])) params[2]
     fitType = if (!is.null(params[3])) params[3]
     normBet = if (!is.null(params[4])) params[4]
-    rowsum.filter <-if (!is.null(params[5])) params[5]
+    rowsum.filter <-  if (!is.null(params[5])) as.integer(params[5])
 
     data <- data[, columns]
     data[, columns] <- apply(data[, columns], 2,
@@ -419,7 +426,7 @@ prepGroup <- function(conds = NULL, cols = NULL) {
     coldata
 }
 
-#' addDataColsNew
+#' addDataCols
 #'
 #' add aditional data columns to de results
 #'
@@ -431,16 +438,16 @@ prepGroup <- function(conds = NULL, cols = NULL) {
 #' @export
 #'
 #' @examples
-#'     x <- addDataColsNew()
+#'     x <- addDataCols()
 #'
-addDataColsNew <- function(data = NULL, de_res = NULL, cols = NULL, conds = NULL) {
+addDataCols <- function(data = NULL, de_res = NULL, cols = NULL, conds = NULL) {
     if (is.null(data) || is.null(de_res)) return (NULL)
     norm_data <- data[, cols]
     
     coldata <- prepGroup(conds, cols)
     
-    mean_cond_first <- getMeanNew(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[1], "libname"]))
-    mean_cond_second <- getMeanNew(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[2], "libname"]))
+    mean_cond_first <- getMean(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[1], "libname"]))
+    mean_cond_second <- getMean(norm_data, as.vector(coldata[coldata$group==levels(coldata$group)[2], "libname"]))
     
     m <- cbind(rownames(de_res), norm_data[rownames(de_res), cols],
                log10(unlist(mean_cond_second) + 1),
@@ -471,7 +478,7 @@ addDataColsNew <- function(data = NULL, de_res = NULL, cols = NULL, conds = NULL
 #' @examples
 #'     x <- getMean()
 #'
-getMeanNew<-function(data = NULL, selcols=NULL) {
+getMean<-function(data = NULL, selcols=NULL) {
     if (is.null(data)) return (NULL)
     mean_cond<-NULL
     if (length(selcols) > 1)

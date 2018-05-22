@@ -407,7 +407,7 @@ getSampleNames <- function(cnames = NULL, part = 1) {
     m
 }
 
-#' prepDataContainerNew
+#' prepDataContainer
 #'
 #' Prepares the data container that stores values used within DESeq.
 #'
@@ -418,75 +418,64 @@ getSampleNames <- function(cnames = NULL, part = 1) {
 #' @export
 #'
 #' @examples
-#'     x <- prepDataContainerNew()
+#'     x <- prepDataContainer()
 #'
-prepDataContainerNew <- function(data = NULL, counter=NULL, 
+prepDataContainer <- function(data = NULL, counter=NULL, 
                               input = NULL) {
     if (is.null(data)) return(NULL)
     
     inputconds <- reactiveValues(demethod_params = list(), conds = list(), dclist = list())
-    observeEvent(input$startDE, {
-        inputconds$conds <- list()
-        for (cnt in seq(1:(2*counter))){
-            inputconds$conds[cnt] <- list(isolate(input[[paste0("condition",cnt)]]))
-        }
-        #Get parameters for each method
-        inputconds$demethod_params <- NULL
-        for (cnt in seq(1:counter)){
-            if (isolate(input[[paste0("demethod",cnt)]]) == "DESeq2"){
-                inputconds$demethod_params[cnt] <- paste(
-                    isolate(input[[paste0("demethod",cnt)]]),
-                    isolate(input[[paste0("fitType",cnt)]]),
-                    isolate(input[[paste0("betaPrior",cnt)]]),
-                    isolate(input[[paste0("testType",cnt)]]), sep=",")
-            }
-            else if (isolate(input[[paste0("demethod",cnt)]]) == "EdgeR"){
-                inputconds$demethod_params[cnt]<- paste(
-                    isolate(input[[paste0("demethod",cnt)]]),
-                    isolate(input[[paste0("edgeR_normfact",cnt)]]),
-                    isolate(input[[paste0("dispersion",cnt)]]),
-                    isolate(input[[paste0("edgeR_testType",cnt)]]), sep=",")
-            }
-            else if (isolate(input[[paste0("demethod",cnt)]]) == "Limma"){
-                inputconds$demethod_params[cnt] <- paste(
-                    isolate(input[[paste0("demethod",cnt)]]),
-                    isolate(input[[paste0("limma_normfact",cnt)]]),
-                    isolate(input[[paste0("limma_fitType",cnt)]]),
-                    isolate(input[[paste0("normBetween",cnt)]]), sep=",")
-            }
-        }
-        
-        for (i in seq(1:counter))
-        {
-            conds <- c(rep(paste0("Cond", 2*i-1), 
-                           length(inputconds$conds[[2*i-1]])), 
-                       rep(paste0("Cond", 2*i), length(inputconds$conds[[2*i]])))
-            cols <- c(paste(inputconds$conds[[2*i-1]]), 
-                      paste(inputconds$conds[[2*i]]))
-            params <- unlist(strsplit(inputconds$demethod_params[i], ","))
-            withProgress(message = 'Running DE Algorithms', detail = inputconds$demethod_params[i], value = 0, {
-                initd <- callModule(debrowserdeanalysis, paste0("DEResults",i), data = data, 
-                      columns = cols, conds = conds, params = params)
-                if (nrow(initd$dat()) > 1){
-                    inputconds$dclist[[i]] <- list(conds = conds, cols = cols, init_data=initd$dat(), 
-                        demethod_params = inputconds$demethod_params[i])
-                }
-                incProgress(1/counter)
-            })
-        }
-    })
 
-    comparison <- reactive({
-        compselect <- 1
-        dat <- NULL
-        if(length(inputconds$dclist) <1) return(NULL)
-        if (!is.null(input$compselect))
-            compselect <- as.integer(input$compselect)
-        if (length(inputconds$dclist) > 1 && !is.null(inputconds$dclist[[compselect]])){
-            dat <- inputconds$dclist[[compselect]]
+    inputconds$conds <- list()
+    for (cnt in seq(1:(2*counter))){
+        inputconds$conds[cnt] <- list(isolate(input[[paste0("condition",cnt)]]))
+    }
+    #Get parameters for each method
+    inputconds$demethod_params <- NULL
+    for (cnt in seq(1:counter)){
+        if (isolate(input[[paste0("demethod",cnt)]]) == "DESeq2"){
+            inputconds$demethod_params[cnt] <- paste(
+                isolate(input[[paste0("demethod",cnt)]]),
+                isolate(input[[paste0("fitType",cnt)]]),
+                isolate(input[[paste0("betaPrior",cnt)]]),
+                isolate(input[[paste0("testType",cnt)]]), sep=",")
         }
-        dat
-    })
+        else if (isolate(input[[paste0("demethod",cnt)]]) == "EdgeR"){
+            inputconds$demethod_params[cnt]<- paste(
+                isolate(input[[paste0("demethod",cnt)]]),
+                isolate(input[[paste0("edgeR_normfact",cnt)]]),
+                isolate(input[[paste0("dispersion",cnt)]]),
+                isolate(input[[paste0("edgeR_testType",cnt)]]), sep=",")
+        }
+        else if (isolate(input[[paste0("demethod",cnt)]]) == "Limma"){
+            inputconds$demethod_params[cnt] <- paste(
+                isolate(input[[paste0("demethod",cnt)]]),
+                isolate(input[[paste0("limma_normfact",cnt)]]),
+                isolate(input[[paste0("limma_fitType",cnt)]]),
+                isolate(input[[paste0("normBetween",cnt)]]), sep=",")
+        }
+    }
     
-    list(comp = comparison)
+    for (i in seq(1:counter))
+    {
+        conds <- c(rep(paste0("Cond", 2*i-1), 
+                       length(inputconds$conds[[2*i-1]])), 
+                   rep(paste0("Cond", 2*i), length(inputconds$conds[[2*i]])))
+        cols <- c(paste(inputconds$conds[[2*i-1]]), 
+                  paste(inputconds$conds[[2*i]]))
+        params <- unlist(strsplit(inputconds$demethod_params[i], ","))
+        withProgress(message = 'Running DE Algorithms', detail = inputconds$demethod_params[i], value = 0, {
+            initd <- callModule(debrowserdeanalysis, paste0("DEResults",i), data = data, 
+                  columns = cols, conds = conds, params = params)
+            if (nrow(initd$dat()) > 1){
+                inputconds$dclist[[i]] <- list(conds = conds, cols = cols, init_data=initd$dat(), 
+                    demethod_params = inputconds$demethod_params[i])
+            }
+            incProgress(1/counter)
+        })
+    }
+
+    if(length(inputconds$dclist) <1) return(NULL)
+
+    inputconds$dclist
 }

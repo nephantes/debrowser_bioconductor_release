@@ -98,7 +98,7 @@
 
 deServer <- function(input, output, session) {
     #library(debrowser)
-    #library(googleAuthR)
+    library(googleAuthR)
     enableBookmarking("server")
     tryCatch(
     {
@@ -213,7 +213,8 @@ deServer <- function(input, output, session) {
         
         filtd <- reactiveVal()
         batch <- reactiveVal()
-        sel <- c()
+        sel <- reactiveVal()
+        dc <- reactiveVal()
         observe({
             updata <- reactive({ 
                 ret <- callModule(debrowserdataload, "load")
@@ -232,22 +233,24 @@ deServer <- function(input, output, session) {
                 }
             })
             observeEvent (input$goDE, {
-                    updateTabItems(session, "DataPrep", "CondSelect")
-                    sel <- debrowsercondselect(input, output, session, batch()$BatchEffect()$count, batch()$BatchEffect()$meta)
+                updateTabItems(session, "DataPrep", "CondSelect")
+                sel(debrowsercondselect(input, output, session, batch()$BatchEffect()$count, batch()$BatchEffect()$meta))
             })
             
-            dc <- reactive({
-                dc <- NULL
-                if (buttonValues$startDE == TRUE){
-                    print(sel$cc())
-                    dc <- prepDataContainer(batch()$BatchEffect()$count, sel$cc(), input)
-                }
-                dc
+            observeEvent (input$startDE, {
+                dat <- prepDataContainer(batch()$BatchEffect()$count, sel()$cc(), input)
+                dc(dat)
+                updateTabItems(session, "DataPrep", "DEAnalysis")
+                buttonValues$startDE <- TRUE
+                buttonValues$goQCplots <- FALSE
+                togglePanels(1, c( 0, 1, 2, 3, 4), session)
+                choicecounter$qc <- 0
+                selected$data$randstr <- NULL
             })
             
             output$compselectUI <- renderUI({
-                if (is.null(dc())) return(NULL)
-                getCompSelection(sel$cc())
+                if (!is.null(sel()))
+                    getCompSelection(sel()$cc())
             })
             compsel <- reactive({
                 cp <- 1
@@ -256,16 +259,13 @@ deServer <- function(input, output, session) {
                 cp
             })
             output$cutOffUI <- renderUI({
-                if (is.null(dc())) return(NULL)
                 cutOffSelectionUI(paste0("DEResults", compsel()))
             })  
             output$deresUI <- renderUI({
-                if (is.null(dc())) return(NULL)
                 column(12, getDEResultsUI(paste0("DEResults",compsel())))
             })
             output$dcres <- renderPrint({
-                if (is.null(dc())) return("")
-                print(head(sel$cc()))
+                print(head(sel()$cc()))
             })
             output$loadedtable <- renderPrint({
                 head( updata()$load()$count )
@@ -290,11 +290,7 @@ deServer <- function(input, output, session) {
         output$gopanel <- renderUI({
             getGoPanel()
         })
-        output$cutoffSelection <- renderUI({
-            nc <- 1
-            if (!is.null(choicecounter$nc)) nc <- choicecounter$nc
-            getCutOffSelection(nc)
-        })
+
         output$downloadSection <- renderUI({
             choices <- c("most-varied", "alldetected", "pcaset")
             if (buttonValues$startDE)
@@ -361,18 +357,6 @@ deServer <- function(input, output, session) {
         Dataset <- reactive({
             init_data()
         })
-        observeEvent(input$add_btn, {
-            shinyjs::enable("startDE")
-            buttonValues$startDE <- FALSE
-            choicecounter$nc <- choicecounter$nc + 1
-        })
-        observeEvent(input$rm_btn, {
-            buttonValues$startDE <- FALSE
-            if (choicecounter$nc > 0) 
-                choicecounter$nc <- choicecounter$nc - 1
-            if (choicecounter$nc == 0) 
-                shinyjs::disable("startDE")
-        })
 
         observeEvent(input$resetsamples, {
             buttonValues$startDE <- FALSE
@@ -389,39 +373,12 @@ deServer <- function(input, output, session) {
         })
         outputOptions(output, 'restore_DE', suspendWhenHidden = FALSE)
 
-        output$sampleSelector <- renderUI({
-            if (is.null(samples())) return(NULL)
-            if (is.null(input$samples))
-                samp <- samples()
-            else
-                samp <- input$samples
-            tmpSamples <- list(
-                selectInput("samples",
-                    label = "Samples",
-                    choices = samp, multiple = TRUE,
-                    selected = samp)
-            )
-            return(tmpSamples)
-        })
-
-        output$conditionSelector <- renderUI({
-            selectConditions(Dataset(), choicecounter, input, loadingJSON())
-        })
-
         observeEvent(input$save_state, {
             shinyjs::hide("save_state")
             shinyjs::show("bookmark_special_name")
             shinyjs::show("name_bookmark")
         })
-        observeEvent(input$startDE, {
-            updateTabItems(session, "DataPrep", "DEAnalysis")
-            buttonValues$startDE <- TRUE
-            buttonValues$goQCplots <- FALSE
-            init_data <- NULL 
-            togglePanels(1, c( 0, 1, 2, 3, 4), session)
-            choicecounter$qc <- 0
-            selected$data$randstr <- NULL
-        })
+
         observeEvent(input$goQCplots, {
             choicecounter$qc <- 1
             buttonValues$startDE <- FALSE
@@ -432,31 +389,20 @@ deServer <- function(input, output, session) {
             compselect <- 1
             if (!is.null(input$compselect))
                 compselect <- as.integer(input$compselect)
-            if (!is.null(dc())){
-                if (is.list(dc())){
-                    if(length(dc())<compselect)
-                        compselect <- 1
-                    dc()[[compselect]]
-                }
-                else
-                    dc()
-            }
+
+            dc()[[compselect]]
         })
         conds <- reactive({ comparison()$conds })
         cols <- reactive({ comparison()$cols })
         init_data <- reactive({ 
             if (!is.null(comparison()$init_data))
                 comparison()$init_data 
-            else
+            else if (!is.null(batch()))
                 batch()$BatchEffect()$count
         })
         filt_data <- reactive({
-            if (!is.null(comparison()$init_data) &&
-                !is.null(input$padjtxt) &&
-                !is.null(input$foldChangetxt)){
-                applyFilters(init_data(), isolate(cols()), 
-                    isolate(conds()), input)
-            }
+            if (!is.null(comparison()))
+                comparison()$init_data
         })
         randstr <- reactive({ 
             tmpRand<-NULL

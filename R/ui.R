@@ -107,7 +107,7 @@ enableBookmarking("server")
                     menuItem("BatchEffect", tabName = "BatchEffect"),
                     menuItem("CondSelect", tabName = "CondSelect"),
                     menuItem("DEAnalysis", tabName = "DEAnalysis"),
-                    menuItem("DEFilter", tabName = "DEAnalysis", startExpanded = TRUE,
+                    menuItem("DEFilter", tabName = "DEAnalysis",
                              uiOutput("cutOffUI"),
                              uiOutput("compselectUI"))
                 ),
