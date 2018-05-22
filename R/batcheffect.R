@@ -191,7 +191,7 @@ batchMethod <- function(id) {
   ns <- NS(id)
   selectInput(ns("batchmethod"), "Correction Method:",
               choices <- c("none", "Combat", "Harman"),
-               selected='Combat'
+               selected='none'
   )
 }
 

@@ -4,7 +4,7 @@
 \alias{runDESeq2}
 \title{runDESeq2}
 \usage{
-runDESeq2(data = NULL, columns = NULL, conds = NULL, params)
+runDESeq2(data = NULL, columns = NULL, conds = NULL, params = NULL)
 }
 \arguments{
 \item{data, }{A matrix that includes all the expression raw counts,
