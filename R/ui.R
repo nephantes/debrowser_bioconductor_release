@@ -101,6 +101,8 @@ enableBookmarking("server")
                 googleAuthR::googleAuthUI("initial_google_button")),
             conditionalPanel(condition = "output.user_name",
                 uiOutput("loading"),
+                tabsetPanel(id = "menutabs", type = "tabs",
+                tabPanel(title = "Data Prep", value = "dataprep", id="dataprep",
                 sidebarMenu(id="DataPrep",
                     menuItem("Upload", tabName = "Upload"),
                     menuItem("Filter", tabName = "Filter"),
@@ -110,13 +112,14 @@ enableBookmarking("server")
                     menuItem("DEFilter", tabName = "DEAnalysis",
                              uiOutput("cutOffUI"),
                              uiOutput("compselectUI"))
-                ),
+                ),p("Logged in as: ", textOutput("user_name"))),
+                tabPanel(title = "Discover", value = "discover", id="discover",
                 conditionalPanel(condition = "(output.dataready)",
-                    uiOutput("leftMenu")),
-                conditionalPanel(condition = "(output.dataready)",
-                    uiOutput("downloadSection")),
+                    uiOutput("leftMenu"),
+                    uiOutput("downloadSection"),
+                    uiOutput('cutoffSelection')),
                     debrowser::bookmarkUI("bm")
-            ), p("Logged in as: ", textOutput("user_name"))
+                 )))
         ),
     dashboardBody(
         conditionalPanel(condition = "output.user_name",
@@ -131,16 +134,28 @@ enableBookmarking("server")
                                  tabItem(tabName="Upload", dataLoadUI("load"),
                                          column(4, verbatimTextOutput("loadedtable")
                                          )),
-                                 tabItem(tabName="Filter",dataLCFUI("lcf"),                
+                                 tabItem(tabName="Filter",
+                                         conditionalPanel(
+                                             (condition <- "input.Filter"),
+                                         dataLCFUI("lcf"),                
                                          column(4, verbatimTextOutput("filtertable")
-                                         )),
-                                 tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
+                                         ))),
+                                 tabItem(tabName="BatchEffect", 
+                                         conditionalPanel(
+                                             (condition <- "input.Batch"),
+                                         batchEffectUI("batcheffect"),
                                          column(4, verbatimTextOutput("batcheffecttable")
-                                         )),
-                                 tabItem(tabName="CondSelect", condSelectUI()),
-                                 tabItem(tabName="DEAnalysis", uiOutput("deresUI"),
+                                         ))),
+                                 tabItem(tabName="CondSelect", 
+                                         conditionalPanel(
+                                             (condition <- "input.goDE"),
+                                         condSelectUI())),
+                                 tabItem(tabName="DEAnalysis", 
+                                         conditionalPanel(
+                                             (condition <- "input.goDE"),
+                                         uiOutput("deresUI"),
                                          column(4, verbatimTextOutput("dcres")
-                                         ))
+                                         )))
                              )),
                     tabPanel(title = "Main Plots", value = "panel1", id="panel1",
                             uiOutput("mainmsgs"),

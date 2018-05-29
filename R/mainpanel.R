@@ -43,8 +43,7 @@ getMainPanelPlots <- function(filt_data = NULL,
     cols = NULL, conds = NULL,
     input = NULL, compselect = NULL) {
     if (is.null(filt_data) || 
-        is.null(cols) || is.null(conds) ||
-        is.null(input$padjtxt) || is.null(input$foldChangetxt)  )
+        is.null(cols) || is.null(conds))
             return(NULL)
 
     lb <- link_brush()
