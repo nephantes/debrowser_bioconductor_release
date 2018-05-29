@@ -102,15 +102,14 @@ dataLCFUI<- function (id) {
                                        actionButton(ns("submitLCF"), label = "Filter", styleclass = "primary")
                                    )
                             ),
-                            column(5,div(style = 'overflow: scroll', 
-                                         
+                            column(5,div(style = 'overflow: scroll',
                                  tableOutput(ns("filteredSummary")),
                                  DT::dataTableOutput(ns("filteredDetails"))),
                                  uiOutput(ns("filteredtable"))
-
                             )
                           ),
-                          actionButton("Batch", label = "Batch Effect Correction", styleclass = "primary")
+                          conditionalPanel(condition <- paste0("input['", ns("submitLCF"),"']"),
+                          actionButton("Batch", label = "Batch Effect Correction", styleclass = "primary"))
       ),
       shinydashboard::box(title = "Histograms",
                           solidHeader = TRUE, status = "info",  width = 12, 

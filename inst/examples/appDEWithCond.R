@@ -47,6 +47,10 @@ server <- function(input, output, session) {
       if (input$startDE)
           prepDataContainer(filtd, sel$cc(), input)
   })
+  output$condReady <- reactive({
+      sel$cc()
+  })
+  outputOptions(output, 'condReady', suspendWhenHidden = FALSE)
   
   output$compselectUI <- renderUI({
       if (is.null(dc())) return(NULL)

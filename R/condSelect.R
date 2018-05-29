@@ -19,22 +19,20 @@
 #'
 debrowsercondselect <- function(input = NULL, output = NULL, session = NULL, data = NULL, metadata = NULL) {
     if (is.null(data)) return(NULL)
-    choicecounter <- reactiveValues(nc = 0)
+    choicecounter <- reactiveVal(0)
     
     output$conditionSelector <- renderUI({
-        selectConditions(data, metadata, choicecounter, input)
+        selectConditions(data, metadata, choicecounter(), input)
     })
     observeEvent(input$add_btn, {
-        choicecounter$nc <- choicecounter$nc + 1
+        choicecounter(choicecounter() + 1)
     })
     observeEvent(input$rm_btn, {
-        if (choicecounter$nc > 0) 
-            choicecounter$nc <- choicecounter$nc - 1
+        if (choicecounter() > 0) 
+            choicecounter(choicecounter() - 1)
     })
-    cc <- reactive({
-        choicecounter$nc
-    })
-    list(cc = cc)
+
+    list(cc = choicecounter)
 }
 
 #' condSelectUI
@@ -55,7 +53,8 @@ list(
         column(12,actionButton("add_btn", "Add New Comparison",styleclass = "primary"),
                actionButton("rm_btn", "Remove", styleclass = "primary"),
                getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/deseq/deseq.html"),
-               actionButton("startDE", "Start DE!", styleclass = "primary"))
+               conditionalPanel(condition <- ("output.condReady>0"),
+               actionButton("startDE", "Start DE!", styleclass = "primary")))
     ))
 )
 }
@@ -272,7 +271,7 @@ selectConditions<-function(Dataset = NULL,
         else
             input[[paste0("condition", num)]]
     }
-    nc <- choicecounter$nc
+    nc <- choicecounter
     
     if (nc >= 0) {
         allsamples <- getSampleNames( colnames(Dataset), "all" )
@@ -289,7 +288,6 @@ selectConditions<-function(Dataset = NULL,
                         (2 * i), allsamples, selected2)
     
             ),
-            
             column(12, 
                    column(1, helpText(" ")),
                    getSelectInputBox("demethod", "DE Method", i, 
