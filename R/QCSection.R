@@ -71,15 +71,15 @@ getQCPlots <- function(dataset = NULL, input = NULL,
         dat <- dataset
         normdat <-  getNormalizedMatrix(dat, input$norm_method)
         if (input$qcplot == "all2all") {
-            qcPlots <- all2all(dat, input$cex)
+            qcPlots <- all2all(normdat, input$cex)
         } else if (input$qcplot == "heatmap") {
-            callModule(debrowserheatmap, "heatmap", dat)
+            callModule(debrowserheatmap, "heatmap", normdat)
         } else if (input$qcplot == "IQR") {
             callModule(debrowserIQRplot, "IQR", dat)
             callModule(debrowserIQRplot, "normIQR", normdat)
         } else if (input$qcplot == "Density"){
             callModule(debrowserdensityplot, "density", dat)
-            callModule(debrowserIQRplot, "normdensity", normdat)
+            callModule(debrowserdensityplot, "normdensity", normdat)
         }
     }
     return(qcPlots)

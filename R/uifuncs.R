@@ -143,6 +143,34 @@ getQCLeftMenu <- function( input = NULL) {
     )
 }
 
+#' getCutOffSelection
+#'
+#' Gathers the cut off selection for DE analysis
+#'
+#' @param nc, total number of comparisons
+#' @note \code{getCutOffSelection}
+#' @return returns the left menu according to the selected tab;
+#' @examples
+#'     x <- getCutOffSelection()
+#' @export
+#'
+getCutOffSelection <- function(nc = 1){
+    list( conditionalPanel( (condition <- "input.dataset!='most-varied' &&
+        input.methodtabs!='panel0'"),
+        tags$head(tags$script(HTML(logSliderJScode("padj")))),
+        shinydashboard::menuItem(" Filter", icon = icon("star-o"),
+        #h4("Filter"),
+        sliderInput("padj", "padj value cut off",
+        min=0, max=10, value=6, sep = "",
+        animate = FALSE),
+        textInput("padjtxt", "or padj", value = "0.01" ),
+        sliderInput("foldChange", "Fold Change cut off",
+            1, 10, 2, step = 0.1),
+        textInput("foldChangetxt", "or foldChange", value = "2" )
+        )
+    ) )
+}
+
 #' getProgramTitle
 #'
 #' Generates the title of the program to be displayed within DEBrowser.

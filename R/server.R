@@ -215,6 +215,13 @@ deServer <- function(input, output, session) {
         batch <- reactiveVal()
         sel <- reactiveVal()
         dc <- reactiveVal()
+        compsel <- reactive({
+            cp <- 1
+            if (!is.null(input$compselect))
+                cp <- input$compselect
+            cp
+        })
+
         observe({
             updata <- reactive({ 
                 ret <- callModule(debrowserdataload, "load")
@@ -235,6 +242,7 @@ deServer <- function(input, output, session) {
             observeEvent (input$goDE, {
                 updateTabItems(session, "DataPrep", "CondSelect")
                 sel(debrowsercondselect(input, output, session, batch()$BatchEffect()$count, batch()$BatchEffect()$meta))
+                choicecounter$nc <- sel()$cc()
             })
             
             observeEvent (input$startDE, {
@@ -243,8 +251,8 @@ deServer <- function(input, output, session) {
                 updateTabItems(session, "DataPrep", "DEAnalysis")
                 buttonValues$startDE <- TRUE
                 buttonValues$goQCplots <- FALSE
-                togglePanels(1, c( 0, 1, 2, 3, 4), session)
-                choicecounter$qc <- 0
+                togglePanels(0, c( 0, 1, 2, 3, 4), session)
+                #choicecounter$qc <- 0
                 selected$data$randstr <- NULL
             })
             
@@ -252,12 +260,7 @@ deServer <- function(input, output, session) {
                 if (!is.null(sel()))
                     getCompSelection(sel()$cc())
             })
-            compsel <- reactive({
-                cp <- 1
-                if (!is.null(input$compselect))
-                    cp <- input$compselect
-                cp
-            })
+
             output$cutOffUI <- renderUI({
                 cutOffSelectionUI(paste0("DEResults", compsel()))
             })  
@@ -290,7 +293,11 @@ deServer <- function(input, output, session) {
         output$gopanel <- renderUI({
             getGoPanel()
         })
-
+        output$cutoffSelection <- renderUI({
+            nc <- 1
+            if (!is.null(choicecounter$nc)) nc <- choicecounter$nc
+            getCutOffSelection(nc)
+        })
         output$downloadSection <- renderUI({
             choices <- c("most-varied", "alldetected", "pcaset")
             if (buttonValues$startDE)
@@ -300,19 +307,7 @@ deServer <- function(input, output, session) {
             choices <- c(choices, "selected")
             getDownloadSection(TRUE, choices)
         })
-        output$preppanel <- renderUI({
-            tabItems(
-                tabItem(tabName="Upload", dataLoadUI("load"),
-                        column(4, verbatimTextOutput("loadedtable")
-                        )),
-                tabItem(tabName="Filter",dataLCFUI("lcf"),                
-                        column(4, verbatimTextOutput("filtertable")
-                        )),
-                tabItem(tabName="BatchEffect", batchEffectUI("batcheffect"),
-                        column(4, verbatimTextOutput("batcheffecttable")
-                        ))
-            )
-        })
+       
         output$leftMenu  <- renderUI({
             getLeftMenu(input)
         })
@@ -402,7 +397,7 @@ deServer <- function(input, output, session) {
         })
         filt_data <- reactive({
             if (!is.null(comparison()))
-                comparison()$init_data
+                applyFilters(init_data(), cols(), conds(), input)
         })
         randstr <- reactive({ 
             tmpRand<-NULL
@@ -436,8 +431,7 @@ deServer <- function(input, output, session) {
             compselect <- 1
             if (!is.null(input$compselect) ) 
                 compselect <- as.integer(input$compselect)
-            if (!is.null(isolate(filt_data())) && !is.null(input$padjtxt) && 
-                !is.null(input$foldChangetxt)) {
+            if (!is.null(isolate(filt_data()))) {
                 condmsg$text <- getCondMsg(dc(), input$compselect,
                     cols(), conds())
                 selected$data <- getMainPanelPlots(filt_data(), 
