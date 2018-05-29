@@ -115,8 +115,9 @@ batchEffectUI <- function (id) {
                 uiOutput(ns("afterbatchtable"))
           )
         ),
+        conditionalPanel(condition <- paste0("input['", ns("submitBatchEffect"),"']"),
         actionButton("goDE", "Go to DE Analysis!", styleclass = "primary"),
-        actionButton("goQCplots", "Go to QC plots!", styleclass = "primary")),
+        actionButton("goQCplots", "Go to QC plots!", styleclass = "primary"))),
       shinydashboard::box(title = "Plots",
         solidHeader = T, status = "info",  width = 12, 
         fluidRow(column(1, div()),

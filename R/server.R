@@ -251,9 +251,13 @@ deServer <- function(input, output, session) {
                 updateTabItems(session, "DataPrep", "DEAnalysis")
                 buttonValues$startDE <- TRUE
                 buttonValues$goQCplots <- FALSE
-                togglePanels(0, c( 0, 1, 2, 3, 4), session)
-                #choicecounter$qc <- 0
                 selected$data$randstr <- NULL
+            })
+
+            observeEvent (input$goMain, {
+                updateTabItems(session, "methodtabs", "panel1")
+                updateTabItems(session, "menutabs", "discover")
+                togglePanels(0, c( 0, 1, 2, 3, 4), session)
             })
             
             output$compselectUI <- renderUI({
@@ -363,10 +367,12 @@ deServer <- function(input, output, session) {
             if (is.null(Dataset())) return(NULL)
             getSamples(colnames(Dataset()), index = 1)
         })
-        output$restore_DE <- reactive({
+        output$condReady <- reactive({
+            if (!is.null(sel()))
+                choicecounter$nc <- sel()$cc()
             choicecounter$nc
         })
-        outputOptions(output, 'restore_DE', suspendWhenHidden = FALSE)
+        outputOptions(output, 'condReady', suspendWhenHidden = FALSE)
 
         observeEvent(input$save_state, {
             shinyjs::hide("save_state")
@@ -557,8 +563,12 @@ deServer <- function(input, output, session) {
                 dat2[,  pcols] <- format( as.numeric( dat2[,  pcols] ), 
                     scientific = TRUE, digits = 3 )
             rcols <- names(dat2)[!(names(dat2) %in% pcols)]
-            dat2[,  rcols] <- apply(dat2[,  rcols], 2,
-                                    function(x) round( as.numeric(x), digits = 2))  
+            if (!is.null(rcols) && length(rcols) > 1)
+                dat2[,  rcols] <- apply(dat2[,  rcols], 2,
+                                    function(x) round( as.numeric(x), digits = 2))
+            else
+                dat2[,  rcols] <-  round( as.numeric(dat2[,  rcols]), digits = 2)
+                
             dat[[1]] <- dat2
             return(dat)
         })

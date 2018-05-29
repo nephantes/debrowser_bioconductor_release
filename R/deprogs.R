@@ -27,7 +27,8 @@ debrowserdeanalysis <- function(input = NULL, output = NULL, session = NULL,
     observe({
         setFilterParamsNew(session, isolate(input))
         dat <-  prepDat()[prepDat()$Legend == input$legendradio,]
-        getTableDetails(output, session, "DEResults", dat, modal=FALSE)
+        dat2 <- removeCols(c("ID", "x", "y","Legend", "Size"), dat)
+        getTableDetails(output, session, "DEResults", dat2, modal=FALSE)
     })
     list(dat = prepDat)
 }
@@ -50,7 +51,11 @@ getDEResultsUI<- function (id) {
             fluidRow(
                 column(12,
                 uiOutput(ns("DEResults"))
-                ))
+                ),
+                #conditionalPanel(condition <- ("output.definished"),
+                    actionButton("goMain", "Go to Main Plots!", styleclass = "primary")
+                #)
+                )
             )
         )
         )

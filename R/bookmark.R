@@ -187,7 +187,7 @@ bookmarkUI <- function(id = NULL) {
     ns <- NS(id)
 
     list(conditionalPanel(condition = paste0("((input.goDE) || ",
-        "(output.restore_DE > 0)) && (!input.startDE)"),
+        "(output.condReady > 0)) && (!input.startDE)"),
         style = "padding: 27px;",
         textInput(ns("bookmark_special_name"), "Name your save:",
         value = "", placeholder = "At Least 5 Characters"),

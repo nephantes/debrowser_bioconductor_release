@@ -109,7 +109,7 @@ enableBookmarking("server")
                     menuItem("BatchEffect", tabName = "BatchEffect"),
                     menuItem("CondSelect", tabName = "CondSelect"),
                     menuItem("DEAnalysis", tabName = "DEAnalysis"),
-                    menuItem("DEFilter", tabName = "DEAnalysis",
+                    menuItem("DEFilter", tabName = "DEAnalysis",  startExpanded = TRUE,
                              uiOutput("cutOffUI"),
                              uiOutput("compselectUI"))
                 ),p("Logged in as: ", textOutput("user_name"))),
