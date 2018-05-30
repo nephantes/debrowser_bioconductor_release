@@ -384,6 +384,7 @@ deServer <- function(input, output, session) {
             choicecounter$qc <- 1
             buttonValues$startDE <- FALSE
             buttonValues$goQCplots <- TRUE
+            updateTabItems(session, "menutabs", "discover")
             togglePanels(2, c( 0, 2, 4), session)
         })
         comparison <- reactive({
@@ -482,24 +483,22 @@ deServer <- function(input, output, session) {
         })
 
         inputQCPlot <- reactiveValues(width = 700, height = 500)
-        inputQCPlot <- eventReactive(input$startQCPlot, {
-            tmpDat <- c()
-            tmpDat$width <- input$width
-            tmpDat$height <- input$height
-            return(tmpDat)
+        observeEvent(input$startQCPlot, {
+            inputQCPlot$width <- input$width
+            inputQCPlot$height <- input$height
         })
         
-        goplots <- reactive({
+        datForTables <- reactive({
             dat <- getDataForTables(input, init_data(),
-                filt_data(), selected,
-                getMostVaried(),  isolate(mergedComp()),
-                isolate(edat$val$pcaset))
-            tmpPlots <- getGOPlots(dat[[1]][, isolate(cols())], input)
-            return(tmpPlots)
+                                    filt_data(), selectedData(),
+                                    getMostVaried(), mergedComp())
+            return(dat)
         })
+
         inputGOstart <- reactive({
             if (input$startGO){
-                goplots()
+                dat <- datForTables()
+                getGOPlots(dat[[1]][, isolate(cols())], input)
             }
         })
         observeEvent(input$startGO, {
@@ -511,21 +510,52 @@ deServer <- function(input, output, session) {
             }
         })
         output$KEGGPlot <- renderImage({
+            validate(need(!is.null(input$gotable_rows_selected),
+                          "Please select a category in the GO/KEGG table to be able
+                          to see the pathway diagram"))
+            
             org <- input$organism
-            dat <- getDataForTables(input, init_data(),
-                    filt_data(), selected,
-                    getMostVaried(),  isolate(mergedComp()),
-                    isolate(edat$val$pcaset))
+            dat <- datForTables()
             genedata <- getEntrezIds(dat[[1]], org)
             i <- input$gotable_rows_selected
-            pv.out <- pathview::pathview(gene.data = genedata, 
-                      pathway.id = inputGOstart()$table$ID[i],
-                      species = substr(inputGOstart()$table$ID[i],0,3), 
-                      out.suffix = "b.2layer", kegg.native = TRUE)
-            list(src = paste0(inputGOstart()$table$ID[i],".b.2layer.png"),
+            pid <- inputGOstart()$table$ID[i]
+            pv.out <- pathview(gene.data = genedata,
+                 pathway.id = pid,
+                 species = substr(inputGOstart()$table$ID[i],0,3),
+                 out.suffix = "b.2layer", kegg.native = TRUE)
+            unlink(paste0(pid,".png"))
+            unlink(paste0(pid,".xml"))
+            list(src = paste0(pid,".b.2layer.png"),
                  contentType = 'image/png')
         }, deleteFile = TRUE)
 
+        getGOCatGenes <- reactive({
+            if(is.null(input$gotable_rows_selected)) return (NULL)
+            org <- input$organism
+            dat <- tabledat()
+            
+            i <- input$gotable_rows_selected
+            genedata <- getEntrezTable(inputGOstart()$enrich_p$geneID[i],
+                                       dat[[1]], org)
+            
+            #selected$data$getSelected <- reactiveVal(genedata)
+            dat[[1]] <- genedata
+            dat
+        })
+        output$GOGeneTable <- DT::renderDataTable({
+            validate(need(!is.null(input$gotable_rows_selected),
+                          "Please select a category in the GO/KEGG table to be able
+                          to see the gene list"))
+            dat <- getGOCatGenes()
+            if (!is.null(dat)){
+                DT::datatable(dat[[1]],
+                              list(lengthMenu = list(c(10, 25, 50, 100),
+                                                     c("10", "25", "50", "100")),
+                                   pageLength = 25, paging = TRUE, searching = TRUE)) %>%
+                    getTableStyle(input, dat[[2]], dat[[3]], buttonValues$startDE)
+            }
+        })
+        
         output$getColumnsForTables <-  renderUI({
             if (is.null(table_col_names())) return (NULL)
             selected_list <- table_col_names()
@@ -547,10 +577,7 @@ deServer <- function(input, output, session) {
             colnames(tabledat()[[1]])
         })
         tabledat <- reactive({
-            dat <- getDataForTables(input, init_data(),
-                filt_data(), selected,
-                getMostVaried(),  isolate(mergedComp()),
-                isolate(edat$val$pcaset))
+            dat <- datForTables()
             if (is.null(dat)) return (NULL)
             dat2 <- removeCols(c("ID", "x", "y","Legend", "Size"), dat[[1]])
             
@@ -649,10 +676,7 @@ deServer <- function(input, output, session) {
         output$downloadData <- downloadHandler(filename = function() {
             paste(input$dataset, "csv", sep = ".")
         }, content = function(file) {
-            dat <- getDataForTables(input, init_data(),
-                filt_data(), selected,
-                getMostVaried(),  isolate(mergedComp()),
-                isolate(edat$val$pcaset))
+            dat <- datForTables()
             dat2 <- removeCols(c("x", "y","Legend", "Size"), dat[[1]])
             if(!("ID" %in% names(dat2)))
                 dat2 <- addID(dat2)

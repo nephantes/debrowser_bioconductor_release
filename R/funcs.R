@@ -542,3 +542,32 @@ whitelist <- function(user_info, whitelist = NULL){
     out
     
 }
+
+#' getKEGGModal
+#' prepares a modal for KEGG plots
+#'
+#' @return the info button
+#'
+#' @examples
+#'     x<- getKEGGModal()
+#'
+#' @export
+getKEGGModal<-function(){
+    bsModal("modalExample", "KEGG Pathway", "KeggPathway", size = "large",
+            div(style = "display:block;overflow-y:auto; overflow-x:auto;",imageOutput("KEGGPlot")))
+}
+
+#' getTableModal
+#' prepares table modal for KEGG
+#'
+#' @return the info button
+#'
+#' @examples
+#'     x<- getTableModal()
+#'
+#' @export
+getTableModal<-function(){
+    bsModal("modalTable", "Genes in the category", "GeneTableButton", size = "large",
+            div(style = "display:block;overflow-y:auto; overflow-x:auto;",
+                wellPanel( DT::dataTableOutput("GOGeneTable"))))
+}

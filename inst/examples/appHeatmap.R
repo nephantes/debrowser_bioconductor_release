@@ -1,11 +1,4 @@
-library(shiny)
-library(shinydashboard)
-library(heatmaply)
-library(shinyjs)
-library(gplots)
-library(colourpicker)
-source("../../R/plotSize.R")
-source("../../R/heatmap.R")
+library(debrowser)
 options(warn=-1)
 header <- dashboardHeader(
     title = "DEBrowser Heatmap"
@@ -32,7 +25,7 @@ server <- function(input, output, session) {
         # Filter out the rows that has maximum 100 reads in a sample
     #    subset(a, apply(a, 1, max, na.rm = TRUE)  >=  10)
     withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
-        selected <- callModule(debrowserheatmap, "heatmap", filtd)
+        selected <- callModule(debrowserheatmap, "heatmap", mtcars)
     })
     
     output$heatmap_hover <- renderPrint({

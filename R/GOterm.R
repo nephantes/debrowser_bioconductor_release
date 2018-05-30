@@ -29,7 +29,41 @@ getGeneList <- function(genes = NULL, org = "org.Hs.eg.db") {
     genelist
 }
 
-#' getGeneList
+#' getEntrezTable
+#'
+#' Gathers the entrezIds of the genes in given list and their data
+#"
+#' @note \code{GOTerm}
+#'
+#' @export
+#'
+#' @note \code{getEntrezTable}
+#' symobol to ENTREZ ID conversion
+#' @param genes, gene list
+#' @param dat, data matrix
+#' @param org, orgranism for gene symbol entrez ID conversion
+#' @return table with the entrez IDs in the rownames
+#'
+#' @examples
+#'     x <- getEntrezTable()
+#'
+getEntrezTable <- function(genes = NULL, dat = NULL, org = "org.Hs.eg.db") {
+    if (is.null(genes)) return(NULL)
+    installpack(org)
+    allkeys <- AnnotationDbi::keys(eval(parse(text = org)),
+                                   keytype="SYMBOL")
+    entrezIDs <- unlist(strsplit(genes, "/"))
+    
+    mapped_genes <- mapIds(eval(parse(text = org)), keys = rownames(dat),
+                           column="ENTREZID", keytype="SYMBOL",
+                           multiVals = "first")
+    mapped_genes <- mapped_genes[mapped_genes %in% entrezIDs]
+    genelist <- cbind(mapped_genes, dat[names(mapped_genes), ])
+    
+    genelist <- data.frame(genelist)
+}
+
+#' getEntrezIds
 #'
 #' Gathers the gene list to use for GOTerm analysis.
 #"
