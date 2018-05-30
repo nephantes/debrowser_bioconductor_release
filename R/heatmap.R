@@ -383,9 +383,9 @@ heatmapControlsUI <- function(id) {
         dendControlsUI(id, "Col"),
         shinydashboard::menuItem("Heatmap Colors",
                                  conditionalPanel(paste0("!input['", ns("customColors"), "']"),
-                                                  palUI(id),
-                                                  sliderInput(ns("ncol"), "# of Colors", 
-                                                              min = 1, max = 256, value = 256)),
+                                    palUI(id),
+                                    sliderInput(ns("ncol"), "# of Colors", 
+                                    min = 1, max = 256, value = 256)),
                                  customColorsUI(id)
         ),
         shinydashboard::menuItem("Heatmap Dendrogram",
@@ -420,17 +420,17 @@ heatmapControlsUI <- function(id) {
 kmeansControlsUI <- function(id) {
     ns <- NS(id)
     shinydashboard::menuItem("kmeans",
-                             checkboxInput(ns('kmeansControl'), 'kmeans clustering', value = FALSE),
-                             conditionalPanel(paste0("input['", ns("kmeansControl"), "']"),
-                                              sliderInput(ns("knum"), "k: # of Clusters", 
-                                                          min = 2, max = 20, value = 2),
-                                              selectizeInput(ns("kmeansalgo"), "kmeans.algorithm",
-                                                             c("Hartigan-Wong", "Lloyd", "Forgy",
-                                                               "MacQueen"), selected = 'Lloyd'),
-                                              textInput(ns('clusterorder'), 
-                                                        'The order of the clusters', ""),
-                                              actionButton(ns("changeOrder"), label = "Change Order", styleclass = "primary"),
-                                              checkboxInput(ns('showClasses'), 'Show Classes', value = FALSE)))
+        checkboxInput(ns('kmeansControl'), 'kmeans clustering', value = FALSE),
+        conditionalPanel(paste0("input['", ns("kmeansControl"), "']"),
+            sliderInput(ns("knum"), "k: # of Clusters", 
+                min = 2, max = 20, value = 2),
+            selectizeInput(ns("kmeansalgo"), "kmeans.algorithm",
+                c("Hartigan-Wong", "Lloyd", "Forgy",
+                "MacQueen"), selected = 'Lloyd'),
+            textInput(ns('clusterorder'), 
+                'The order of the clusters', ""),
+            actionButton(ns("changeOrder"), label = "Change Order", styleclass = "primary"),
+            checkboxInput(ns('showClasses'), 'Show Classes', value = FALSE)))
 }
 #' dendControlsUI
 #'
@@ -447,15 +447,15 @@ kmeansControlsUI <- function(id) {
 dendControlsUI <- function(id, dendtype = "Row") {
     ns <- NS(id)
     shinydashboard::menuItem(paste0(dendtype, " dendrogram"),
-                             selectizeInput(ns(paste0("distFun_", dendtype)), "Dist. method", 
-                                            distFunParamsUI(),
-                                            selected = 'euclidean'),
-                             selectizeInput(ns(paste0("hclustFun_", dendtype)), "Clustering linkage",
-                                            clustFunParamsUI(), 
-                                            selected = 'complete'),
-                             sliderInput(ns(paste0("k_", dendtype)), "# of Clusters", 
-                                         min = 1, max = 10, value = 2),
-                             checkboxInput(ns(paste0('lab',dendtype)), paste0(dendtype, ' Labels'), value = TRUE))
+        selectizeInput(ns(paste0("distFun_", dendtype)), "Dist. method", 
+            distFunParamsUI(),
+            selected = 'euclidean'),
+        selectizeInput(ns(paste0("hclustFun_", dendtype)), "Clustering linkage",
+            clustFunParamsUI(), 
+            selected = 'complete'),
+        sliderInput(ns(paste0("k_", dendtype)), "# of Clusters",
+            min = 1, max = 10, value = 2),
+        checkboxInput(ns(paste0('lab',dendtype)), paste0(dendtype, ' Labels'), value = TRUE))
 }
 
 #' clustFunParamsUI
@@ -470,8 +470,8 @@ dendControlsUI <- function(id, dendtype = "Row") {
 #'
 clustFunParamsUI <- function() {
     c(Complete= "complete",Single= "single",Average= "average",
-      Mcquitty= "mcquitty",Median= "median",Centroid= "centroid",
-      Ward.D= "ward.D",Ward.D2= "ward.D2")
+    Mcquitty= "mcquitty",Median= "median",Centroid= "centroid",
+    Ward.D= "ward.D",Ward.D2= "ward.D2")
 }
 
 #' distFunParamsUI
@@ -486,8 +486,8 @@ clustFunParamsUI <- function() {
 #'
 distFunParamsUI <- function() {
     c(Cor="cor", Euclidean="euclidean",Maximum='maximum',
-      Manhattan='manhattan',Canberra='canberra',
-      Binary='binary',Minkowski='minkowski')
+    Manhattan='manhattan',Canberra='canberra',
+    Binary='binary',Minkowski='minkowski')
 }
 
 #' palUI
@@ -505,20 +505,20 @@ palUI <- function(id) {
     ns <- NS(id)
     colSel='RdBu'
     selectizeInput(inputId = ns("pal"), 
-                   label ="Select Color Palette",
-                   choices = c('RdBu' = 'RdBu',
-                               'BlueRed' = 'bluered',
-                               'RedBlue' = 'redblue',
-                               'RdYlBu' = 'RdYlBu',
-                               'RdYlGn' = 'RdYlGn',
-                               'BrBG' = 'BrBG',
-                               'Spectral' = 'Spectral',
-                               'BuGn' = 'BuGn',
-                               'PuBuGn' = 'PuBuGn',
-                               'YlOrRd' = 'YlOrRd',
-                               'Heat' = 'heat.colors',
-                               'Grey' = 'grey.colors'),
-                   selected=colSel)
+    label ="Select Color Palette",
+    choices = c('RdBu' = 'RdBu',
+        'BlueRed' = 'bluered',
+        'RedBlue' = 'redblue',
+        'RdYlBu' = 'RdYlBu',
+        'RdYlGn' = 'RdYlGn',
+        'BrBG' = 'BrBG',
+        'Spectral' = 'Spectral',
+        'BuGn' = 'BuGn',
+        'PuBuGn' = 'PuBuGn',
+        'YlOrRd' = 'YlOrRd',
+        'Heat' = 'heat.colors',
+        'Grey' = 'grey.colors'),
+    selected=colSel)
 }
 
 #' customColorsUI
@@ -537,9 +537,9 @@ customColorsUI <- function(id) {
     list(
         checkboxInput(ns('customColors'), 'Custom Colors', value = FALSE),
         conditionalPanel(paste0("input['", ns("customColors"), "']"),
-                         colourpicker::colourInput(ns("color1"), "Choose min colour", "blue"),
-                         colourpicker::colourInput(ns("color2"), "Choose median colour", "white"),
-                         colourpicker::colourInput(ns("color3"), "Choose max colour", "red")))
+            colourpicker::colourInput(ns("color1"), "Choose min colour", "blue"),
+            colourpicker::colourInput(ns("color2"), "Choose median colour", "white"),
+            colourpicker::colourInput(ns("color3"), "Choose max colour", "red")))
 }
 
 #' prepHeatData

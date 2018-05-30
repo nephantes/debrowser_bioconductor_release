@@ -24,24 +24,28 @@ getQCPanel <- function(input = NULL) {
         getHelpButton("method", 
         "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#quality-control-plots")),
         conditionalPanel(condition = "input.qcplot == 'IQR' 
-                         || input.qcplot == 'Density'",
+            || input.qcplot == 'Density'",
             column(12, ggvisOutput("ggvisQC1")),
             column(12, ggvisOutput("ggvisQC2"))
         ),
         conditionalPanel(condition = "input.qcplot == 'pca'",
-                         getPCAPlotUI("qcpca")),    
+            getPCAPlotUI("qcpca")),    
         conditionalPanel(condition = "(input.qcplot == 'heatmap')",
-                         getHeatmapUI("heatmap")),
+            getHeatmapUI("heatmap"),
+            column(4,
+                   verbatimTextOutput("heatmap_hover"),
+                   verbatimTextOutput("heatmap_selected")
+            )),
         conditionalPanel(condition = "(input.qcplot == 'IQR')",
-                         getIQRPlotUI("IQR"),
-                         getIQRPlotUI("normIQR")),
+            getIQRPlotUI("IQR"),
+            getIQRPlotUI("normIQR")),
         conditionalPanel(condition = "(input.qcplot == 'Density')",
-                         getDensityPlotUI("density"),
-                         getDensityPlotUI("normdensity")),
+            getDensityPlotUI("density"),
+            getDensityPlotUI("normdensity")),
         conditionalPanel(condition = 
-                             "(input.qcplot != 'heatmap')",
-                         column(12, plotOutput("qcplotout",
-                                               height = height, width = width)))
+            "(input.qcplot != 'heatmap')",
+            column(12, plotOutput("qcplotout",
+            height = height, width = width)))
        )
     return(qcPanel)
 }
@@ -69,17 +73,19 @@ getQCPlots <- function(dataset = NULL, input = NULL,
     qcPlots <- NULL
     if (nrow(dataset) > 0) {
         dat <- dataset
-        normdat <-  getNormalizedMatrix(dat, input$norm_method)
+        normdat <-  reactive({
+            getNormalizedMatrix(dat, input$norm_method)
+        })
         if (input$qcplot == "all2all") {
-            qcPlots <- all2all(normdat, input$cex)
+            qcPlots <- all2all(normdat(), input$cex)
         } else if (input$qcplot == "heatmap") {
-            callModule(debrowserheatmap, "heatmap", normdat)
+            callModule(debrowserheatmap, "heatmap", normdat())
         } else if (input$qcplot == "IQR") {
             callModule(debrowserIQRplot, "IQR", dat)
-            callModule(debrowserIQRplot, "normIQR", normdat)
+            callModule(debrowserIQRplot, "normIQR", normdat())
         } else if (input$qcplot == "Density"){
             callModule(debrowserdensityplot, "density", dat)
-            callModule(debrowserdensityplot, "normdensity", normdat)
+            callModule(debrowserdensityplot, "normdensity", normdat())
         }
     }
     return(qcPlots)
@@ -116,7 +122,6 @@ getQCReplot <- function(cols = NULL, conds = NULL,
         samples <- new_cols
         color  <- new_cols
         shape <- new_conds
-
     }else{
         dataset <- datasetInput[,c(input$col_list)]
         samples <- colnames(dataset)

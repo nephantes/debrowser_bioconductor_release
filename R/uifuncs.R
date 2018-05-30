@@ -123,6 +123,7 @@ getQCLeftMenu <- function( input = NULL) {
             uiOutput("columnSelForQC")),
             shinydashboard::menuItem(" QC Options", icon = icon("star-o"), startExpanded=FALSE,
             conditionalPanel( (condition <- "input.qcplot=='heatmap'"),
+                actionButton("startQCPlot", "Submit!"),
                 plotSizeMarginsUI("heatmap"),
                 heatmapControlsUI("heatmap")),
             conditionalPanel( condition <- "(input.qcplot=='all2all')",

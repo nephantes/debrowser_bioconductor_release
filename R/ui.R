@@ -49,8 +49,8 @@ enableBookmarking("server")
             messageItem("Refresh", "", 
                                         icon = shiny::icon("refresh"))
             ))
-   dbHeader$children[[2]]$children <- tags$a(style='color: white;',
-                                            id="top_logo" , "DEBrowser")
+    dbHeader$children[[2]]$children <- tags$a(style='color: white;',
+         id="top_logo" , "DEBrowser")
     addResourcePath(prefix = "www", directoryPath = system.file("extdata",
         "www", package = "debrowser"))
     if(!file.exists("shiny_saves/startup.rds")){
@@ -97,6 +97,7 @@ enableBookmarking("server")
         dbHeader,
         dashboardSidebar(
             width = 250,
+            getJSLine(), 
             conditionalPanel(condition = "!output.user_name",
                 googleAuthR::googleAuthUI("initial_google_button")),
             conditionalPanel(condition = "output.user_name",

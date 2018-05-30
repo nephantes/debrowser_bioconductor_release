@@ -384,6 +384,7 @@ deServer <- function(input, output, session) {
             choicecounter$qc <- 1
             buttonValues$startDE <- FALSE
             buttonValues$goQCplots <- TRUE
+            updateTabItems(session, "menutabs", "discover")
             togglePanels(2, c( 0, 2, 4), session)
         })
         comparison <- reactive({
@@ -482,11 +483,9 @@ deServer <- function(input, output, session) {
         })
 
         inputQCPlot <- reactiveValues(width = 700, height = 500)
-        inputQCPlot <- eventReactive(input$startQCPlot, {
-            tmpDat <- c()
-            tmpDat$width <- input$width
-            tmpDat$height <- input$height
-            return(tmpDat)
+        observeEvent(input$startQCPlot, {
+            inputQCPlot$width <- input$width
+            inputQCPlot$height <- input$height
         })
         
         datForTables <- reactive({

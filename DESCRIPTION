@@ -23,7 +23,8 @@ Depends:
     jsonlite,
     shinyjs,
     shinydashboard,
-    shinyBS
+    shinyBS,
+    pathview
 License: GPL-3 + file LICENSE
 LazyData: true
 Imports:
@@ -57,7 +58,6 @@ Imports:
     methods,
     sva,
     RCurl,
-    pathview,
     googleAuthR,
     enrichplot,
     colourpicker,
