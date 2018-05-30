@@ -82,8 +82,10 @@ getGOLeftMenu <- function() {
         animate = FALSE),
     textInput("pvaluetxt", "or p.adjust", value = "0.01" ),
         getOrganismBox(),
-        #actionButton("KeggPathway", "KeggPathway", style="text-align:center;color: #0000ff; font-size:120%"),
-        conditionalPanel( ( condition <- "(input.goplot=='enrichGO' ||
+            actionButton("GeneTableButton", "DE Genes"),
+            conditionalPanel( (condition <- "input.goplot=='enrichKEGG'"),
+                      actionButton("KeggPathway", "KeggPathway")),
+            conditionalPanel( ( condition <- "(input.goplot=='enrichGO' ||
             (input.goplot=='compare' && input.gofunc!='enrichDO' &&
             input.gofunc!='enrichKEGG'))" ),
             selectInput("ontology", "Choose an ontology:",
