@@ -12,67 +12,13 @@
 #'
 
 deUI <- function() {
-    getUrlJSCode <- '
-        shinyjs.setButtonHref = function(params) {
-            var current_url = window.location.href.split(\"?\")[0];
-            top_logo.href = current_url + "?start=true";
-            document.getElementsByClassName("fa fa-sign-out")[0].parentElement.setAttribute("href", current_url + "?logout=true");
-            document.getElementsByClassName("fa fa-refresh")[0].parentElement.setAttribute("href", current_url + "?start=true");
-            document.getElementsByClassName("header")[0].innerHTML = "";
-            document.getElementsByClassName("label-primary")[0].innerHTML = "";
-        }
-        shinyjs.hideDropdown = function(params) {
-            document.getElementsByClassName("dropdown-toggle")[0].style.display = "none";
-        }
-        shinyjs.showDropdown = function(params) {
-            document.getElementsByClassName("dropdown-toggle")[0].style.display = "block";
-        }
-        shinyjs.hideQCPlot = function(params) {
-            if (document.getElementsByClassName("shiny-plot-output").length != 0)
-                if (document.getElementsByClassName("shiny-plot-output")[0].getElementsByTagName("img").length != 0)
-                    document.getElementsByClassName("shiny-plot-output")[0].getElementsByTagName("img")[0].style.display = "none";
-        }
-        shinyjs.showQCPlot = function(params) {
-            if (document.getElementsByClassName("shiny-plot-output").length != 0)
-                if (document.getElementsByClassName("shiny-plot-output")[0].getElementsByTagName("img").length != 0)
-                    document.getElementsByClassName("shiny-plot-output")[0].getElementsByTagName("img")[0].style.display = "block";
-        }
-    '
-    
-enableBookmarking("server")
-
-    dbHeader <- dashboardHeader(titleWidth = 250,
-        dropdownMenu(type = "notifications", 
-            badgeStatus = "primary", icon = shiny::icon("cog"),
-            messageItem("Sign Out", "",
-                                        icon = shiny::icon("sign-out")),
-            messageItem("Refresh", "", 
-                                        icon = shiny::icon("refresh"))
-            ))
+    dbHeader <- dashboardHeader(titleWidth = 250)
     dbHeader$children[[2]]$children <- tags$a(style='color: white;',
          id="top_logo" , "DEBrowser")
     addResourcePath(prefix = "www", directoryPath = system.file("extdata",
         "www", package = "debrowser"))
-    if(!file.exists("shiny_saves/startup.rds")){
-        startup_obj <- list()
-        startup_obj$bookmark_counter <- 3
-        startup_obj$startup_bookmark <- ""
-        dir.create("shiny_saves")
-        saveRDS(startup_obj, "shiny_saves/startup.rds")
-    }        
-        
-    startup <- readRDS("shiny_saves/startup.rds")
-    if (startup[['bookmark_counter']] == 0){
-        debrowser <- (fluidPage(
-            tags$script('Shiny.addCustomMessageHandler("testmessage",
-                function(message) {
-                    window.location.href = new_url;
-                }
-        );') ))
-    }
-
-    else{
-        debrowser <- (fluidPage(
+     
+    debrowser <- (fluidPage(
         shinyjs::useShinyjs(),
         shinyjs::inlineCSS("
         #loading-debrowser {
@@ -97,10 +43,7 @@ enableBookmarking("server")
         dbHeader,
         dashboardSidebar(
             width = 250,
-            getJSLine(), 
-            conditionalPanel(condition = "!output.user_name",
-                googleAuthR::googleAuthUI("initial_google_button")),
-            conditionalPanel(condition = "output.user_name",
+            getJSLine(),
                 uiOutput("loading"),
                 tabsetPanel(id = "menutabs", type = "tabs",
                 tabPanel(title = "Data Prep", value = "dataprep", id="dataprep",
@@ -118,12 +61,10 @@ enableBookmarking("server")
                 conditionalPanel(condition = "(output.dataready)",
                     uiOutput("leftMenu"),
                     uiOutput("downloadSection"),
-                    uiOutput('cutoffSelection')),
-                    debrowser::bookmarkUI("bm")
-                 )))
+                    uiOutput('cutoffSelection'))
+                 ))
         ),
     dashboardBody(
-        conditionalPanel(condition = "output.user_name",
         mainPanel(
             width = 12,
             tags$head(
@@ -167,11 +108,9 @@ enableBookmarking("server")
                             uiOutput("gopanel")),
                     tabPanel(title = "Tables", value = "panel4", id="panel4",
                             dataTableOutput("tables")))
-        ),
-        extendShinyjs(text = getUrlJSCode)
-        )))
+        )
+        ))
     )
     )
-    }
     debrowser
 }

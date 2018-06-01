@@ -2,12 +2,6 @@ require(shiny)
 library(debrowser)
 library(testthat)
 
-test_that("able to create the basic UI", {
-    expect_silent( getDataPrep <- getDataPrepPanel() )
-    expect_true(exists("getDataPrep"))
-    expect_equal(getDataPrep[[1]][[1]],"div")
-})
-
 test_that("able to create panel UI", {
     expect_silent( QCPanel <- getQCPanel() )
     expect_true(exists("QCPanel"))

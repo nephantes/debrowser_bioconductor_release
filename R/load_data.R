@@ -23,13 +23,8 @@ load_data <- function (input = NULL, session = NULL) {
     
     query <- parseQueryString(session$clientData$url_search)
     jsonobj<-query$jsonobject
-    existing_json_path <- paste0("shiny_bookmarks/", 
-        parseQueryString(session$clientData$url_search)[["_state_id_"]],
-                                 "/file1.JSON")
-    if(file.exists(existing_json_path)){
-        jsonobj <- existing_json_path
-    }
-    if (!is.null(jsonobj) && (jsonobj != "saved"))
+   
+    if (!is.null(jsonobj))
     {
         raw <- getURL(jsonobj, .opts = list(ssl.verifypeer = FALSE),
             crlf = TRUE)
@@ -50,17 +45,10 @@ load_data <- function (input = NULL, session = NULL) {
         df <- df[,sapply(df, is.numeric)]
         return(df)
     }
-    # Restore from file 1
-    bookmark_file1_path <- paste0("shiny_bookmarks/", 
-        parseQueryString(session$clientData$url_search)[["_state_id_"]],
-        "/file1.tsv")
-    if(file.exists(bookmark_file1_path)){
-        to_read_from <- bookmark_file1_path
-    }
-    else {
-        inFile1 <- input$file1
-        to_read_from <- inFile1$datapath
-    }
+
+    inFile1 <- input$file1
+    to_read_from <- inFile1$datapath
+
     try(df <- read.table(to_read_from, sep = "\t",
         header = TRUE, row.names = 1))
     df <- df[,sapply(df, is.numeric)]

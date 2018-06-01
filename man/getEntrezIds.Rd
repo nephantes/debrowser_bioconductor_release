@@ -2,7 +2,7 @@
 % Please edit documentation in R/GOterm.R
 \name{getEntrezIds}
 \alias{getEntrezIds}
-\title{getGeneList}
+\title{getEntrezIds}
 \usage{
 getEntrezIds(genes = NULL, org = "org.Hs.eg.db")
 }
