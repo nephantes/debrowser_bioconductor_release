@@ -97,6 +97,7 @@
 
 deServer <- function(input, output, session) {
     #library(debrowser)
+    options(warn = -1)
     tryCatch(
     {
         if (!interactive()) {
@@ -359,15 +360,15 @@ deServer <- function(input, output, session) {
 
             updateTextInput(session, "dataset", 
                 value =  choicecounter$lastselecteddataset)
-            #if(input$qcplot=="pca" || input$qcplot=="IQR" || input$qcplot=="Density")
-            #    shinyjs::js$hideQCPlot()
+
             getQCReplot(isolate(cols()), isolate(conds()), 
                 df_select(), input, inputQCPlot(),
-               drawPCAExplained(edat$val$plotdata) )
+                drawPCAExplained(edat$val$plotdata) )
         })
         
         df_select <- reactive({
-            getSelectedCols(Dataset(), datasetInput(), input)
+            if (!is.null(Dataset()) && !is.null(datasetInput()) )
+                getSelectedCols(Dataset(), datasetInput(), input)
         })
         
         output$columnSelForQC <- renderUI({

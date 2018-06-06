@@ -60,10 +60,14 @@ debrowserpcaplot <- function(input = NULL, output = NULL, session = NULL, pcadat
         )
     })
     output$pca1 <- renderPlotly({
-        qcplots()$plot1
+        p <- qcplots()$plot1
+        p$elementId <- NULL
+        p
     })
     output$pca2 <- renderPlotly({
-        qcplots()$plot2
+        p <- qcplots()$plot2
+        p$elementId <- NULL
+        p
     })
     output$colorShapeSelect <- renderUI({
         getColorShapeSelection(metadata, input, session)
