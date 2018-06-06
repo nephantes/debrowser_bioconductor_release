@@ -91,15 +91,12 @@
 #' @import V8
 #' @import shinyBS
 #' @import pathview
-#' @import googleAuthR
 #' @import colourpicker
 #' @import RColorBrewer
 #' @import heatmaply
 
 deServer <- function(input, output, session) {
     #library(debrowser)
-    library(googleAuthR)
-    enableBookmarking("server")
     tryCatch(
     {
         if (!interactive()) {
@@ -108,104 +105,15 @@ deServer <- function(input, output, session) {
                     shiny.autoreload=TRUE, warn =-1)
             debrowser::loadpack(debrowser)
         }
-        shinyjs::hide("dropdown-toggle")
-        shinyjs::js$setButtonHref()
-        shinyjs::js$hideDropdown()
-        if(exists(".startdebrowser.called")){
-            shinyjs::hide("logout")
-        }
-
-        options(googleAuthR.scopes.selected = 
-            c("https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/userinfo.profile"))
-        options("googleAuthR.webapp.client_id" = 
-            "186441708690-n65idoo8t19ghi7ieopat6mlqkht9jts.apps.googleusercontent.com")
-        options("googleAuthR.webapp.client_secret" = "ulK-sj8bhvduC9kLU4VQl5ih")
-
-        access_token <- callModule(googleAuth, "initial_google_button")
         # To hide the panels from 1 to 4 and only show Data Prep
         togglePanels(0, c(0), session)
         loadingJSON <- reactive({
             getJsonObj(isolate(session), isolate(input), access_token())
         })
-        output$user_name <- renderText({
-            if(exists(".startdebrowser.called")){
-                return("local")
-            }
-            loadingJSON()$username
-        })
-    
+
         choicecounter <- reactiveValues(nc = 0, qc = 0, 
             lastselecteddataset = "")
         
-        callModule(bookmarkServer, "bm", loadingJSON = loadingJSON())
-        
-        lapply(1:20, function(i) {
-            shinyjs::onclick(paste0("bm-remove_bm", i),
-                 list(
-                     removeBookmark(i, loadingJSON()$username),
-                     shinyjs::hide(paste0("bm-remove_bm", i)),
-                     shinyjs::hide(paste0("bm-bookmark", i))
-                 )
-            )
-        })
-        # Save extra values in state$values when we bookmark...
-        onBookmark(function(state) {
-            # state$values can store data onBookmark to be restored later
-            state$values$input_save <- input
-            state$values$data <- Dataset
-            state$values$nc <- choicecounter$nc
-            state$values$samples <- input$samples
-        })
-        onRestored(function(state) {
-            #Write the functions after restored
-            shinyjs::js$showDropdown()
-            if(!is.null(state$values$data)){
-                #The file is uploaded, go to the next tab.
-                buttonValues$gotoanalysis <- TRUE
-            }
-            if(!is.null(state$values$nc)){
-                choicecounter$nc <- state$values$nc
-            }
-            if(choicecounter$nc > 0){
-                shinyjs::enable("startDE")
-            }
-        })
-        onBookmarked(function(url) {
-            username <- loadingJSON()$username
-            user_addition <- ""
-            startup_path <- "shiny_saves/startup.rds"
-            past_state_path <- "shiny_saves/past_state.txt"
-            if(!is.null(username) && (username != "") ){
-                user_addition <- paste0("&username=", username)
-                startup_path <- paste0("shiny_saves/", 
-                    username ,"/startup.rds")
-                past_state_path <- paste0("shiny_saves/", 
-                    username, "/past_state.txt")
-            }
-            updateQueryString(paste0(url, user_addition))
-            startup <- list()
-            if(file.exists(startup_path)){
-                startup <- readRDS(startup_path)
-            }
-            if(!file.exists("shiny_saves")){
-                dir.create("shiny_saves")
-            }
-            shiny_saves_dir <- paste0("shiny_saves/", username)
-            if(!file.exists(shiny_saves_dir)){
-                dir.create(shiny_saves_dir)
-            }
-            startup[['startup_bookmark']] <- get_state_id(url)
-            write(startup[['startup_bookmark']],file=past_state_path, append=FALSE)
-            
-            saveRDS(startup, startup_path)
-            bookmark_dir_id <- get_state_id(url)
-            file.copy(isolate(input$file1$datapath), 
-                      paste0("shiny_bookmarks/", bookmark_dir_id, "/file1.tsv"))
-        })
-        observeEvent(input$stopApp, {
-            stopApp(returnValue = invisible())
-        })
         output$programtitle <- renderUI({
             togglePanels(0, c(0), session)
             getProgramTitle(session)
@@ -374,12 +282,6 @@ deServer <- function(input, output, session) {
         })
         outputOptions(output, 'condReady', suspendWhenHidden = FALSE)
 
-        observeEvent(input$save_state, {
-            shinyjs::hide("save_state")
-            shinyjs::show("bookmark_special_name")
-            shinyjs::show("name_bookmark")
-        })
-
         observeEvent(input$goQCplots, {
             choicecounter$qc <- 1
             buttonValues$startDE <- FALSE
@@ -449,9 +351,7 @@ deServer <- function(input, output, session) {
             startPlots()
         })
         edat <- reactiveValues(val = NULL)
-        observeEvent(input$qcplot, {
-            shinyjs::js$showQCPlot()
-        })
+
         output$qcplotout <- renderPlot({
             if (is.null(input$col_list) && is.null(df_select())) return(NULL)
             if (!is.null(df_select()))
