@@ -123,6 +123,7 @@ deServer <- function(input, output, session) {
         filtd <- reactiveVal()
         batch <- reactiveVal()
         sel <- reactiveVal()
+        selected <- reactiveVal()
         dc <- reactiveVal()
         compsel <- reactive({
             cp <- 1
@@ -361,9 +362,13 @@ deServer <- function(input, output, session) {
             updateTextInput(session, "dataset", 
                 value =  choicecounter$lastselecteddataset)
 
-            getQCReplot(isolate(cols()), isolate(conds()), 
+            plotDat <- getQCReplot(isolate(cols()), isolate(conds()), 
                 df_select(), input, inputQCPlot(),
                 drawPCAExplained(edat$val$plotdata) )
+            
+            selected$data <- plotDat$heatselected()
+
+            plotDat$qcPlots
         })
         
         df_select <- reactive({
@@ -388,7 +393,9 @@ deServer <- function(input, output, session) {
             inputQCPlot$width <- input$width
             inputQCPlot$height <- input$height
         })
-        
+        selectedData <- reactive({
+            selected$data
+        })
         datForTables <- reactive({
             dat <- getDataForTables(input, init_data(),
                                     filt_data(), selectedData(),

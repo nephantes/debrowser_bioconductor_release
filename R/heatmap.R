@@ -83,7 +83,7 @@ debrowserheatmap <- function( input, output, session, data = NULL){
         input$hoveredgenenameclick
     })
     
-    list( shg = (shg), shgClicked=(shgClicked), selGenes=(hselGenes))
+    list( shg = (shg), shgClicked=(shgClicked), selGenes=(hselGenes), getSelected = (orderData))
 }
 #' getPlotArea
 #'
