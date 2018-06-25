@@ -387,6 +387,7 @@ getDataForTables <- function(input = NULL, init_data = NULL,
             dat <- getSearchData(getDown(filt_data), input)
     }
     else if (input$dataset == "selected"){
+        print(selected$data)
         dat <- getSearchData(selected$data$getSelected(), input)
     }
     else if (input$dataset == "pcaset"){

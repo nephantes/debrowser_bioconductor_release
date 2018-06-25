@@ -71,6 +71,7 @@ getQCPlots <- function(dataset = NULL, input = NULL,
     metadata = NULL, inputQCPlot = NULL, drawPCAExplained = NULL) {
     if (is.null(dataset)) return(NULL)
     qcPlots <- NULL
+    heatselected <- reactiveVal()
     if (nrow(dataset) > 0) {
         dat <- dataset
         normdat <-  reactive({
@@ -79,7 +80,7 @@ getQCPlots <- function(dataset = NULL, input = NULL,
         if (input$qcplot == "all2all") {
             qcPlots <- all2all(normdat(), input$cex)
         } else if (input$qcplot == "heatmap") {
-            callModule(debrowserheatmap, "heatmap", normdat())
+            heatselected(callModule(debrowserheatmap, "heatmap", normdat()))
         } else if (input$qcplot == "IQR") {
             callModule(debrowserIQRplot, "IQR", dat)
             callModule(debrowserIQRplot, "normIQR", normdat())
@@ -88,7 +89,7 @@ getQCPlots <- function(dataset = NULL, input = NULL,
             callModule(debrowserdensityplot, "normdensity", normdat())
         }
     }
-    return(qcPlots)
+    list( qcPlots = (qcPlots), heatselected=(heatselected))
 }
 
 
