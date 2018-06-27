@@ -20,12 +20,13 @@ debrowserbarmainplot <- function(input, output, session, data = NULL,
                                  conds=NULL, cols = NULL, key=NULL) {
     if(is.null(data)) return(NULL)
     output$BarMain <- renderPlotly({
+        if (!is.null(data))
         getBarMainPlot(data, conds, cols, key)
     })
     output$BarMainUI <- renderUI({
     shinydashboard::box(
         collapsible = TRUE, title = session$ns("plot"), status = "primary", 
-        solidHeader = TRUE, width = NULL,
+        solidHeader = TRUE, width = session$ns("width"),
         draggable = TRUE,  plotlyOutput(session$ns("BarMain"),
              width = input$width, height=input$height))
     })

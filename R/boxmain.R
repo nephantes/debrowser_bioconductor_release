@@ -44,7 +44,7 @@ debrowserboxmainplot <- function(input = NULL, output = NULL, session = NULL, da
   output$BoxMainUI <- renderUI({
     shinydashboard::box(
       collapsible = TRUE, title = session$ns("plot"), status = "primary", 
-      solidHeader = TRUE, width = NULL,
+      solidHeader = TRUE, width = session$ns("width"),
       draggable = TRUE,  plotlyOutput(session$ns("BoxMain"),
                                       width = input$width, height=input$height))
   })
