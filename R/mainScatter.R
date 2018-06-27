@@ -28,7 +28,7 @@ debrowsermainplot <- function(input = NULL, output = NULL, session = NULL, data 
                        collapsible = TRUE, title = "Main Plots", status = "primary", 
                        solidHeader = TRUE,width = NULL,
                        draggable = TRUE, plotlyOutput(session$ns("main"), 
-                                                      height=input$plotheight, width=input$plotwidth)
+                           height=input$plotheight, width=input$plotwidth)
                    ))))
     })
     selectedPoint <- reactive({
@@ -48,6 +48,7 @@ debrowsermainplot <- function(input = NULL, output = NULL, session = NULL, data 
         selGeneList <- event_data("plotly_selected", source = session$ns("source"))
         if (is.null(selGeneList$key)) return (NULL)
         keys <- as.vector(unlist(selGeneList$key))
+        return(keys)
     })
     
     output$main <- renderPlotly({

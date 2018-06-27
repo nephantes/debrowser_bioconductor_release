@@ -9,15 +9,23 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(  sidebarMenu(id="DEAnalysis",
     menuItem("Main", tabName = "Main"),
     mainPlotControlsUI("main"),
-    plotSizeMarginsUI("main")))
+    plotSizeMarginsUI("main",  w=600, h=400),
+    heatmapControlsUI("heatmap"),
+    plotSizeMarginsUI("heatmap", w=600, h=400)))
 
 body <- dashboardBody(
     tabItems(
-        tabItem(tabName="Main", getMainPlotUI("main"),
-                column(4,
-                       verbatimTextOutput("main_hover"),
-                       verbatimTextOutput("main_selected")
-                )
+        tabItem(tabName="Main",
+                fluidRow(column(6,
+                getMainPlotUI("main"),
+                verbatimTextOutput("main_hover"),
+                verbatimTextOutput("main_selected")
+                ),
+                column(6,
+                getHeatmapUI("heatmap"),
+                verbatimTextOutput("heatmap_hover"),
+                verbatimTextOutput("heatmap_selected")
+                ))
         )
     ))
 
@@ -53,6 +61,27 @@ server <- function(input, output, session) {
     })
     output$main_selected <- renderPrint({
         selected$selGenes()
+    })
+    selectedHeat <- NULL
+    observe({
+        if (!is.null(selected$selGenes())) {
+        withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
+            selectedHeat <- callModule(debrowserheatmap, "heatmap", xdata[selected$selGenes(), dat$columns])
+        })
+        }
+    })
+    output$heatmap_hover <- renderPrint({
+        if (!is.null(selectedHeat)){
+        if (selected$shgClicked() != "")
+            return(paste0("Clicked: ",selectedHeat$shgClicked()))
+        else
+            return(paste0("Hovered:", selectedHeat$shg()))
+        }
+    })
+    output$heatmap_selected <- renderPrint({
+        if (!is.null(selectedHeat)){
+            selectedHeat$selGenes()
+        }
     })
 }
 shinyApp(ui, server)
