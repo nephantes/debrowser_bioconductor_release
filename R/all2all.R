@@ -1,3 +1,74 @@
+#' debrowserbarmainplot
+#'
+#' Module for a bar plot that can be used in data prep, main plots 
+#' low count removal modules or any desired module
+#' 
+#' @param input, input variables
+#' @param output, output objects
+#' @param session, session 
+#' @param data, a matrix that includes expression values
+#' @param conds, conditions
+#' @param cols, columns
+#' @param key, the gene or region name
+#' @return density plot 
+#' @export
+#'
+#' @examples
+#'     x <- debrowserbarmainplot()
+#'
+debrowserall2all <- function(input, output, session, data = NULL,
+                                 cex=2) {
+    if(is.null(data)) return(NULL)
+    output$all2allplot <- renderPlot({
+        all2all(data, cex)
+    })
+    output$all2allUI <- renderUI({
+        shinydashboard::box(
+            collapsible = TRUE, title = "All2all plot", status = "primary", 
+            solidHeader = TRUE, width = NULL,
+            draggable = TRUE,  plotOutput(session$ns("all2allplot"),
+                width = input$width, height=input$height))
+    })
+}
+
+#' getAll2AllPlotUI
+#'
+#' all2all plots UI.  
+#'
+#' @note \code{getAll2AllPlotUI}
+#' @param id, namespace id
+#' @return the panel for all2all plots;
+#'
+#' @examples
+#'     x <- getAll2AllPlotUI("bar")
+#'
+#' @export
+#'
+getAll2AllPlotUI <- function(id) {
+    ns <- NS(id)
+    uiOutput(ns("all2allUI"))
+}
+
+#' all2allControlsUI
+#'
+#' Generates the controls in the left menu for an all2all plot
+#'
+#' @note \code{all2allControlsUI}
+#' @param id, namespace id
+#' @return returns the controls for left menu
+#' @examples
+#'     x <- all2allControlsUI("bar")
+#' @export
+#'
+all2allControlsUI <- function(id) {
+    ns <- NS(id)
+    shinydashboard::menuItem(paste0(id, " - Options"),
+         sliderInput("cex", "corr font size",
+                min = 0.1, max = 10,
+                step = 0.1, value = 2)
+    )
+}
+
 #' all2all
 #'
 #' Prepares all2all scatter plots for given datasets. 
