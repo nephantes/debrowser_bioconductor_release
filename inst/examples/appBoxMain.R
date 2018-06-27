@@ -34,7 +34,7 @@ server <- function(input, output, session) {
         if (!is.null(input$genename))
             callModule(debrowserboxmainplot, "boxmain", demodata, 
                    metadatatable$sample,  
-                   metadatatable$selection1, input$genename)
+                   metadatatable$treatment, input$genename)
     })
     
 }

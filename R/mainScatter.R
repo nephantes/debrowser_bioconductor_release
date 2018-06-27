@@ -18,7 +18,7 @@
 debrowsermainplot <- function(input = NULL, output = NULL, session = NULL, data = NULL) {
     if (is.null(data)) return(NULL)
     
-    plotdata <-  reactive({ 
+    plotdata <-  reactive({
         plotData(data, input)
     })
     output$mainplot <- renderUI({
@@ -100,7 +100,7 @@ mainScatterNew <- function(input = NULL, data = NULL, source = NULL,
     if ( is.null(data) ) return(NULL)
     
     p <- plot_ly(source = source, data=data, x=~x, y=~y, key=~key,
-                 color=~Legend, colors=c("grey", "blue", "red"), 
+                 color=~Legend, colors=getLegendColors(unique(data$Legend)), 
                  type="scatter", mode = "markers",
                  width=input$width - 100, height=input$height,
                  text=~paste("<b>", ID, "</b><br>",
@@ -153,8 +153,8 @@ plotData <- function(pdata = NULL, input = NULL){
     }
     plot_init_data <- rbind(data_rand, data_rest)
     plot_init_data$Legend  <- factor(plot_init_data$Legend, 
-                                     levels = unique(plot_init_data$Legend))
-    
+         levels = unique(plot_init_data$Legend))
+
     plot_data <- plot_init_data
     if (mainplot == "volcano") {
         plot_data <- plot_init_data[which(!is.na(plot_init_data$log2FoldChange)
@@ -199,6 +199,38 @@ mainPlotControlsUI <- function(id) {
         sliderInput(ns("backperc"), "Background Data(%):",
         min=10, max=100, value=10, sep = "",
         animate = FALSE)))
+}
+
+#' getLegendColors
+#'
+#' Generates colors according to the data
+#'
+#' @note \code{getLegendColors}
+#' @param Legend, unique Legends
+#' @return mainPlotControls
+#' @examples
+#'     x <- getLegendColors(c("up", "down", "GS", "NS"))
+#' @export
+#'
+
+getLegendColors<-function(Legend=c("up", "down", "NS"))
+{
+    colors <- c()
+    for(i in seq(1:length(Legend))){
+        if (Legend[i]=="Up"){
+            colors <- c(colors, "red")
+        }
+        else if (Legend[i]=="Down"){
+            colors <- c(colors, "blue")
+        }
+        else if (Legend[i]=="NS"){
+            colors <- c(colors, "grey")
+        }
+        else if (Legend[i]=="GS"){
+            colors <- c(colors, "green")
+        }
+    }
+    colors
 }
 
 #' generateTestData
