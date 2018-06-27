@@ -123,26 +123,19 @@ getQCLeftMenu <- function( input = NULL) {
             uiOutput("columnSelForQC")),
             shinydashboard::menuItem(" QC Options", icon = icon("star-o"), startExpanded=FALSE,
             conditionalPanel( (condition <- "input.qcplot=='heatmap'"),
-                actionButton("startQCPlot", "Submit!"),
                 plotSizeMarginsUI("heatmap"),
                 heatmapControlsUI("heatmap")),
             conditionalPanel( condition <- "(input.qcplot=='all2all')",
-            sliderInput("width", "width",
-            min = 100, max = 2000, step = 10, value = 700),
-            sliderInput("height", "height",
-            min = 100, max = 2000, step = 10, value = 500)),
-            conditionalPanel( (condition <- "input.qcplot=='all2all'"),
-                sliderInput("cex", "corr font size",
-                min = 0.1, max = 10,
-                step = 0.1, value = 2)),
-                getHelpButton("method",
+                plotSizeMarginsUI("all2all"),
+                all2allControlsUI("all2all")
+            ),
+        getHelpButton("method",
                               "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#heat-maps"),
         conditionalPanel( (condition <- "input.qcplot=='pca'"),
             shinydashboard::menuItem("PCA Options",
             pcaPlotControlsUI("qcpca")),
             plotSizeMarginsUI("qcpca", w=600, h=400, t=50, b=50, l=60, r=0)
-        ),
-        downloadButton("downloadPlot", "Download Plot"))
+        ))
     )
 }
 

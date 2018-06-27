@@ -317,6 +317,7 @@ deServer <- function(input, output, session) {
             tmpRand
         })
         selected <- reactiveValues(data = NULL)
+        qcPlots <- reactiveValues(plot = NULL)
         observe({
             setFilterParams(session, input)
             if ((!is.null(input$genenames) && input$interactive == TRUE) || 
@@ -332,6 +333,21 @@ deServer <- function(input, output, session) {
                    genenames <- paste(rownames(tmpDat), collapse = ",")
                 }
                 selected$data <- getSelHeat(tmpDat, genenames)
+            }
+            if(!is.null(input$qcplot) && !is.null(df_select())){
+                if (input$qcplot == "all2all") {
+                    callModule(debrowserall2all, "all2all", df_select(), input$cex)
+                } else if (input$qcplot == "pca") {
+                    callModule(debrowserpcaplot, "qcpca", df_select(), batch()$BatchEffect()$meta)
+                } else if (input$qcplot == "heatmap") {
+                    callModule(debrowserheatmap, "heatmap", normdat())
+                } else if (input$qcplot == "IQR") {
+                    callModule(debrowserIQRplot, "IQR", df_select())
+                    callModule(debrowserIQRplot, "normIQR", normdat())
+                } else if (input$qcplot == "Density"){
+                    callModule(debrowserdensityplot, "density", df_select())
+                    callModule(debrowserdensityplot, "normdensity", normdat())
+                }
             }
         })
         condmsg <- reactiveValues(text = NULL)
@@ -353,24 +369,11 @@ deServer <- function(input, output, session) {
             startPlots()
         })
         edat <- reactiveValues(val = NULL)
-
-        output$qcplotout <- renderPlot({
-            if (is.null(input$col_list) && is.null(df_select())) return(NULL)
-            if (!is.null(df_select()))
-                callModule(debrowserpcaplot, "qcpca", df_select(), batch()$BatchEffect()$meta)
-
-            updateTextInput(session, "dataset", 
-                value =  choicecounter$lastselecteddataset)
-
-            plotDat <- getQCReplot(isolate(cols()), isolate(conds()), 
-                df_select(), input, inputQCPlot(),
-                drawPCAExplained(edat$val$plotdata) )
-            
-            selected$data <- plotDat$heatselected()
-
-            plotDat$qcPlots
-        })
         
+        normdat <-  reactive({
+            getNormalizedMatrix(df_select(), input$norm_method)
+        })
+
         df_select <- reactive({
             if (!is.null(Dataset()) && !is.null(datasetInput()) )
                 getSelectedCols(Dataset(), datasetInput(), input)
@@ -388,11 +391,6 @@ deServer <- function(input, output, session) {
             )
         })
 
-        inputQCPlot <- reactiveValues(width = 700, height = 500)
-        observeEvent(input$startQCPlot, {
-            inputQCPlot$width <- input$width
-            inputQCPlot$height <- input$height
-        })
         selectedData <- reactive({
             selected$data
         })
@@ -591,18 +589,6 @@ deServer <- function(input, output, session) {
             write.table(dat2, file, sep = ",", row.names = FALSE)
         })
 
-        output$downloadPlot <- downloadHandler(filename = function() {
-            paste(input$qcplot, ".pdf", sep = "")
-        }, content = function(file) {
-            
-            if (choicecounter$qc == 0)
-                saveQCPlot(file, input, df_select(), 
-                           cols(), conds(), inputQCPlot())
-            else
-                saveQCPlot(file, input, df_select(),
-                           inputQCPlot = inputQCPlot())
-        })
-        
         output$downloadGOPlot <- downloadHandler(filename = function() {
             paste(input$goplot, ".pdf", sep = "")
         }, content = function(file) {

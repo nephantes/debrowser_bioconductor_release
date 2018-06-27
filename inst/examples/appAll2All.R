@@ -1,11 +1,4 @@
-library(shiny)
-library(shinydashboard)
-library(GGally)
-library(plotly)
-library(shinyjs)
-source("../../R/plotSize.R")
-source("../../R/funcs.R")
-source("../../R/all2all.R")
+library(debrowser)
 
 options(warn =-1)
 
@@ -14,8 +7,8 @@ header <- dashboardHeader(
 )
 sidebar <- dashboardSidebar(  sidebarMenu(id="DEAnlysis",
       menuItem("All2All", tabName = "All2All"),
-      getAll2AllMenuUI("all2all"),
-      plotSizeMarginsUI("all2all", h=800, w=800)
+      plotSizeMarginsUI("all2all", h=800, w=800),
+      all2allControlsUI("all2all")
 ))
 
 body <- dashboardBody(
@@ -33,7 +26,7 @@ server <- function(input, output, session) {
     load(system.file("extdata", "demo", "demodata.Rda",
                    package = "debrowser"))
     observe({
-        callModule(debrowserall2all, "all2all", demodata)
+        callModule(debrowserall2all, "all2all", demodata, input$cex)
     })
 }
 
