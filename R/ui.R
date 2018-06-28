@@ -59,9 +59,11 @@ deUI <- function() {
                 ),p("Logged in as: ", textOutput("user_name"))),
                 tabPanel(title = "Discover", value = "discover", id="discover",
                 conditionalPanel(condition = "(output.dataready)",
-                    uiOutput("leftMenu"),
+                    conditionalPanel( (condition <- "input.methodtabs=='panel1'"),
+                    mainPlotControlsUI("main")),
                     uiOutput("downloadSection"),
-                    uiOutput('cutoffSelection'))
+                    uiOutput('cutoffSelection'),
+                    uiOutput("leftMenu"))
                  ))
         ),
     dashboardBody(
@@ -101,7 +103,7 @@ deUI <- function() {
                              )),
                     tabPanel(title = "Main Plots", value = "panel1", id="panel1",
                             uiOutput("mainmsgs"),
-                            conditionalPanel(condition = "input.demo || output.dataready", uiOutput("mainpanel"))),
+                            uiOutput("mainpanel")),
                     tabPanel(title = "QC Plots", value = "panel2", id="panel2",
                             uiOutput("qcpanel")),
                     tabPanel(title = "GO Term", value = "panel3", id="panel3",
