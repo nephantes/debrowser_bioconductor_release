@@ -1,9 +1,4 @@
-library(shiny)
-library(heatmaply)
-library(shinyjs)
-source("../../R/plotSize.R")
-source("../../R/funcs.R")
-source("../../R/histogram.R")
+library(debrowser)
 
 header <- dashboardHeader(
   title = "DEBrowser Histogram Plots"

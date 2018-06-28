@@ -11,7 +11,7 @@ test_that("able to create panel UI", {
     expect_true(exists("downloads"))
     expect_equal(downloads[[1]][[1]], "div")
 
-    expect_silent( getMain <- getMainPanel("randstr") )
+    expect_silent( getMain <- getMainPanel() )
     expect_true(exists("getMain"))
     expect_equal(getMain[[1]][[1]], "div")
 

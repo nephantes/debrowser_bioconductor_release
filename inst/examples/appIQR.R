@@ -1,10 +1,4 @@
-library(shiny)
-library(heatmaply)
-library(shinyjs)
-library(reshape2)
-source("../../R/plotSize.R")
-source("../../R/funcs.R")
-source("../../R/IQR.R")
+library(debrowser)
 
 header <- dashboardHeader(
   title = "DEBrowser IQR Plots"

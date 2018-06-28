@@ -1,9 +1,4 @@
-library(shiny)
-library(plotly)
-library(shinyjs)
-source("../../R/plotSize.R")
-source("../../R/funcs.R")
-source("../../R/barmain.R")
+library(debrowser)
 
 options(warn =-1)
 

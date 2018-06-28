@@ -1,4 +1,4 @@
-#' debrowserbarmainplot
+#' debrowserall2all
 #'
 #' Module for a bar plot that can be used in data prep, main plots 
 #' low count removal modules or any desired module
@@ -7,14 +7,12 @@
 #' @param output, output objects
 #' @param session, session 
 #' @param data, a matrix that includes expression values
-#' @param conds, conditions
-#' @param cols, columns
-#' @param key, the gene or region name
-#' @return density plot 
+#' @param cex, the size of the dots
+#' @return all2all plot 
 #' @export
 #'
 #' @examples
-#'     x <- debrowserbarmainplot()
+#'     x <- debrowserall2all()
 #'
 debrowserall2all <- function(input, output, session, data = NULL,
                                  cex=2) {
