@@ -65,6 +65,13 @@ debrowserdataload <- function(input = NULL, output = NULL, session = NULL) {
         ldata$count <- demodata
         ldata$meta <- metadatatable
     })
+    observeEvent(input$demo2, {
+        load(system.file("extdata", "demo", "demodata2.Rda",
+                         package = "debrowser"))
+        
+        ldata$count <- demodata
+        ldata$meta <- metadatatable
+    })
     
     observeEvent(input$uploadFile, {
         if (is.null(input$countdata)) return (NULL)
@@ -119,7 +126,8 @@ dataLoadUI<- function (id) {
         ),
         fluidRow(column(12,
         actionButton(ns("uploadFile"), label = "Upload", styleclass = "primary"), 
-        actionButton(ns("demo"),  label = "Load Demo!", styleclass = "primary"),
+        actionButton(ns("demo"),  label = "Load Demo (Vernia et. al)!", styleclass = "primary"),
+        actionButton(ns("demo2"),  label = "Load Demo (Donnard et. al)!", styleclass = "primary"),
         actionButton("Filter", label = "Filter", styleclass = "primary"))
         ),
   fluidRow(
