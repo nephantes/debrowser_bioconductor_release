@@ -1,9 +1,4 @@
-library(shiny)
-library(heatmaply)
-library(shinyjs)
-source("../../R/plotSize.R")
-source("../../R/funcs.R")
-source("../../R/density.R")
+library(debrowser)
 
 options(warn =-1)
 

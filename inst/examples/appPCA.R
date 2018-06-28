@@ -1,7 +1,4 @@
 library(debrowser)
-source("../../R/plotSize.R")
-source("../../R/funcs.R")
-source("../../R/pca.R")
 
 header <- shinydashboard::dashboardHeader(
     title = "DEBrowser PCA Plots"

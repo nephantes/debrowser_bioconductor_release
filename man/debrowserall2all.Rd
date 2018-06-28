@@ -2,7 +2,7 @@
 % Please edit documentation in R/all2all.R
 \name{debrowserall2all}
 \alias{debrowserall2all}
-\title{debrowserbarmainplot}
+\title{debrowserall2all}
 \usage{
 debrowserall2all(input, output, session, data = NULL, cex = 2)
 }
@@ -15,20 +15,16 @@ debrowserall2all(input, output, session, data = NULL, cex = 2)
 
 \item{data, }{a matrix that includes expression values}
 
-\item{conds, }{conditions}
-
-\item{cols, }{columns}
-
-\item{key, }{the gene or region name}
+\item{cex, }{the size of the dots}
 }
 \value{
-density plot
+all2all plot
 }
 \description{
 Module for a bar plot that can be used in data prep, main plots 
 low count removal modules or any desired module
 }
 \examples{
-    x <- debrowserbarmainplot()
+    x <- debrowserall2all()
 
 }

@@ -1,7 +1,4 @@
-#library(debrowser)
-library(plotly)
-source("../../R/plotSize.R")
-source("../../R/mainScatter.R")
+library(debrowser)
 
 header <- dashboardHeader(
     title = "DEBrowser Main Plots"
@@ -53,7 +50,7 @@ server <- function(input, output, session) {
     #                        "shKRAS", "shKRAS", "shKRAS") )
     # dat$data <- data.frame(data[, dat$columns])
     #
-    #xdata <- generateTestData(dat)
+    xdata <- generateTestData(dat)
     selected <- callModule(debrowsermainplot, "main", xdata)
     
     output$main_hover <- renderPrint({

@@ -1,10 +1,4 @@
 library(debrowser)
-library(plotly)
-source("../../R/plotSize.R")
-source("../../R/mainScatter.R")
-source("../../R/barmain.R")
-source("../../R/boxmain.R")
-source("../../R/funcs.R")
 
 header <- dashboardHeader(
     title = "DEBrowser Main Plots"
@@ -62,7 +56,7 @@ server <- function(input, output, session) {
     #                        "shKRAS", "shKRAS", "shKRAS") )
     # dat$data <- data.frame(data[, dat$columns])
     #
-    #xdata <- generateTestData(dat)
+    xdata <- generateTestData(dat)
 
     selected <- reactiveVal()
     observe({
@@ -83,7 +77,7 @@ server <- function(input, output, session) {
         if (!is.null(selected()) && !is.null(selected()$shgClicked()) && selected()$shgClicked()!=""){
             withProgress(message = 'Creating Bar/Box plots', style = "notification", value = 0.1, {
             callModule(debrowserbarmainplot, "barmain", xdata, 
-                       dat$columns,  
+                       dat$columns,
                        dat$conds, selected()$shgClicked())
             callModule(debrowserboxmainplot, "boxmain", xdata, 
                        dat$columns,

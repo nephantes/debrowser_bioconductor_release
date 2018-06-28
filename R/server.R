@@ -43,7 +43,7 @@
 #'             scale_nominal set_options %>% group_by layer_rects
 #'             band scale_numeric hide_axis layer_densities scale_ordinal
 #'             layer_text
-#' @importFrom plotly renderPlotly plotlyOutput plot_ly add_bars
+#' @importFrom plotly renderPlotly plotlyOutput plot_ly add_bars event_data
 #' @importFrom gplots heatmap.2 redblue
 #' @importFrom igraph layout.kamada.kawai  
 #' @importFrom grDevices dev.off pdf colorRampPalette 

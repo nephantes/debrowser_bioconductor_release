@@ -1,6 +1,4 @@
 library(debrowser)
-library(DESeq2)
-library(edgeR)
 library(testthat)
 
 load(system.file("extdata", "demo", "demodata.Rda",
@@ -10,20 +8,18 @@ columns <- c("exper_rep1", "exper_rep2", "exper_rep3",
 conds <- factor( c("Control", "Control", "Control",
     "Treat", "Treat", "Treat") )
 data <- data.frame(demodata[, columns])
-
+params <-
+        #Run DESeq2 with the following parameters
+        c("DESeq2", "parametric", F, "Wald") 
+non_expressed_cutoff <- 10
+data <- subset(data, rowSums(data) > 10)
 test_that("Able to run DESeq2", {
-    deseqrun <- runDESeq(data, columns, conds)
+    deseqrun <- runDE(data, columns, conds, params)
     expect_true(exists("deseqrun"))
 })
 
-test_that("Linked brush initialization", {
-    expect_silent( lb <- linked_brush())
-    expect_true(exists("lb"))
-})
-
 ##################################################
-deseqrun <- runDESeq(data, columns, conds)
-lb <- linked_brush()
+deseqrun <- runDE(data, columns, conds, params)
 
 de_res <- data.frame(deseqrun)
 norm_data <- getNormalizedMatrix(data[, columns])
@@ -64,25 +60,5 @@ updown <- rdata[rdata$Legend=="Up" | rdata$Legend=="Down",columns]
 
 test_that("Check the QC plots", {
     expect_silent( all2all(data) )
-
-    expect_silent( MAP <- MAPlot(dat, lb) )
-    expect_false( is.null(MAP) )
-
-    expect_silent( test_scat <- mainScatter(rdata, lb, 
-        x="Cond1", y="Cond2") )
-    expect_false(is.null(test_scat))
-    expect_silent( test_scat_zoom <- scatterZoom(rdata,
-        x="Cond1", y="Cond2") )
-    expect_false(is.null(test_scat_zoom))
-
-    expect_silent( test_volc <- volcanoPlot(rdata, lb) )
-    expect_false(is.null(test_volc))
-    expect_silent( test_volc_zoom <- volcanoZoom(rdata) )
-    expect_false(is.null(test_volc_zoom))
-
-    expect_silent( test_ma <- MAPlot(dat, lb) )
-    expect_false(is.null(test_ma))
-    expect_silent( test_ma_zoom <- MAZoom(dat) )
-    expect_false(is.null(test_ma_zoom))
 })
 

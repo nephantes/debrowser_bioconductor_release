@@ -1,12 +1,4 @@
-library(shiny)
-library(shinyjs)
-library(DESeq2)
-library(edgeR)
-library(limma)
-library(shinydashboard)
-source("../../R/funcs.R")
-source("../../R/condSelect.R")
-source("../../R/deprogs.R")
+library(debrowser)
 
 header <- dashboardHeader(
   title = "DEBrowser DE Analysis"
@@ -40,12 +32,10 @@ server <- function(input, output, session) {
         subset(demodata, apply(demodata, 1, max, na.rm = TRUE)  >=  10)
     
   sel <- debrowsercondselect(input, output, session, demodata, metadatatable)
+  dc <- reactiveVal()
   observeEvent(input$startDE, {
       updateTabItems(session, "DataPrep", "DEAnalysis")
-  })
-  dc <- reactive({
-      if (input$startDE)
-          prepDataContainer(filtd, sel$cc(), input)
+      dc(prepDataContainer(filtd, sel$cc(), input))
   })
   output$condReady <- reactive({
       sel$cc()
