@@ -13,15 +13,9 @@ getLeftMenu <- function(input = NULL) {
 if (is.null(input)) return(NULL)
    leftMenu <- list(
         conditionalPanel( (condition <- "input.methodtabs=='panel1'"),
-                          actionButton("startPlots", "Submit!"),
-        shinydashboard::menuItem(" Plot Type", icon = icon("star-o"), startExpanded=TRUE,
-        radioButtons("mainplot", paste("Main Plots:", sep = ""),
-            c(Scatter = "scatter", VolcanoPlot = "volcano",
-            MAPlot = "maplot"))
-                ),
             getMainPlotsLeftMenu()),
         conditionalPanel( (condition <- "input.methodtabs=='panel2'"),
-        shinydashboard::menuItem(" Plot Type", icon = icon("star-o"), startExpanded = TRUE,
+        shinydashboard::menuItem(" Plot Type", startExpanded = TRUE,
         wellPanel(radioButtons("qcplot",
                 paste("QC Plots:", sep = ""),
                 c(PCA = "pca", All2All = "all2all", Heatmap = "heatmap", IQR = "IQR",
@@ -29,14 +23,14 @@ if (is.null(input)) return(NULL)
             getQCLeftMenu(input)),
         conditionalPanel( (condition <- "input.methodtabs=='panel3'"),
             actionButton("startGO", "Submit!"),
-        shinydashboard::menuItem(" Plot Type", icon = icon("star-o"), startExpanded = TRUE,
+        shinydashboard::menuItem(" Plot Type", startExpanded = TRUE,
             wellPanel(radioButtons("goplot", paste("Go Plots:", sep = ""),
                 c(enrichGO = "enrichGO", enrichKEGG = "enrichKEGG",
                 Disease = "disease", compareClusters = "compare")))),
                 getGOLeftMenu()
                 ),
         conditionalPanel( (condition <- "input.methodtabs=='panel4'"),
-        shinydashboard::menuItem(" Select Columns", icon = icon("star-o"), startExpanded=TRUE,
+        shinydashboard::menuItem(" Select Columns", startExpanded=TRUE,
              uiOutput("getColumnsForTables")
         ))
     )
@@ -54,10 +48,11 @@ if (is.null(input)) return(NULL)
 #'
 getMainPlotsLeftMenu <- function() {
     mainPlotsLeftMenu <- list(
-        shinydashboard::menuItem(" Background Selection", icon = icon("star-o"),
-        sliderInput("backperc", "Background Data(%):",
-            min=10, max=100, value=10, sep = "",
-            animate = FALSE))
+        plotSizeMarginsUI("main",  w=600, h=400),
+        heatmapControlsUI("heatmapMain"),
+        plotSizeMarginsUI("heatmapMain", w=600, h=360),
+        plotSizeMarginsUI("barmain", w=600,h=400),
+        plotSizeMarginsUI("boxmain", w=600, h=400)
         )
     return(mainPlotsLeftMenu)
 }
@@ -74,7 +69,7 @@ getMainPlotsLeftMenu <- function() {
 #'
 getGOLeftMenu <- function() {
     list(
-    shinydashboard::menuItem(" Go Term Options", icon = icon("star-o"), startExpanded=TRUE, 
+    shinydashboard::menuItem(" Go Term Options", startExpanded=TRUE, 
                                        
     tags$head(tags$script(HTML(logSliderJScode("gopvalue")))),
     sliderInput("gopvalue", "p.adjust cut off",
@@ -119,9 +114,9 @@ getGOLeftMenu <- function() {
 getQCLeftMenu <- function( input = NULL) {
     if (is.null(input)) return(NULL)
         list(
-        shinydashboard::menuItem(" Select Columns", icon = icon("star-o"), startExpanded=TRUE, 
+        shinydashboard::menuItem(" Select Columns", startExpanded=TRUE, 
             uiOutput("columnSelForQC")),
-            shinydashboard::menuItem(" QC Options", icon = icon("star-o"), startExpanded=FALSE,
+            shinydashboard::menuItem(" QC Options", startExpanded=FALSE,
             conditionalPanel( (condition <- "input.qcplot=='heatmap'"),
                 plotSizeMarginsUI("heatmap"),
                 heatmapControlsUI("heatmap")),
@@ -154,7 +149,7 @@ getCutOffSelection <- function(nc = 1){
     list( conditionalPanel( (condition <- "input.dataset!='most-varied' &&
         input.methodtabs!='panel0'"),
         tags$head(tags$script(HTML(logSliderJScode("padj")))),
-        shinydashboard::menuItem(" Filter", icon = icon("star-o"),
+        shinydashboard::menuItem(" Filter",
         #h4("Filter"),
         sliderInput("padj", "padj value cut off",
         min=0, max=10, value=6, sep = "",
@@ -165,6 +160,33 @@ getCutOffSelection <- function(nc = 1){
         textInput("foldChangetxt", "or foldChange", value = "2" )
         )
     ) )
+}
+
+#' getMainPanel
+#'
+#' main panel for volcano, scatter and maplot.  
+#' Barplot and box plots are in this page as well.
+#'
+#' @note \code{getMainPanel}
+#' @return the panel for main plots;
+#'
+#' @examples
+#'     x <- getMainPanel()
+#'
+#' @export
+#'
+getMainPanel <- function() {
+    list(
+        fluidRow(column(6,
+            getMainPlotUI("main")
+        ),
+        column(6,
+            getHeatmapUI("heatmapMain")
+        )),
+        fluidRow(column(6,
+            getBarMainPlotUI("barmain")),
+        column(6,
+            getBoxMainPlotUI("boxmain"))))
 }
 
 #' getProgramTitle
@@ -320,8 +342,8 @@ helpText( "To be able to select conditions please click
 getStartPlotsMsg <- function() {
 a <- list( conditionalPanel(condition <- "!input.startPlots",
     column( 12, 
-    helpText( "Please choose the appropriate parameters and
-            press submit button to draw the plots!" ),
+    helpText( "Please choose the appropriate parameters to discover
+               more in DE Results!" ),
     getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#the-main-plots"))))
 }
 

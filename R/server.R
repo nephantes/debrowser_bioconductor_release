@@ -161,7 +161,6 @@ deServer <- function(input, output, session) {
                 updateTabItems(session, "DataPrep", "DEAnalysis")
                 buttonValues$startDE <- TRUE
                 buttonValues$goQCplots <- FALSE
-                selected$data$randstr <- NULL
             })
 
             observeEvent (input$goMain, {
@@ -194,12 +193,8 @@ deServer <- function(input, output, session) {
                 head( batch()$BatchEffect()$count )
             })
         })
-        
         output$mainpanel <- renderUI({
-            debrowser_mainpanel <- NULL
-            if (!is.null(randstr()))
-                debrowser_mainpanel <- getMainPanel(randstr())
-            debrowser_mainpanel
+            getMainPanel()
         })
         output$qcpanel <- renderUI({
             getQCPanel(input)
@@ -244,7 +239,7 @@ deServer <- function(input, output, session) {
                 condmsg$text 
         })
         buttonValues <- reactiveValues(goQCplots = FALSE, goDE = FALSE,
-            startDE = FALSE, gotoanalysis = FALSE)
+            startDE = FALSE)
         output$dataready <- reactive({
             query <- parseQueryString(session$clientData$url_search)
             jsonobj<-query$jsonobject
@@ -254,15 +249,7 @@ deServer <- function(input, output, session) {
         })
         outputOptions(output, "dataready", 
                       suspendWhenHidden = FALSE)
-        output$definished <- reactive({
-            return(!is.null(filt_data()))
-        })
-        outputOptions(output, "definished",
-                      suspendWhenHidden = FALSE)
-        
-        observeEvent(input$gotoanalysis, {
-            buttonValues$gotoanalysis <- TRUE
-        })
+
         Dataset <- reactive({
             init_data()
         })
@@ -307,15 +294,10 @@ deServer <- function(input, output, session) {
                 batch()$BatchEffect()$count
         })
         filt_data <- reactive({
-            if (!is.null(comparison()))
+            if (!is.null(init_data()) && !is.null(comparison()) && !is.null(input$padjtxt))
                 applyFilters(init_data(), cols(), conds(), input)
         })
-        randstr <- reactive({ 
-            tmpRand<-NULL
-            if (!is.null(selected$data$randstr))
-                tmpRand<-selected$data$randstr() 
-            tmpRand
-        })
+
         selected <- reactiveValues(data = NULL)
         qcPlots <- reactiveValues(plot = NULL)
         observe({
@@ -354,19 +336,34 @@ deServer <- function(input, output, session) {
         explainedData <- reactive({
             getPCAexplained( df_select(), input )
         })
-        startPlots <- reactive({
-            compselect <- 1
-            if (!is.null(input$compselect) ) 
-                compselect <- as.integer(input$compselect)
-            if (!is.null(isolate(filt_data()))) {
-                condmsg$text <- getCondMsg(dc(), input$compselect,
-                    cols(), conds())
-                selected$data <- getMainPanelPlots(filt_data(), 
-                    cols(), conds(), input, compselect)
+
+        selectedMain <- reactiveVal()
+        observe({
+            if (!is.null(filt_data())) {
+            condmsg$text <- getCondMsg(dc(), input$compselect,
+                cols(), conds())
+            selectedMain(callModule(debrowsermainplot, "main", filt_data()))
             }
         })
-        observeEvent(input$startPlots, {
-            startPlots()
+        selectedHeat <- reactiveVal()
+        observe({
+            if (!is.null(selectedMain()) && !is.null(selectedMain()$selGenes())) {
+                withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
+                    selectedHeat(callModule(debrowserheatmap, "heatmapMain", filt_data()[selectedMain()$selGenes(), cols()]))
+                })
+            }
+        })
+        observe({
+            if (!is.null(selectedMain()) && !is.null(selectedMain()$shgClicked()) && selectedMain()$shgClicked()!=""){
+                withProgress(message = 'Creating Bar/Box plots', style = "notification", value = 0.1, {
+                    callModule(debrowserbarmainplot, "barmain", filt_data(), 
+                               cols(), conds(),  
+                               selectedMain()$shgClicked())
+                    callModule(debrowserboxmainplot, "boxmain", filt_data(), 
+                               cols(), conds(),
+                               selectedMain()$shgClicked())
+                })
+            }
         })
         edat <- reactiveValues(val = NULL)
         
@@ -396,8 +393,8 @@ deServer <- function(input, output, session) {
         })
         datForTables <- reactive({
             dat <- getDataForTables(input, init_data(),
-                                    filt_data(), selectedData(),
-                                    getMostVaried(), mergedComp())
+                filt_data(), selectedData(),
+                getMostVaried(), mergedComp())
             return(dat)
         })
 

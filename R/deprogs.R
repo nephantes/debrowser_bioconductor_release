@@ -52,9 +52,7 @@ getDEResultsUI<- function (id) {
                 column(12,
                 uiOutput(ns("DEResults"))
                 ),
-                #conditionalPanel(condition <- ("output.definished"),
                     actionButton("goMain", "Go to Main Plots!", styleclass = "primary")
-                #)
                 )
             )
         )

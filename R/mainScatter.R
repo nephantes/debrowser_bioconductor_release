@@ -161,6 +161,7 @@ plotData <- function(pdata = NULL, input = NULL){
                                           & !is.na(plot_init_data$log10padj)
                                           & !is.na(plot_init_data$Legend)),]
         plot_data$x <- plot_data$log2FoldChange
+        plot_data$log10padj[plot_data$log10padj>input$log10padjCutoff] <- input$log10padjCutoff
         plot_data$y <- plot_data$log10padj
         x <- "log2FC"
         y <- "log10padj"
@@ -169,7 +170,7 @@ plotData <- function(pdata = NULL, input = NULL){
         y <-  "y"
     } else if (mainplot == "maplot") {
         plot_data$x <- (plot_init_data$x + plot_init_data$y) / 2
-        plot_data$y <- plot_init_data$x - plot_init_data$y
+        plot_data$y <- plot_init_data$y - plot_init_data$x
         x <- "A"
         y <- "M"
     }
@@ -198,7 +199,13 @@ mainPlotControlsUI <- function(id) {
     shinydashboard::menuItem("Main Options",
         sliderInput(ns("backperc"), "Background Data(%):",
         min=10, max=100, value=10, sep = "",
-        animate = FALSE)))
+        animate = FALSE), 
+        conditionalPanel(condition <- paste0("input['", ns("mainplot"),"'] = 'volcano'"),
+             sliderInput(ns("log10padjCutoff"), "Log10 padj value cutoff:",
+                min=2, max=100, value=60, sep = "",
+                animate = FALSE)
+        )
+        ))
 }
 
 #' getLegendColors
