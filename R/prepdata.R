@@ -157,7 +157,9 @@ applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
         genelist <- getGeneSetData(m, c(input$genesetarea))
         m[rownames(genelist), "Legend"] <- "GS"
         m[rownames(genelist), "Size"] <- "100"
-        m <- m[rev(order(m$Legend)),]
+        tmp <- m["Legend"=="GS", ]
+        tmp1 <- m["Legend"!="GS", ]
+        m <- rbind(tmp1, tmp)
     }
     m
 }

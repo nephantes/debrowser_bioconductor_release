@@ -491,7 +491,6 @@ getMean<-function(data = NULL, selcols=NULL) {
     mean_cond
 }
 
-
 #' getLegendRadio
 #'
 #' Radio buttons for the types in the legend
