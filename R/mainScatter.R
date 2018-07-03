@@ -99,7 +99,7 @@ mainScatterNew <- function(input = NULL, data = NULL, source = NULL,
                         x = NULL, y = NULL) {
     if ( is.null(data) ) return(NULL)
     
-    p <- plot_ly(source = source, data=data, x=~x, y=~y, key=~key,
+    p <- plot_ly(source = source, data=data, x=~x, y=~y, key=~key, alpha = 0.8,
                  color=~Legend, colors=getLegendColors(unique(data$Legend)), 
                  type="scatter", mode = "markers",
                  width=input$width - 100, height=input$height,
@@ -238,6 +238,29 @@ getLegendColors<-function(Legend=c("up", "down", "NS"))
         }
     }
     colors
+}
+#' getLevelOrder
+#'
+#' Generates the order of the overlapping points 
+#'
+#' @note \code{getLevelOrder}
+#' @param Level,
+#' @return order
+#' @examples
+#'     x <- getLevelOrder(c("up", "down", "GS", "NS"))
+#' @export
+#'
+
+getLevelOrder<-function(Level=c("up", "down", "NS"))
+{
+    levels <- c( "NS", "Up", "Down", "GS")
+    for(i in seq(1:length(levels)))
+    {
+        if(!levels[i] %in% Level){
+            levels <- levels[-(i)]
+        }
+    }
+    levels
 }
 
 #' generateTestData
