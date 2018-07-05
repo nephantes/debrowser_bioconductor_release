@@ -172,7 +172,7 @@ batchEffectUI <- function (id) {
 normalizationMethods <- function(id) {
     ns <- NS(id)
     selectInput(ns("norm_method"), "Normalization Method:",
-        choices = c("none", "DESeq2", "TMM", "RLE", "upperquartile"))
+        choices = c("none", "MRN", "TMM", "RLE", "upperquartile"))
 }
 
 #' batchMethod

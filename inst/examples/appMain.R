@@ -1,3 +1,4 @@
+library(plotly)
 library(debrowser)
 source("../../R/mainScatter.R")
 

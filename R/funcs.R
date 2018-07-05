@@ -302,11 +302,11 @@ getNormalizedMatrix <- function(M = NULL, method = "TMM") {
     norm <- M
     M <- M[rowSums(M)>0, ]
     if (is.null(M) ) return (NULL)
-    if (!(method == "none" || method == "DESeq2")){
+    if (!(method == "none" || method == "MRN")){
         norm.factors <- edgeR::calcNormFactors(M, method = method)
         norm <- edgeR::equalizeLibSizes(edgeR::DGEList(M,
             norm.factors = norm.factors))$pseudo.counts
-    }else if(method == "DESeq2"){
+    }else if(method == "MRN"){
         columns <- colnames(M)
         conds <- columns
         coldata <- prepGroup(conds, columns)
@@ -570,4 +570,46 @@ getTableModal<-function(){
     bsModal("modalTable", "Genes in the category", "GeneTableButton", size = "large",
             div(style = "display:block;overflow-y:auto; overflow-x:auto;",
                 wellPanel( DT::dataTableOutput("GOGeneTable"))))
+}
+
+#' getTabUpdateJS
+#' prepmenu tab and discovery menu tab updates
+#'
+#' @return the JS for tab updates
+#'
+#' @examples
+#'     x<- getTabUpdateJS()
+#'
+#' @export
+getTabUpdateJS<-function(){
+    tags$script(HTML( "
+        $(function() {
+        $('#methodtabs').attr('selectedtab', '2')
+        $($('#methodtabs >')[0]).attr('id', 'dataprepMethod')
+        $($('#menutabs >')[0]).attr('id', 'dataprepMenu')
+        for(var i=1;i<=5;i++){
+        $($('#methodtabs >')[i]).attr('id', 'discoveryMethod')
+        }
+        $($('#menutabs >')[1]).attr('id', 'discoveryMenu')
+        $(document).on('click', '#dataprepMethod', function () {
+        if($('#dataprepMenu').attr('class')!='active'){   
+        $('#dataprepMenu').find('a').click()
+        }
+        });
+        $(document).on('click', '#dataprepMenu', function () {
+        if($('#dataprepMethod').attr('class')!='active'){   
+        $('#dataprepMethod').find('a').click()
+        }
+        });
+        $(document).on('click', '#discoveryMethod', function () {
+        $('#methodtabs').attr('selectedtab', $(this).index())
+        if($('#discoveryMenu').attr('class')!='active'){   
+        $('#discoveryMenu').find('a').click()
+        }
+        });
+        $(document).on('click', '#discoveryMenu', function () {
+        $($('#methodtabs >')[ $('#methodtabs').attr('selectedtab')]).find('a').click()
+        });
+        })
+    "))
 }

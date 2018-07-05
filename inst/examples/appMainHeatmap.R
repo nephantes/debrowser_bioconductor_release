@@ -1,3 +1,4 @@
+library(plotly)
 library(debrowser)
 
 header <- dashboardHeader(

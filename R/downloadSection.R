@@ -3,7 +3,6 @@
 #' download section button and dataset selection box in the
 #' menu for user to download selected data.
 #'
-#' @param flag, to show the download selection
 #' @param choices, main vs. QC section
 #'
 #' @note \code{getDownloadSection}
@@ -14,15 +13,13 @@
 #'
 #' @export
 #'
-getDownloadSection <- function(flag = FALSE, choices=NULL) {
-    a <- NULL
-    if (flag){
-        a <- list(conditionalPanel( (condition <- "input.methodtabs!='panel0'"),
+getDownloadSection <- function(choices=NULL) {
+    list(conditionalPanel( (condition <- "input.methodtabs!='panel0'"),
                 shinydashboard::menuItem(" Select Plot Options",                
                     selectInput("dataset", "Choose a dataset:",
                     choices = choices), 
                     selectInput("norm_method", "Normalization Method:",
-                        c("none", "DESeq2", "TMM", "RLE", "upperquartile")),
+                        c("none", "MRN", "TMM", "RLE", "upperquartile")),
                     downloadButton("downloadData", "Download Data"),
                     conditionalPanel(condition = "input.dataset=='most-varied'",
                     textInput("topn", "top-n", value = "500" ), 
@@ -32,7 +29,5 @@ getDownloadSection <- function(flag = FALSE, choices=NULL) {
                     helpText("Regular expressions can be used\n
                              Ex: ^Al => Al.., Al$ => ...al")
                 )
-            ))
-    }
-    a
+    ))
 }

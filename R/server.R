@@ -214,7 +214,7 @@ deServer <- function(input, output, session) {
                              "comparisons", "alldetected",
                              "most-varied", "pcaset")
             choices <- c(choices, "selected")
-            getDownloadSection(TRUE, choices)
+            getDownloadSection(choices)
         })
        
         output$leftMenu  <- renderUI({
