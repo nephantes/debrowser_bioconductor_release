@@ -244,7 +244,7 @@ getLegendColors<-function(Legend=c("up", "down", "NS"))
 #' Generates the order of the overlapping points 
 #'
 #' @note \code{getLevelOrder}
-#' @param Level,
+#' @param Level, factor levels shown in the legend
 #' @return order
 #' @examples
 #'     x <- getLevelOrder(c("up", "down", "GS", "NS"))

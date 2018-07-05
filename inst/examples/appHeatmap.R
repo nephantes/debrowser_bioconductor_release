@@ -21,21 +21,30 @@ body <- dashboardBody(
 ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
 server <- function(input, output, session) {
-    #filtd <-
-        # Filter out the rows that has maximum 100 reads in a sample
-    #    subset(a, apply(a, 1, max, na.rm = TRUE)  >=  10)
-    withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
-        selected <- callModule(debrowserheatmap, "heatmap", mtcars)
+    load(system.file("extdata", "demo", "demodata.Rda",
+                     package = "debrowser"))
+    insulinSignalingGenes <- reactive({
+        genes <- c("Prkar2a", "Tsc1", "Mapk8", "Sos1", "Pik3r1", "Srebf1",
+                   "Insr", "Fasn", "Ppp1r3b", "Pik3r3", "Ptprf", "Pklr",
+                   "Irs2", "Socs4", "Eif4ebp1", "Ppp1r3c", "Pygl", "Socs2",
+                   "Cbl","Acaca", "Crkl")
+        normDat <- getNormalizedMatrix(demodata, method = "MRN")
+        normDat[genes, ]
     })
-    
+    selected <- reactiveVal()
+    observe({
+        withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
+            selected(callModule(debrowserheatmap, "heatmap", insulinSignalingGenes()))
+        })
+    })
     output$heatmap_hover <- renderPrint({
-        if (selected$shgClicked() != "")
-            return(paste0("Clicked: ",selected$shgClicked()))
+        if (selected()$shgClicked() != "")
+            return(paste0("Clicked: ",selected()$shgClicked()))
         else
-            return(paste0("Hovered:", selected$shg()))
+            return(paste0("Hovered:", selected()$shg()))
     })
     output$heatmap_selected <- renderPrint({
-         selected$selGenes()
+        selected()$selGenes()
     })
 }
 

@@ -4,11 +4,9 @@
 \alias{getDownloadSection}
 \title{getDownloadSection}
 \usage{
-getDownloadSection(flag = FALSE, choices = NULL)
+getDownloadSection(choices = NULL)
 }
 \arguments{
-\item{flag, }{to show the download selection}
-
 \item{choices, }{main vs. QC section}
 }
 \value{
