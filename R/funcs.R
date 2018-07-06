@@ -583,33 +583,49 @@ getTableModal<-function(){
 #' @export
 getTabUpdateJS<-function(){
     tags$script(HTML( "
-        $(function() {
-        $('#methodtabs').attr('selectedtab', '2')
-        $($('#methodtabs >')[0]).attr('id', 'dataprepMethod')
-        $($('#menutabs >')[0]).attr('id', 'dataprepMenu')
-        for(var i=1;i<=5;i++){
-        $($('#methodtabs >')[i]).attr('id', 'discoveryMethod')
-        }
-        $($('#menutabs >')[1]).attr('id', 'discoveryMenu')
-        $(document).on('click', '#dataprepMethod', function () {
-        if($('#dataprepMenu').attr('class')!='active'){   
-        $('#dataprepMenu').find('a').click()
-        }
-        });
-        $(document).on('click', '#dataprepMenu', function () {
-        if($('#dataprepMethod').attr('class')!='active'){   
-        $('#dataprepMethod').find('a').click()
-        }
-        });
-        $(document).on('click', '#discoveryMethod', function () {
-        $('#methodtabs').attr('selectedtab', $(this).index())
-        if($('#discoveryMenu').attr('class')!='active'){   
-        $('#discoveryMenu').find('a').click()
-        }
-        });
-        $(document).on('click', '#discoveryMenu', function () {
-        $($('#methodtabs >')[ $('#methodtabs').attr('selectedtab')]).find('a').click()
-        });
-        })
-    "))
+                      $(function() {
+                      $('#methodtabs').attr('selectedtab', '2')
+                      $($('#methodtabs >')[0]).attr('id', 'dataprepMethod')
+                      $($('#menutabs >')[0]).attr('id', 'dataprepMenu')
+                      for(var i=1;i<=5;i++){
+                      $($('#methodtabs >')[i]).attr('id', 'discoveryMethod')
+                      }
+                      $($('#menutabs >')[1]).attr('id', 'discoveryMenu')
+                      $(document).on('click', '#dataprepMethod', function () {
+                      if($('#dataprepMenu').attr('class')!='active'){   
+                      $('#dataprepMenu').find('a').click()
+                      }
+                      });
+                      $(document).on('click', '#dataprepMenu', function () {
+                      if($('#dataprepMethod').attr('class')!='active'){   
+                      $('#dataprepMethod').find('a').click()
+                      }
+                      });
+                      $(document).on('click', '#discoveryMethod', function () {
+                      $('#methodtabs').attr('selectedtab', $(this).index())
+                      if($('#discoveryMenu').attr('class')!='active'){   
+                      $('#discoveryMenu').find('a').click()
+                      }
+                      });
+                      $(document).on('click', '#discoveryMenu', function () {
+                      $($('#methodtabs >')[ $('#methodtabs').attr('selectedtab')]).find('a').click()
+                      });
+                      //hide buttons on entrance
+                      $('.sidebar-menu > ').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(1)').css('display', 'inline');
+                      $(document).on('click', '#Filter', function () {
+                      $('.sidebar-menu > :nth-child(2)').css('display', 'inline');
+                      });
+                      $(document).on('click', '#Batch', function () {
+                      $('.sidebar-menu > :nth-child(3)').css('display', 'inline');
+                      });
+                      $(document).on('click', '#goDE', function () {
+                      $('.sidebar-menu > :nth-child(4)').css('display', 'inline');
+                      });
+                      $(document).on('click', '#startDE', function () {
+                      $('.sidebar-menu > :nth-child(5)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(6)').css('display', 'inline');
+                      });
+                      })
+                      "))
 }
