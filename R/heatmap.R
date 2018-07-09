@@ -69,6 +69,7 @@ debrowserheatmap <- function( input, output, session, data = NULL){
     shg <- reactive({
         if (is.null(input$hoveredgenename)) return("")
         js$getSelectedGenes(session$ns("heatmap"), session$ns("selgenenames"))
+        print(input$hoveredgenename)
         input$hoveredgenename
     })
     observe({
