@@ -1,6 +1,10 @@
-library(plotly)
 library(debrowser)
-
+library(plotly)
+library(heatmaply)
+library(gplots)
+source("../../R/mainScatter.R")
+source("../../R/funcs.R")
+source("../../R/heatmap.R")
 
 header <- dashboardHeader(
     title = "DEBrowser Main Plots"
@@ -58,7 +62,7 @@ server <- function(input, output, session) {
     #                        "shKRAS", "shKRAS", "shKRAS") )
     # dat$data <- data.frame(data[, dat$columns])
     #
-    xdata <- generateTestData(dat)
+    #xdata <- generateTestData(dat)
 
     selected <- reactiveVal()
     observe({
@@ -67,23 +71,33 @@ server <- function(input, output, session) {
         }
         selected(callModule(debrowsermainplot, "main", xdata))
     })
-    selectedHeat <- NULL
+    selectedHeat <- reactiveVal()
     observe({
         if (!is.null(selected()) && !is.null(selected()$selGenes())) {
         withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
-            selectedHeat <- callModule(debrowserheatmap, "heatmap", xdata[selected()$selGenes(), dat$columns])
+            selectedHeat(callModule(debrowserheatmap, "heatmap", xdata[selected()$selGenes(), dat$columns]))
         })
         }
+    })
+    
+    getGeneName <- reactive({
+        gname <- NULL
+        if (!is.null(selected()$shgClicked()))
+            gname <- selected()$shgClicked()
+        
+        if (!is.null(selectedHeat()) && !is.null(selectedHeat()$shgClicked()))
+            gname <- selectedHeat()$shgClicked()
+        return(gname)
     })
     observe({
         if (!is.null(selected()) && !is.null(selected()$shgClicked()) && selected()$shgClicked()!=""){
             withProgress(message = 'Creating Bar/Box plots', style = "notification", value = 0.1, {
             callModule(debrowserbarmainplot, "barmain", xdata, 
                        dat$columns,
-                       dat$conds, selected()$shgClicked())
+                       dat$conds, getGeneName())
             callModule(debrowserboxmainplot, "boxmain", xdata, 
                        dat$columns,
-                       dat$conds, selected()$shgClicked())
+                       dat$conds, getGeneName())
             })
         }
     })

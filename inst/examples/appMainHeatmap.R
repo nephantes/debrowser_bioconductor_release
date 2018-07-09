@@ -51,7 +51,7 @@ server <- function(input, output, session) {
     #                        "shKRAS", "shKRAS", "shKRAS") )
     # dat$data <- data.frame(data[, dat$columns])
     #
-    xdata <- generateTestData(dat)
+    #xdata <- generateTestData(dat)
     selected <- callModule(debrowsermainplot, "main", xdata)
     
     output$main_hover <- renderPrint({
@@ -64,22 +64,18 @@ server <- function(input, output, session) {
     observe({
         if (!is.null(selected$selGenes())) {
         withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
-            selectedHeat <- callModule(debrowserheatmap, "heatmap", xdata[selected$selGenes(), dat$columns])
+            selectedHeat <- callModule(debrowserheatmap, "heatmap", 
+                xdata[selected$selGenes(), dat$columns])
         })
         }
     })
     output$heatmap_hover <- renderPrint({
-        if (!is.null(selectedHeat)){
-        if (selected$shgClicked() != "")
-            return(paste0("Clicked: ",selectedHeat$shgClicked()))
-        else
-            return(paste0("Hovered:", selectedHeat$shg()))
-        }
+       if( !is.null(selectedHeat))
+            selectedHeat$shgClicked()
     })
     output$heatmap_selected <- renderPrint({
-        if (!is.null(selectedHeat)){
-            selectedHeat$selGenes()
-        }
+        if( !is.null(selectedHeat))
+        selectedHeat$selGenes()
     })
 }
 shinyApp(ui, server)

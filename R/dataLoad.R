@@ -16,7 +16,11 @@
 debrowserdataload <- function(input = NULL, output = NULL, session = NULL) {
     if (is.null(input)) return(NULL)
     ldata <- reactiveValues(count=NULL, meta=NULL)
-
+    output$dataloaded <- reactive({
+        return(!is.null(loadeddata()))
+    })
+    outputOptions(output, "dataloaded", 
+        suspendWhenHidden = FALSE)
     observe({
         query <- parseQueryString(session$clientData$url_search)
         jsonobj<-query$jsonobject
@@ -127,9 +131,11 @@ dataLoadUI<- function (id) {
         fluidRow(column(12,
         actionButton(ns("uploadFile"), label = "Upload", styleclass = "primary"), 
         actionButton(ns("demo"),  label = "Load Demo (Vernia et. al)!", styleclass = "primary"),
-        actionButton(ns("demo2"),  label = "Load Demo (Donnard et. al)!", styleclass = "primary"),
-        actionButton("Filter", label = "Filter", styleclass = "primary"))
-        ),
+        actionButton(ns("demo2"),  label = "Load Demo (Donnard et. al)!", styleclass = "primary"))),
+        fluidRow(column(12,
+        conditionalPanel(condition = paste0("output['", ns("dataloaded"),"']"),
+        actionButton("Filter", label = "Filter", styleclass = "primary")))
+        ), br(),
   fluidRow(
     shinydashboard::box(title = "Upload Summary",
         solidHeader = T, status = "info",

@@ -1,4 +1,6 @@
 library(debrowser)
+library(DESeq2)
+source("../../R/heatmap.R")
 options(warn=-1)
 header <- dashboardHeader(
     title = "DEBrowser Heatmap"
@@ -38,13 +40,15 @@ server <- function(input, output, session) {
         })
     })
     output$heatmap_hover <- renderPrint({
-        if (selected()$shgClicked() != "")
+        if (!is.null(selected()) && !is.null(selected()$shgClicked()) && 
+            selected()$shgClicked() != "")
             return(paste0("Clicked: ",selected()$shgClicked()))
         else
             return(paste0("Hovered:", selected()$shg()))
     })
     output$heatmap_selected <- renderPrint({
-        selected()$selGenes()
+        if (!is.null(selected()))
+            selected()$selGenes()
     })
 }
 
