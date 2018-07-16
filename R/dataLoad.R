@@ -91,6 +91,10 @@ debrowserdataload <- function(input = NULL, output = NULL, session = NULL) {
                 read.delim(input$metadata$datapath, 
                 header=T, sep=input$metadataSep), T))
         }
+        else{
+            metadatatable <- cbind(colnames(counttable), 1)
+            colnames(metadatatable) <- c("Sample", "Batch")
+        }
         if (is.null(counttable)) 
             {stop("Please upload the count file!")}
         ldata$count <- counttable
