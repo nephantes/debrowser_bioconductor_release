@@ -52,7 +52,7 @@ getDEResultsUI<- function (id) {
                 column(12,
                 uiOutput(ns("DEResults"))
                 ),
-                    actionButton("goMain", "Go to Main Plots!", styleclass = "primary")
+                    actionButton("goMain", "Go to Main Plots", styleclass = "primary")
                 )
             )
         )

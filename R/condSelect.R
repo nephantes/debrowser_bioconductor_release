@@ -54,7 +54,7 @@ list(
                actionButton("rm_btn", "Remove", styleclass = "primary"),
                getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/deseq/deseq.html"),
                conditionalPanel(condition <- ("output.condReady>0"),
-               actionButton("startDE", "Start DE!", styleclass = "primary")))
+               actionButton("startDE", "Start DE", styleclass = "primary")))
     ))
 )
 }

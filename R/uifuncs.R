@@ -22,7 +22,7 @@ if (is.null(input)) return(NULL)
                   Density = "Density")))),
             getQCLeftMenu(input)),
         conditionalPanel( (condition <- "input.methodtabs=='panel3'"),
-            actionButton("startGO", "Submit!"),
+            actionButton("startGO", "Submit"),
         shinydashboard::menuItem(" Plot Type", startExpanded = TRUE,
             wellPanel(radioButtons("goplot", paste("Go Plots:", sep = ""),
                 c(enrichGO = "enrichGO", enrichKEGG = "enrichKEGG",
@@ -146,6 +146,7 @@ getQCLeftMenu <- function( input = NULL) {
 #' @export
 #'
 getCutOffSelection <- function(nc = 1){
+    compselect <- getCompSelection("compselect", nc)
     list( conditionalPanel( (condition <- "input.dataset!='most-varied' &&
         input.methodtabs!='panel0'"),
         tags$head(tags$script(HTML(logSliderJScode("padj")))),
@@ -157,7 +158,8 @@ getCutOffSelection <- function(nc = 1){
         textInput("padjtxt", "or padj", value = "0.01" ),
         sliderInput("foldChange", "Fold Change cut off",
             1, 10, 2, step = 0.1),
-        textInput("foldChangetxt", "or foldChange", value = "2" )
+        textInput("foldChangetxt", "or foldChange", value = "2" ),
+        compselect
         )
     ) )
 }
@@ -299,7 +301,7 @@ getLogo <- function(){
 #'
 getStartupMsg <- function() {
 a <- list( column( 12, 
-helpText("Please select a file or load the demo data!"),
+helpText("Please select a file or load the demo data."),
 helpText( "For more information;" ),
 helpText(   a("Quick Start Guide",
 href = "http://debrowser.readthedocs.org",
@@ -321,7 +323,7 @@ getHelpButton("method", "http://debrowser.readthedocs.org")) ))
 getAfterLoadMsg <- function() {
 a <- list( column( 12, wellPanel(
 helpText( "Please choose the appropriate conditions for DESeq analysis
-            and press 'Run DESeq!' button in the left menu" ),
+            and press 'Run DESeq' button in the left menu" ),
 helpText( "To be able to select conditions please click
             'Condition1' or 'Condition2' boxes.
             You can also use delete button to remove the
@@ -343,7 +345,7 @@ getStartPlotsMsg <- function() {
 a <- list( conditionalPanel(condition <- "!input.startPlots",
     column( 12, 
     helpText( "Please choose the appropriate parameters to discover
-               more in DE Results!" ),
+               more in DE Results" ),
     getHelpButton("method", "http://debrowser.readthedocs.io/en/develop/quickstart/quickstart.html#the-main-plots"))))
 }
 

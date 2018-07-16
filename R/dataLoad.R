@@ -96,13 +96,14 @@ debrowserdataload <- function(input = NULL, output = NULL, session = NULL) {
             colnames(metadatatable) <- c("Sample", "Batch")
         }
         if (is.null(counttable)) 
-            {stop("Please upload the count file!")}
+            {stop("Please upload the count file")}
         ldata$count <- counttable
         ldata$meta <- metadatatable
     })
     loadeddata <- reactive({
         ret <- NULL
         if(!is.null(ldata$count)){
+            ldata$count <- ldata$count[,sapply(ldata$count, is.numeric)]
             ret <- list(count = ldata$count, meta = ldata$meta)
         }
         return(ret)
@@ -134,8 +135,8 @@ dataLoadUI<- function (id) {
         ),
         fluidRow(column(12,
         actionButton(ns("uploadFile"), label = "Upload", styleclass = "primary"), 
-        actionButton(ns("demo"),  label = "Load Demo (Vernia et. al)!", styleclass = "primary"),
-        actionButton(ns("demo2"),  label = "Load Demo (Donnard et. al)!", styleclass = "primary"))),
+        actionButton(ns("demo"),  label = "Load Demo (Vernia et. al)", styleclass = "primary"),
+        actionButton(ns("demo2"),  label = "Load Demo (Donnard et. al)", styleclass = "primary"))),
         fluidRow(column(12,
         conditionalPanel(condition = paste0("output['", ns("dataloaded"),"']"),
         actionButton("Filter", label = "Filter", styleclass = "primary")))
