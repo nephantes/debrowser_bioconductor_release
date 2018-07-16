@@ -1,5 +1,8 @@
 library(debrowser)
 library(DESeq2)
+library(heatmaply)
+library(RColorBrewer)
+library(gplots)
 source("../../R/heatmap.R")
 options(warn=-1)
 header <- dashboardHeader(

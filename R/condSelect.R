@@ -279,7 +279,7 @@ selectConditions<-function(Dataset = NULL,
         lapply(seq_len(nc), function(i) {
             selected1 <- selectedSamples(2 * i - 1)
             selected2 <- selectedSamples( 2 * i )
-           
+
             to_return <- list(column(12, getMetaSelector(metadata = metadata, input=input, n = i),
             
                     getConditionSelectorFromMeta(metadata, input, i,
@@ -343,35 +343,36 @@ getMetaSelector <- function(metadata = NULL, input = NULL, n = 0){
 #'
 get_conditions_given_selection <- function(metadata = NULL, selection = NULL){		
     if(is.null(metadata)) return(NULL)		
-    df <- metadata	
+    df <- metadata
     if(selection == "No Selection"){		
-        return(NULL)		
-    }		
-    if(length(levels(factor(df[,selection]))) != 2){		
+        return(NULL)	
+    }
+    facts <- levels(factor(df[,selection]))
+    facts <- facts[facts != "" & facts != "NA"]
+    if(length(facts) != 2){		
         return("There must be exactly 2 groups.")		
-    } else {		
+    } else {
         # Assuming the first column has samples		
         sample_col_name <- colnames(df)[1]		
         
-        condition1 <- levels(df[,selection])[1]		
-        condition2 <- levels(df[,selection])[2]		
+        condition1 <- facts[1]		
+        condition2 <- facts[2]		
         
         # In case the conditions are integers		
         if(is.null(condition2)){		
-            condition1 <- levels(factor(df[,selection]))[1]		
-            condition2 <- levels(factor(df[,selection]))[2]		
-        }		
-        
+            condition1 <- factor(condition1)		
+            condition2 <- factor(condition2)	
+        }
+
         condition1_filtered <- df[df[,selection] == condition1, ]		
         a <- condition1_filtered[,sample_col_name]		
-        
+
         condition2_filtered <- df[df[,selection] == condition2, ]		
-        b <- condition2_filtered[,sample_col_name]		
-        
+        b <- condition2_filtered[,sample_col_name]	
+
         both_groups <- list(a, b)
         return(both_groups)		
-    }		
-    		
+    }
 }
 
 #' getSampleNames
