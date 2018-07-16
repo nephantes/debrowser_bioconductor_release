@@ -83,13 +83,13 @@ debrowserdataload <- function(input = NULL, output = NULL, session = NULL) {
             try(
                 read.delim(input$countdata$datapath, 
                 header=T, sep=input$countdataSep, 
-            row.names=1 ), T))
+            row.names=1, strip.white=TRUE ), T))
         metadatatable <- c()
         if (!is.null(input$metadata$datapath)){
         metadatatable <- as.data.frame(
             try(
                 read.delim(input$metadata$datapath, 
-                header=T, sep=input$metadataSep), T))
+                header=T, sep=input$metadataSep, strip.white=TRUE), T))
         }
         else{
             metadatatable <- cbind(colnames(counttable), 1)
