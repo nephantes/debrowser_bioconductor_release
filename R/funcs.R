@@ -607,6 +607,10 @@ getTabUpdateJS<-function(){
                       $('#discoveryMenu').find('a').click()
                       }
                       });
+                      $('#discoveryMenu > ').css('display', 'none');
+                      $(document).on('click', '#goMain', function () {
+                           $('#discoveryMenu > ').css('display', 'block');
+                      });
                       $(document).on('click', '#discoveryMenu', function () {
                       $($('#methodtabs >')[ $('#methodtabs').attr('selectedtab')]).find('a').click()
                       });
