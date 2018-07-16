@@ -425,23 +425,30 @@ getDataForTables <- function(input = NULL, init_data = NULL,
 getMergedComparison <- function(Dataset = NULL, dc = NULL, nc = NULL, input = NULL){
     merged <- c()
     if (is.null(dc)) return (NULL)
-    merged <- Dataset[,input$samples]
 
+    mergeresults <- c()
+    samples <- c()
     for ( ni in seq(1:nc)) {
         tmp <- dc[[ni]]$init_data[,c("foldChange", "padj")]
-        
+
+        samples <- unique(c(samples, c(dc[[ni]]$cols)))
         tt <- paste0("C", (2*ni-1),".vs.C",(2*ni))
         fctt <- paste0("foldChange.", tt)
         patt <-  paste0("padj.", tt)
         colnames(tmp) <- c(fctt,  patt)
-
-        merged[,fctt] <- character(nrow(merged))
-        merged[,patt] <- character(nrow(merged))
-        merged[rownames(tmp),c(fctt, patt)] <- tmp[rownames(tmp),c(fctt, patt)]
-        merged[rownames(tmp),patt] <- tmp[rownames(tmp),patt]
-        merged[merged[,fctt]=="",fctt] <- 1 
-        merged[merged[,patt]=="",patt] <- 1 
+        if(ni == 1){
+            mergeresults <- tmp
+        }
+        else{
+            mergeresults[,fctt] <- character(nrow(tmp))
+            mergeresults[,patt] <- character(nrow(tmp))
+            mergeresults[rownames(tmp),c(fctt, patt)] <- tmp[,c(fctt, patt)]
+            mergeresults[rownames(tmp),patt] <- tmp[,patt]
+            mergeresults[mergeresults[,fctt]=="",fctt] <- 1 
+            mergeresults[mergeresults[,patt]=="",patt] <- 1 
+        }
     }
+    merged <- cbind(Dataset[rownames(mergeresults), samples], mergeresults)
     merged
 }
 

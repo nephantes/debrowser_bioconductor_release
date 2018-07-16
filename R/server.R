@@ -127,8 +127,8 @@ deServer <- function(input, output, session) {
         dc <- reactiveVal()
         compsel <- reactive({
             cp <- 1
-            if (!is.null(input$compselect))
-                cp <- input$compselect
+            if (!is.null(input$compselect_dataprep))
+                cp <- input$compselect_dataprep
             cp
         })
 
@@ -171,7 +171,7 @@ deServer <- function(input, output, session) {
             
             output$compselectUI <- renderUI({
                 if (!is.null(sel()))
-                    getCompSelection(sel()$cc())
+                    getCompSelection("compselect_dataprep",sel()$cc())
             })
 
             output$cutOffUI <- renderUI({

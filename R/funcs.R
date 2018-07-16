@@ -254,7 +254,7 @@ round_vals <- function(l) {
 #' @export
 #'
 #' @examples
-#'     actionButton("goDE", "Go to DE Analysis!")
+#'     actionButton("goDE", "Go to DE Analysis")
 #'
 actionButton <- function(inputId, label, styleclass = "", size = "",
         block = FALSE, icon = NULL, css.class = "", ...) {
@@ -362,10 +362,10 @@ logSliderJScode <- function(slidername = NULL){
 #'     x <- getCompSelection(count = 2)
 #' @export
 #'
-getCompSelection <- function(count = NULL) {
+getCompSelection <- function(name = NULL, count = NULL) {
     a <- NULL
     if (count>1){
-        a <- list(selectInput("compselect",
+        a <- list(selectInput(name,
             label = "Choose a comparison:",
             choices = c(1:count) ))
     }
@@ -606,6 +606,10 @@ getTabUpdateJS<-function(){
                       if($('#discoveryMenu').attr('class')!='active'){   
                       $('#discoveryMenu').find('a').click()
                       }
+                      });
+                      $('#discoveryMenu > ').css('display', 'none');
+                      $(document).on('click', '#goMain', function () {
+                           $('#discoveryMenu > ').css('display', 'block');
                       });
                       $(document).on('click', '#discoveryMenu', function () {
                       $($('#methodtabs >')[ $('#methodtabs').attr('selectedtab')]).find('a').click()
