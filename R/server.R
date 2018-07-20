@@ -551,9 +551,7 @@ deServer <- function(input, output, session) {
         })
         
         mergedCompInit <- reactive({
-            merged <- getMergedComparison(
-                isolate(Dataset()), isolate(dc()), choicecounter$nc, input)
-            merged
+            getMergedComparison(isolate(dc()), choicecounter$nc, input)
         })
         datasetInput <- function(addIdFlag = FALSE){
             tmpDat <- NULL
