@@ -619,16 +619,26 @@ getTabUpdateJS<-function(){
                       $('.sidebar-menu > :nth-child(1)').css('display', 'inline');
                       $(document).on('click', '#Filter', function () {
                       $('.sidebar-menu > :nth-child(2)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(3)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(4)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(5)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(6)').css('display', 'none');
                       });
                       $(document).on('click', '#Batch', function () {
                       $('.sidebar-menu > :nth-child(3)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(4)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(5)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(6)').css('display', 'none');
                       });
                       $(document).on('click', '#goDE', function () {
                       $('.sidebar-menu > :nth-child(4)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(5)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(6)').css('display', 'none');
                       });
                       $(document).on('click', '#startDE', function () {
                       $('.sidebar-menu > :nth-child(5)').css('display', 'inline');
                       $('.sidebar-menu > :nth-child(6)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(1)').css('display', 'none');
                       });
                       })
                       "))

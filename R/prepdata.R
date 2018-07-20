@@ -137,20 +137,15 @@ applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
     m$Size <- character(nrow(m))
     m[, "Size"] <- "40"
     m$Legend <- "NS"
-    if (input$dataset == "up" || input$dataset == "up+down") 
+    if (input$dataset == "up" || input$dataset == "up+down" || input$dataset == "selected") 
         m$Legend[m$foldChange >= foldChange_cutoff &
                m$padj <= padj_cutoff] <- "Up"
-    if (input$dataset == "down" || input$dataset == "up+down")
+    if (input$dataset == "down" || input$dataset == "up+down" || input$dataset == "selected")
         m$Legend[m$foldChange <= (1 / foldChange_cutoff) &
                m$padj <= padj_cutoff] <- "Down"
     if (input$dataset == "most-varied" && !is.null(cols)) {
         most_varied <- getMostVariedList(m, cols, input)
         m[rownames(most_varied), c("Legend")] <- "MV"
-    }
-    if (input$dataset == "selected" &&
-        !is.null(input$genenames)) {
-        selectedGenes <- unlist(strsplit(input$genenames, ","))
-        m[selectedGenes, c("Legend")] <- "GS"
     }
     if (!is.null(input$genesetarea) && input$genesetarea != ""
         && input$methodtabs == "panel1") {
@@ -277,7 +272,7 @@ getGeneSetData <- function(data = NULL, geneset = NULL) {
     
     geneset1 <- unique(unlist(strsplit(geneset, split="[:;, \t\n\t]")))
     geneset2 <- geneset1[geneset1 != ""]
-    if(length(geneset2) > 20)
+    if(length(geneset2) > 3)
         geneset2 <- paste0("^", geneset2, "$")
     
     dat1 <- as.data.frame(data)
@@ -389,8 +384,7 @@ getDataForTables <- function(input = NULL, init_data = NULL,
             dat <- getSearchData(getDown(filt_data), input)
     }
     else if (input$dataset == "selected"){
-        print(selected$data)
-        dat <- getSearchData(selected$data$getSelected(), input)
+        dat <- getSearchData(selected, input)
     }
     else if (input$dataset == "pcaset"){
         dat <- getSearchData( explainedData, input )
@@ -444,8 +438,8 @@ getMergedComparison <- function(Dataset = NULL, dc = NULL, nc = NULL, input = NU
             mergeresults[,patt] <- character(nrow(tmp))
             mergeresults[rownames(tmp),c(fctt, patt)] <- tmp[,c(fctt, patt)]
             mergeresults[rownames(tmp),patt] <- tmp[,patt]
-            mergeresults[mergeresults[,fctt]=="",fctt] <- 1 
-            mergeresults[mergeresults[,patt]=="",patt] <- 1 
+            mergeresults[is.na(mergeresults[,fctt]),fctt] <- 1 
+            mergeresults[is.na(mergeresults[,patt]),patt] <- 1 
         }
     }
     merged <- cbind(Dataset[rownames(mergeresults), samples], mergeresults)

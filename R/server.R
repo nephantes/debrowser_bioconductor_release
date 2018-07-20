@@ -112,8 +112,7 @@ deServer <- function(input, output, session) {
             getJsonObj(isolate(session), isolate(input), access_token())
         })
 
-        choicecounter <- reactiveValues(nc = 0, qc = 0, 
-            lastselecteddataset = "")
+        choicecounter <- reactiveValues(nc = 0)
         
         output$programtitle <- renderUI({
             togglePanels(0, c(0), session)
@@ -123,7 +122,6 @@ deServer <- function(input, output, session) {
         filtd <- reactiveVal()
         batch <- reactiveVal()
         sel <- reactiveVal()
-        selected <- reactiveVal()
         dc <- reactiveVal()
         compsel <- reactive({
             cp <- 1
@@ -156,11 +154,14 @@ deServer <- function(input, output, session) {
             })
             
             observeEvent (input$startDE, {
+                togglePanels(0, c(0), session)
                 dat <- prepDataContainer(batch()$BatchEffect()$count, sel()$cc(), input)
                 dc(dat)
                 updateTabItems(session, "DataPrep", "DEAnalysis")
+               
                 buttonValues$startDE <- TRUE
                 buttonValues$goQCplots <- FALSE
+                hideObj(c("load-uploadFile","load-demo", "load-demo2", "goQCplots"))
             })
 
             observeEvent (input$goMain, {
@@ -272,7 +273,6 @@ deServer <- function(input, output, session) {
         outputOptions(output, 'condReady', suspendWhenHidden = FALSE)
 
         observeEvent(input$goQCplots, {
-            choicecounter$qc <- 1
             buttonValues$startDE <- FALSE
             buttonValues$goQCplots <- TRUE
             updateTabItems(session, "menutabs", "discover")
@@ -282,13 +282,12 @@ deServer <- function(input, output, session) {
             compselect <- 1
             if (!is.null(input$compselect))
                 compselect <- as.integer(input$compselect)
-
             dc()[[compselect]]
         })
         conds <- reactive({ comparison()$conds })
         cols <- reactive({ comparison()$cols })
         init_data <- reactive({ 
-            if (!is.null(comparison()$init_data))
+            if (buttonValues$startDE && !is.null(comparison()$init_data))
                 comparison()$init_data 
             else if (!is.null(batch()))
                 batch()$BatchEffect()$count
@@ -298,8 +297,7 @@ deServer <- function(input, output, session) {
                 applyFilters(init_data(), cols(), conds(), input)
         })
 
-        selected <- reactiveValues(data = NULL)
-        qcPlots <- reactiveValues(plot = NULL)
+       
         observe({
             setFilterParams(session, input)
             if ((!is.null(input$genenames) && input$interactive == TRUE) || 
@@ -314,7 +312,6 @@ deServer <- function(input, output, session) {
                    tmpDat <- getSearchData(tmpDat, input)
                    genenames <- paste(rownames(tmpDat), collapse = ",")
                 }
-                selected$data <- getSelHeat(tmpDat, genenames)
             }
             if(!is.null(input$qcplot) && !is.null(df_select())){
                 if (input$qcplot == "all2all") {
@@ -389,8 +386,15 @@ deServer <- function(input, output, session) {
         })
 
         selectedData <- reactive({
-            selected$data
+            dat <- isolate(filt_data())
+            dat[selectedMain()$selGenes(), ]
         })
+        genenames <- reactive({
+            if (!is.null(selectedData()))
+                updateTextInput(session, "genesetarea", value =  paste0(rownames(selectedData()), sep =",", collapse=""))
+               
+        })
+        
         datForTables <- reactive({
             dat <- getDataForTables(input, init_data(),
                 filt_data(), selectedData(),
@@ -441,7 +445,6 @@ deServer <- function(input, output, session) {
             genedata <- getEntrezTable(inputGOstart()$enrich_p$geneID[i],
                                        dat[[1]], org)
             
-            #selected$data$getSelected <- reactiveVal(genedata)
             dat[[1]] <- genedata
             dat
         })
@@ -523,7 +526,7 @@ deServer <- function(input, output, session) {
         })
         getMostVaried <- reactive({
             mostVaried <- NULL
-            if (choicecounter$qc == 0)
+            if (buttonValues$startDE)
                 mostVaried <- filt_data()[filt_data()$Legend=="MV" | 
                     filt_data()$Legend=="GS", ]
             else
@@ -554,26 +557,25 @@ deServer <- function(input, output, session) {
         })
         datasetInput <- function(addIdFlag = FALSE){
             tmpDat <- NULL
-            if (choicecounter$qc == 0 ) {
+            if (buttonValues$startDE) {
                 mergedCompDat <- NULL
                 if (input$dataset == "comparisons"){
                     mergedCompDat <- mergedComp()
                 }
                 tmpDat <- getSelectedDatasetInput(filt_data(), 
-                     selected$data$getSelected(), getMostVaried(),
+                     selectedData(), getMostVaried(),
                      mergedCompDat, isolate(edat$val$pcaset), input)
             }
-            else
+            else{
+                
                 tmpDat <- getSelectedDatasetInput(init_data(), 
-                     getSelected = selected$data$getSelected(),
+                     getSelected = selectedData(),
                      getMostVaried = getMostVaried(),
                      explainedData = isolate(edat$val$pcaset),
                      input = input)
+            }
             if(addIdFlag)
                 tmpDat <- addID(tmpDat)
-            if (input$dataset != "pcaset"){
-                choicecounter$lastselecteddataset = input$dataset
-            }
             return(tmpDat)
         }
         output$downloadData <- downloadHandler(filename = function() {
