@@ -300,7 +300,6 @@ getNormalizedMatrix <- function(M = NULL, method = "TMM") {
     
     M[is.na(M)] <- 0
     norm <- M
-    M <- M[rowSums(M)>0, ]
     if (is.null(M) ) return (NULL)
     if (!(method == "none" || method == "MRN")){
         norm.factors <- edgeR::calcNormFactors(M, method = method)

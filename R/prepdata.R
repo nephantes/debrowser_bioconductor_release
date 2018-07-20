@@ -416,22 +416,21 @@ getDataForTables <- function(input = NULL, init_data = NULL,
 #' @examples
 #'     x <- getMergedComparison()
 #'
-getMergedComparison <- function(Dataset = NULL, dc = NULL, nc = NULL, input = NULL){
-    merged <- c()
+getMergedComparison <- function(dc = NULL, nc = NULL, input = NULL){
     if (is.null(dc)) return (NULL)
-
     mergeresults <- c()
-    samples <- c()
+    mergedata <- c()
     for ( ni in seq(1:nc)) {
         tmp <- dc[[ni]]$init_data[,c("foldChange", "padj")]
 
-        samples <- unique(c(samples, c(dc[[ni]]$cols)))
+        samples <- dc[[ni]]$cols
         tt <- paste0("C", (2*ni-1),".vs.C",(2*ni))
         fctt <- paste0("foldChange.", tt)
         patt <-  paste0("padj.", tt)
         colnames(tmp) <- c(fctt,  patt)
         if(ni == 1){
             mergeresults <- tmp
+            mergedata <- dc[[ni]]$init_data[,samples]
         }
         else{
             mergeresults[,fctt] <- character(nrow(tmp))
@@ -440,10 +439,11 @@ getMergedComparison <- function(Dataset = NULL, dc = NULL, nc = NULL, input = NU
             mergeresults[rownames(tmp),patt] <- tmp[,patt]
             mergeresults[is.na(mergeresults[,fctt]),fctt] <- 1 
             mergeresults[is.na(mergeresults[,patt]),patt] <- 1 
+            remaining_samples <- dc[[ni]]$cols[!(samples %in% colnames(mergedata))]
+            mergedata <- cbind(mergedata,  dc[[ni]]$init_data[,remaining_samples])
         }
     }
-    merged <- cbind(Dataset[rownames(mergeresults), samples], mergeresults)
-    merged
+    cbind(mergedata, mergeresults)
 }
 
 #' applyFiltersToMergedComparison
