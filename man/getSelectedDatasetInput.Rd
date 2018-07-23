@@ -5,8 +5,7 @@
 \title{getSelectedDatasetInput}
 \usage{
 getSelectedDatasetInput(rdata = NULL, getSelected = NULL,
-  getMostVaried = NULL, mergedComparison = NULL, explainedData = NULL,
-  input = NULL)
+  getMostVaried = NULL, mergedComparison = NULL, input = NULL)
 }
 \arguments{
 \item{rdata, }{filtered dataset}
@@ -16,8 +15,6 @@ getSelectedDatasetInput(rdata = NULL, getSelected = NULL,
 \item{getMostVaried, }{most varied data}
 
 \item{mergedComparison, }{merged comparison data}
-
-\item{explainedData, }{pca set}
 
 \item{input, }{input parameters}
 }

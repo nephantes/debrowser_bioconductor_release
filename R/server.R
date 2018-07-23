@@ -119,6 +119,7 @@ deServer <- function(input, output, session) {
             getProgramTitle(session)
         })
         
+        updata <- reactiveVal()
         filtd <- reactiveVal()
         batch <- reactiveVal()
         sel <- reactiveVal()
@@ -131,10 +132,8 @@ deServer <- function(input, output, session) {
         })
 
         observe({
-            updata <- reactive({ 
-                ret <- callModule(debrowserdataload, "load")
-                ret
-            })
+            updata(callModule(debrowserdataload, "load"))
+            
             observeEvent (input$Filter, {
                 if(!is.null(updata()$load())){ 
                     updateTabItems(session, "DataPrep", "Filter")
@@ -155,8 +154,7 @@ deServer <- function(input, output, session) {
             
             observeEvent (input$startDE, {
                 togglePanels(0, c(0), session)
-                dat <- prepDataContainer(batch()$BatchEffect()$count, sel()$cc(), input)
-                dc(dat)
+                dc(prepDataContainer(batch()$BatchEffect()$count, sel()$cc(), input))
                 updateTabItems(session, "DataPrep", "DEAnalysis")
                
                 buttonValues$startDE <- TRUE
@@ -181,18 +179,6 @@ deServer <- function(input, output, session) {
             output$deresUI <- renderUI({
                 column(12, getDEResultsUI(paste0("DEResults",compsel())))
             })
-            output$dcres <- renderPrint({
-                print(head(sel()$cc()))
-            })
-            output$loadedtable <- renderPrint({
-                head( updata()$load()$count )
-            })
-            output$filtertable <- renderPrint({
-                head( filtd()$filter()$count  )
-            })
-            output$batcheffecttable <- renderPrint({
-                head( batch()$BatchEffect()$count )
-            })
         })
         output$mainpanel <- renderUI({
             getMainPanel()
@@ -209,11 +195,11 @@ deServer <- function(input, output, session) {
             getCutOffSelection(nc)
         })
         output$downloadSection <- renderUI({
-            choices <- c("most-varied", "alldetected", "pcaset")
+            choices <- c("most-varied", "alldetected")
             if (buttonValues$startDE)
                 choices <- c("up+down", "up", "down",
                              "comparisons", "alldetected",
-                             "most-varied", "pcaset")
+                             "most-varied")
             choices <- c(choices, "selected")
             getDownloadSection(choices)
         })
@@ -246,14 +232,10 @@ deServer <- function(input, output, session) {
             jsonobj<-query$jsonobject
             if (is.null(jsonobj))
                 hide(id = "loading-debrowser", anim = TRUE, animType = "fade")  
-            return(!is.null(Dataset()))
+            return(!is.null(init_data()))
         })
         outputOptions(output, "dataready", 
                       suspendWhenHidden = FALSE)
-
-        Dataset <- reactive({
-            init_data()
-        })
 
         observeEvent(input$resetsamples, {
             buttonValues$startDE <- FALSE
@@ -262,8 +244,8 @@ deServer <- function(input, output, session) {
             choicecounter$nc <- 0
         })
         samples <- reactive({
-            if (is.null(Dataset())) return(NULL)
-            getSamples(colnames(Dataset()), index = 1)
+            if (is.null(init_data())) return(NULL)
+            getSamples(colnames(init_data()), index = 1)
         })
         output$condReady <- reactive({
             if (!is.null(sel()))
@@ -297,7 +279,7 @@ deServer <- function(input, output, session) {
                 applyFilters(init_data(), cols(), conds(), input)
         })
 
-       
+        selectedQCHeat <- reactiveVal()
         observe({
             setFilterParams(session, input)
             if ((!is.null(input$genenames) && input$interactive == TRUE) || 
@@ -319,7 +301,7 @@ deServer <- function(input, output, session) {
                 } else if (input$qcplot == "pca") {
                     callModule(debrowserpcaplot, "qcpca", df_select(), batch()$BatchEffect()$meta)
                 } else if (input$qcplot == "heatmap") {
-                    callModule(debrowserheatmap, "heatmap", normdat())
+                    selectedQCHeat(callModule(debrowserheatmap, "heatmapQC", normdat()))
                 } else if (input$qcplot == "IQR") {
                     callModule(debrowserIQRplot, "IQR", df_select())
                     callModule(debrowserIQRplot, "normIQR", normdat())
@@ -346,7 +328,7 @@ deServer <- function(input, output, session) {
         observe({
             if (!is.null(selectedMain()) && !is.null(selectedMain()$selGenes())) {
                 withProgress(message = 'Creating plot', style = "notification", value = 0.1, {
-                    selectedHeat(callModule(debrowserheatmap, "heatmapMain", filt_data()[selectedMain()$selGenes(), cols()]))
+                    selectedHeat(callModule(debrowserheatmap, "heatmap", filt_data()[selectedMain()$selGenes(), cols()]))
                 })
             }
         })
@@ -369,8 +351,8 @@ deServer <- function(input, output, session) {
         })
 
         df_select <- reactive({
-            if (!is.null(Dataset()) && !is.null(datasetInput()) )
-                getSelectedCols(Dataset(), datasetInput(), input)
+            if (!is.null(init_data()) && !is.null(datasetInput()) )
+                getSelectedCols(init_data(), datasetInput(), input)
         })
         
         output$columnSelForQC <- renderUI({
@@ -387,12 +369,20 @@ deServer <- function(input, output, session) {
 
         selectedData <- reactive({
             dat <- isolate(filt_data())
-            dat[selectedMain()$selGenes(), ]
-        })
-        genenames <- reactive({
-            if (!is.null(selectedData()))
-                updateTextInput(session, "genesetarea", value =  paste0(rownames(selectedData()), sep =",", collapse=""))
-               
+            ret <- c()
+            if (input$selectedplot == "Main Plot"  && !is.null(selectedMain())){
+                ret <- dat[selectedMain()$selGenes(), ]
+            }
+            else if (input$selectedplot == "Main Heatmap" &&  !is.null(selectedHeat())){
+                ret <- dat[selectedHeat()$selGenes(), ]
+            }
+            else if (input$selectedplot == "QC Heatmap" && !is.null(selectedQCHeat())){
+                ret <- dat[selectedQCHeat()$selGenes(), ]
+            }
+            else if (input$selectedplot == "Search Box" && !is.null(input$genesetarea)){
+                ret <- getGeneSetData(dat, c(input$genesetarea))
+            }
+            ret
         })
         
         datForTables <- reactive({
@@ -485,6 +475,7 @@ deServer <- function(input, output, session) {
         tabledat <- reactive({
             dat <- datForTables()
             if (is.null(dat)) return (NULL)
+            if (nrow(dat[[1]])<1) return(NULL)
             dat2 <- removeCols(c("ID", "x", "y","Legend", "Size"), dat[[1]])
             
             pcols <- c(names(dat2)[grep("^padj", names(dat2))], 
@@ -561,15 +552,14 @@ deServer <- function(input, output, session) {
                     mergedCompDat <- mergedComp()
                 }
                 tmpDat <- getSelectedDatasetInput(filt_data(), 
-                     selectedData(), getMostVaried(),
-                     mergedCompDat, isolate(edat$val$pcaset), input)
+                     isolate(selectedData()), getMostVaried(),
+                     mergedCompDat, input)
             }
             else{
                 
                 tmpDat <- getSelectedDatasetInput(init_data(), 
-                     getSelected = selectedData(),
+                     getSelected = isolate(selectedData()),
                      getMostVaried = getMostVaried(),
-                     explainedData = isolate(edat$val$pcaset),
                      input = input)
             }
             if(addIdFlag)

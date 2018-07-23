@@ -297,10 +297,8 @@ actionButton <- function(inputId, label, styleclass = "", size = "",
 #'
 getNormalizedMatrix <- function(M = NULL, method = "TMM") {
     if (is.null(M) ) return (NULL)
-    
     M[is.na(M)] <- 0
     norm <- M
-    if (is.null(M) ) return (NULL)
     if (!(method == "none" || method == "MRN")){
         norm.factors <- edgeR::calcNormFactors(M, method = method)
         norm <- edgeR::equalizeLibSizes(edgeR::DGEList(M,
