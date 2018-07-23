@@ -75,21 +75,15 @@ deUI <- function() {
                 tabsetPanel(id = "methodtabs", type = "tabs",
                     tabPanel(title = "Data Prep", value = "panel0", id="panel0",
                              tabItems(
-                                 tabItem(tabName="Upload", dataLoadUI("load"),
-                                         column(4, verbatimTextOutput("loadedtable")
-                                         )),
+                                 tabItem(tabName="Upload", dataLoadUI("load")),
                                  tabItem(tabName="Filter",
                                          conditionalPanel(
                                              (condition <- "input.Filter"),
-                                         dataLCFUI("lcf"),                
-                                         column(4, verbatimTextOutput("filtertable")
-                                         ))),
+                                         dataLCFUI("lcf"))),
                                  tabItem(tabName="BatchEffect", 
                                          conditionalPanel(
                                              (condition <- "input.Batch"),
-                                         batchEffectUI("batcheffect"),
-                                         column(4, verbatimTextOutput("batcheffecttable")
-                                         ))),
+                                         batchEffectUI("batcheffect"))),
                                  tabItem(tabName="CondSelect", 
                                          conditionalPanel(
                                              (condition <- "input.goDE"),
@@ -97,9 +91,7 @@ deUI <- function() {
                                  tabItem(tabName="DEAnalysis", 
                                          conditionalPanel(
                                              (condition <- "input.goDE"),
-                                         uiOutput("deresUI"),
-                                         column(4, verbatimTextOutput("dcres")
-                                         )))
+                                         uiOutput("deresUI")))
                              )),
                     tabPanel(title = "Main Plots", value = "panel1", id="panel1",
                             uiOutput("mainmsgs"),

@@ -31,11 +31,7 @@ getQCPanel <- function(input = NULL) {
         conditionalPanel(condition = "input.qcplot == 'pca'",
             getPCAPlotUI("qcpca")),    
         conditionalPanel(condition = "(input.qcplot == 'heatmap')",
-            getHeatmapUI("heatmap"),
-            column(4,
-                   verbatimTextOutput("heatmap_hover"),
-                   verbatimTextOutput("heatmap_selected")
-            )),
+            getHeatmapUI("heatmapQC")),
         conditionalPanel(condition = "(input.qcplot == 'IQR')",
             getIQRPlotUI("IQR"),
             getIQRPlotUI("normIQR")),

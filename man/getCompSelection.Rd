@@ -4,7 +4,7 @@
 \alias{getCompSelection}
 \title{getCompSelection}
 \usage{
-getCompSelection(count = NULL)
+getCompSelection(name = NULL, count = NULL)
 }
 \arguments{
 \item{count, }{comparison count}

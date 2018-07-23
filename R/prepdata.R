@@ -166,7 +166,6 @@ applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
 #' @param getSelected, selected data
 #' @param getMostVaried, most varied data
 #' @param mergedComparison, merged comparison data
-#' @param explainedData, pca set
 #' @param input, input parameters
 #' @return data
 #' @export
@@ -175,7 +174,7 @@ applyFilters <- function(filt_data = NULL, cols = NULL, conds=NULL,
 #'     x <- getSelectedDatasetInput()
 #'
 getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL, 
-    getMostVaried = NULL, mergedComparison = NULL, explainedData = NULL, 
+    getMostVaried = NULL, mergedComparison = NULL,
     input = NULL) {
     if (is.null(rdata)) return (NULL)
     m <- rdata
@@ -187,7 +186,7 @@ getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL,
         m <- getUpDown(rdata)
     } else if (input$dataset == "alldetected") {
         m <- rdata
-    } else if (input$dataset == "selected") {
+    } else if (input$dataset == "selected" && !is.null(input$selectedplot)) {
         m <- getSelected
     } else if (input$dataset == "most-varied") {
         m <- getMostVaried
@@ -195,8 +194,6 @@ getSelectedDatasetInput<-function(rdata = NULL, getSelected = NULL,
         m <- mergedComparison
     } else if (input$dataset == "searched") {
         m <- searched
-    } else if (input$dataset == "pcaset") {
-       m <- explainedData
     }
     m
 }

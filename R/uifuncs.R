@@ -49,8 +49,9 @@ if (is.null(input)) return(NULL)
 getMainPlotsLeftMenu <- function() {
     mainPlotsLeftMenu <- list(
         plotSizeMarginsUI("main",  w=600, h=400),
-        heatmapControlsUI("heatmapMain"),
-        plotSizeMarginsUI("heatmapMain", w=600, h=360),
+        shinydashboard::menuItem("Heatmap Options", startExpanded=FALSE,
+        heatmapControlsUI("heatmap"),
+        plotSizeMarginsUI("heatmap", w=600, h=360)),
         plotSizeMarginsUI("barmain", w=600,h=400),
         plotSizeMarginsUI("boxmain", w=600, h=400)
         )
@@ -118,8 +119,8 @@ getQCLeftMenu <- function( input = NULL) {
             uiOutput("columnSelForQC")),
             shinydashboard::menuItem(" QC Options", startExpanded=FALSE,
             conditionalPanel( (condition <- "input.qcplot=='heatmap'"),
-                plotSizeMarginsUI("heatmap"),
-                heatmapControlsUI("heatmap")),
+                plotSizeMarginsUI("heatmapQC"),
+                heatmapControlsUI("heatmapQC")),
             conditionalPanel( condition <- "(input.qcplot=='all2all')",
                 plotSizeMarginsUI("all2all"),
                 all2allControlsUI("all2all")
@@ -183,7 +184,7 @@ getMainPanel <- function() {
             getMainPlotUI("main")
         ),
         column(6,
-            getHeatmapUI("heatmapMain")
+            getHeatmapUI("heatmap")
         )),
         fluidRow(column(6,
             getBarMainPlotUI("barmain")),
@@ -519,4 +520,39 @@ hideObj <- function(btns = NULL) {
 getKEGGModal<-function(){
     a <- bsModal("modalExample", "KEGG Pathway", "KeggPathway", size = "large",
     div(style = "display:block;overflow-y:auto; overflow-x:auto;",imageOutput("KEGGPlot")))
+}
+
+#' getDownloadSection
+#'
+#' download section button and dataset selection box in the
+#' menu for user to download selected data.
+#'
+#' @param choices, main vs. QC section
+#'
+#' @note \code{getDownloadSection}
+#' @return the panel for download section in the menu;
+#'
+#' @examples
+#'     x<- getDownloadSection()
+#'
+#' @export
+#'
+getDownloadSection <- function(choices=NULL) {
+    list(conditionalPanel( (condition <- "input.methodtabs!='panel0'"),
+        shinydashboard::menuItem(" Select Plot Options",                
+        selectInput("dataset", "Choose a dataset:",
+        choices = choices),
+        selectInput("selectedplot", "The plot used in selection:",
+        choices = c("Main Plot", "Main Heatmap", "QC Heatmap", "Search Box")),
+        selectInput("norm_method", "Normalization Method:",
+        c("none", "MRN", "TMM", "RLE", "upperquartile")),
+        downloadButton("downloadData", "Download Data"),
+        conditionalPanel(condition = "input.dataset=='most-varied'",
+        textInput("topn", "top-n", value = "500" ), 
+        textInput("mincount", "total min count", value = "10" )),
+        textareaInput("genesetarea","Search", 
+        "", rows = 5, cols = 35),
+        helpText("Regular expressions can be used\n
+        Ex: ^Al => Al.., Al$ => ...al")
+    )))
 }
