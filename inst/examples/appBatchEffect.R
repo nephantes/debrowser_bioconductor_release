@@ -1,5 +1,6 @@
 library(debrowser)
-
+options(warn =-1)
+source("../../R/batcheffect.R")
 header <- dashboardHeader(
     title = "DEBrowser Batch Effect"
 )

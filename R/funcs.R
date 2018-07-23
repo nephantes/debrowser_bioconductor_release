@@ -352,11 +352,11 @@ logSliderJScode <- function(slidername = NULL){
 #'
 #' Gathers the user selected comparison set to be used within the
 #' DEBrowser.
-#'
+#' @param name, the name of the selectInput
 #' @param count, comparison count
 #' @note \code{getCompSelection}
 #' @examples
-#'     x <- getCompSelection(count = 2)
+#'     x <- getCompSelection(name="comp", count = 2)
 #' @export
 #'
 getCompSelection <- function(name = NULL, count = NULL) {

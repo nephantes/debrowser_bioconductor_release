@@ -5,7 +5,7 @@
 \title{getBoxMainPlot}
 \usage{
 getBoxMainPlot(data = NULL, conds = NULL, cols = NULL, key = NULL,
-  title = "")
+  title = "", input = NULL)
 }
 \arguments{
 \item{data, }{count or normalized data}
@@ -17,6 +17,8 @@ getBoxMainPlot(data = NULL, conds = NULL, cols = NULL, key = NULL,
 \item{key, }{key}
 
 \item{title, }{title}
+
+\item{input, }{input}
 }
 \description{
 Makes Density plots

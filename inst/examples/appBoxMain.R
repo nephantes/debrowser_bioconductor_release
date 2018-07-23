@@ -1,5 +1,6 @@
 library(debrowser)
-
+library(plotly)
+source("../../R/boxmain.R")
 options(warn =-1)
 
 header <- dashboardHeader(
@@ -8,17 +9,17 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(  sidebarMenu(id="DEAnlysis",
     menuItem("BoxMain", tabName = "BoxMain"),
     textInput("genename", "Gene/Region Name", value = "Foxa3" ),
-    plotSizeMarginsUI("boxmain", h=400)
+    plotSizeMarginsUI("boxmain", h=400, t = 30)
 ))
 
 body <- dashboardBody(
     tabItems(
         tabItem(tabName="BoxMain", 
-                fluidRow(
-                    column(12,
-                           getBoxMainPlotUI("boxmain")))
+            fluidRow(
+                column(12,
+                getBoxMainPlotUI("boxmain")))
         )
-    ))
+))
 
 ui <- dashboardPage(header, sidebar, body, skin = "blue")
 
@@ -28,10 +29,9 @@ server <- function(input, output, session) {
     observe({
         if (!is.null(input$genename))
             callModule(debrowserboxmainplot, "boxmain", demodata, 
-                   metadatatable$sample,  
-                   metadatatable$treatment, input$genename)
-    })
-    
+            metadatatable$sample,  
+            metadatatable$treatment, input$genename)
+})
 }
 
 shinyApp(ui, server)

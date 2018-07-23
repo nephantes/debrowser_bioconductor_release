@@ -12,8 +12,6 @@ getMergedComparison(dc = NULL, nc = NULL, input = NULL)
 \item{nc, }{the number of comparisons}
 
 \item{input, }{input params}
-
-\item{Dataset, }{whole data}
 }
 \value{
 data

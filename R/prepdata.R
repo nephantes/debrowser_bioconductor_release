@@ -403,7 +403,6 @@ getDataForTables <- function(input = NULL, init_data = NULL,
 #'
 #' Gathers the merged comparison data to be used within the
 #' DEBrowser.
-#' @param Dataset, whole data
 #' @param dc, data container
 #' @param nc, the number of comparisons
 #' @param input, input params

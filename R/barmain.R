@@ -19,16 +19,20 @@
 debrowserbarmainplot <- function(input, output, session, data = NULL,
                                  conds=NULL, cols = NULL, key=NULL) {
     if(is.null(data)) return(NULL)
-    output$BarMain <- renderPlotly({
-        if (!is.null(data))
-        getBarMainPlot(data, conds, cols, key)
-    })
     output$BarMainUI <- renderUI({
-    shinydashboard::box(
-        collapsible = TRUE, title = session$ns("plot"), status = "primary", 
-        solidHeader = TRUE, width = session$ns("width"),
-        draggable = TRUE,  plotlyOutput(session$ns("BarMain"),
-             width = input$width, height=input$height))
+        list(fluidRow(
+            column(12,
+                   shinydashboard::box(
+                       collapsible = TRUE, title = "BarMain", status = "primary", 
+                       solidHeader = TRUE, width = input$width, height =  input$height + 100,
+                       draggable = TRUE, plotlyOutput(session$ns("BarMain"),
+                                                      height=input$height, width=input$width)
+                   ))))
+
+    })
+    output$BarMain <- renderPlotly({
+        getBarMainPlot(data, conds, cols, key, title = "", input =input)
+
     })
 }
 
@@ -78,23 +82,29 @@ barMainPlotControlsUI <- function(id) {
 #' @param cols, cols
 #' @param key, key
 #' @param title, title
-#'
+#' @param input, input
 #' @export
 #'
 #' @examples
 #'     getBarMainPlot()
 #'
-getBarMainPlot <- function(data=NULL, conds=NULL, cols = NULL, key=NULL, title = ""){
-  if (is.null(data)) return(NULL)
+getBarMainPlot <- function(data=NULL, conds=NULL, cols = NULL, key=NULL, title = "", input = NULL){
     vardata <- getVariationData(data, conds, cols, key)
     title <- paste(vardata$genename, " variation")
-    p <-plot_ly(vardata, x = ~libs, y = ~count, 
-            color=~conds, colors=c("red", "blue"), type = "bar") %>%
+    
+    p <- plot_ly(vardata, x = ~libs, y = ~count, 
+                 color=~conds, colors=c("Red", "Blue"),
+                 type = "bar")
+    p <- p %>% 
         plotly::layout(title = title,
-            xaxis = list(title = "Samples", categoryorder = "array", 
-            categoryarray = vardata$libs),
+            xaxis = list(title = "Conditions"),
             yaxis = list(title = "Read Count"),
-            margin = list(pad=10))
+            height=input$height, width=input$width,
+            margin = list(l = input$left,
+                          b = input$bottom,
+                          t = input$top,
+                          r = input$right
+            ))
     p$elementId <- NULL
     p
 }
