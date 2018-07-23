@@ -7,6 +7,8 @@
 getCompSelection(name = NULL, count = NULL)
 }
 \arguments{
+\item{name, }{the name of the selectInput}
+
 \item{count, }{comparison count}
 }
 \description{
@@ -17,5 +19,5 @@ DEBrowser.
 \code{getCompSelection}
 }
 \examples{
-    x <- getCompSelection(count = 2)
+    x <- getCompSelection(name="comp", count = 2)
 }

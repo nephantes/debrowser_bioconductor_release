@@ -1,5 +1,6 @@
 library(debrowser)
-
+library(plotly)
+source("../../R/barmain.R")
 options(warn =-1)
 
 header <- dashboardHeader(
@@ -8,15 +9,15 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(  sidebarMenu(id="DEAnlysis",
       menuItem("BarMain", tabName = "BarMain"),
       textInput("genename", "Gene/Region Name", value = "Foxa3" ),
-      plotSizeMarginsUI("barmain", h=400)
+      plotSizeMarginsUI("barmain", h=400, t = 30)
 ))
 
 body <- dashboardBody(
   tabItems(
     tabItem(tabName="BarMain", 
         fluidRow(
-            column(12,
-                   getBarMainPlotUI("barmain")))
+        column(12,
+            getBarMainPlotUI("barmain")))
     )
   ))
 

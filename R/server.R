@@ -74,6 +74,7 @@
 #' @importFrom reshape2 melt
 #' @importFrom baySeq getLibsizes getLikelihoods getLikelihoods.NB
 #'             getPriors getPriors.NB nbinomDensity
+#' @importFrom Harman harman reconstructData
 #' @importMethodsFrom baySeq "densityFunction<-" "libsizes<-"
 #' @importFrom clusterProfiler compareCluster enrichKEGG enrichGO
 #' @importFrom DESeq2 DESeq DESeqDataSetFromMatrix results estimateSizeFactors
@@ -243,10 +244,7 @@ deServer <- function(input, output, session) {
             hideObj(c("add_btn","rm_btn","startDE"))
             choicecounter$nc <- 0
         })
-        samples <- reactive({
-            if (is.null(init_data())) return(NULL)
-            getSamples(colnames(init_data()), index = 1)
-        })
+
         output$condReady <- reactive({
             if (!is.null(sel()))
                 choicecounter$nc <- sel()$cc()
@@ -312,10 +310,6 @@ deServer <- function(input, output, session) {
             }
         })
         condmsg <- reactiveValues(text = NULL)
-        explainedData <- reactive({
-            getPCAexplained( df_select(), input )
-        })
-
         selectedMain <- reactiveVal()
         observe({
             if (!is.null(filt_data())) {
@@ -344,10 +338,10 @@ deServer <- function(input, output, session) {
                 })
             }
         })
-        edat <- reactiveValues(val = NULL)
         
         normdat <-  reactive({
-            getNormalizedMatrix(df_select(), input$norm_method)
+            norm <- getNormalizedMatrix(init_data()[,cols()], input$norm_method)
+            getSelectedCols(norm, datasetInput(), input)
         })
 
         df_select <- reactive({
@@ -378,9 +372,6 @@ deServer <- function(input, output, session) {
             }
             else if (input$selectedplot == "QC Heatmap" && !is.null(selectedQCHeat())){
                 ret <- dat[selectedQCHeat()$selGenes(), ]
-            }
-            else if (input$selectedplot == "Search Box" && !is.null(input$genesetarea)){
-                ret <- getGeneSetData(dat, c(input$genesetarea))
             }
             ret
         })
@@ -416,7 +407,7 @@ deServer <- function(input, output, session) {
             genedata <- getEntrezIds(dat[[1]], org)
             i <- input$gotable_rows_selected
             pid <- inputGOstart()$table$ID[i]
-            pv.out <- pathview(gene.data = genedata,
+            pathview(gene.data = genedata,
                  pathway.id = pid,
                  species = substr(inputGOstart()$table$ID[i],0,3),
                  out.suffix = "b.2layer", kegg.native = TRUE)
@@ -546,19 +537,24 @@ deServer <- function(input, output, session) {
         })
         datasetInput <- function(addIdFlag = FALSE){
             tmpDat <- NULL
+            sdata <- NULL
+            if (input$selectedplot != "QC Heatmap"){
+                sdata <- selectedData()
+            }else{
+                sdata <- isolate(selectedData())
+            }
             if (buttonValues$startDE) {
                 mergedCompDat <- NULL
                 if (input$dataset == "comparisons"){
                     mergedCompDat <- mergedComp()
                 }
                 tmpDat <- getSelectedDatasetInput(filt_data(), 
-                     isolate(selectedData()), getMostVaried(),
+                     sdata, getMostVaried(),
                      mergedCompDat, input)
             }
             else{
-                
                 tmpDat <- getSelectedDatasetInput(init_data(), 
-                     getSelected = isolate(selectedData()),
+                     getSelected = sdata,
                      getMostVaried = getMostVaried(),
                      input = input)
             }

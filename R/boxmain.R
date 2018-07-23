@@ -36,18 +36,18 @@ getBoxMainPlotUI <- function(id) {
 #'
 debrowserboxmainplot <- function(input = NULL, output = NULL, session = NULL, data = NULL,
                                   conds = NULL, cols = NULL, key=NULL) {
-  if(is.null(data)) return(NULL)
-  output$BoxMain <- renderPlotly({
-    getBoxMainPlot(data, conds, cols, key)
-  })
-
-  output$BoxMainUI <- renderUI({
+    if(is.null(data)) return(NULL)
+    output$BoxMain <- renderPlotly({
+        getBoxMainPlot(data, conds, cols, key, title="", input)
+    })
+    
+    output$BoxMainUI <- renderUI({
     shinydashboard::box(
-      collapsible = TRUE, title = session$ns("plot"), status = "primary", 
-      solidHeader = TRUE, width = session$ns("width"),
-      draggable = TRUE,  plotlyOutput(session$ns("BoxMain"),
-                                      width = input$width, height=input$height))
-  })
+        collapsible = TRUE, title = session$ns("plot"), status = "primary", 
+        solidHeader = TRUE, width = NULL,
+        draggable = TRUE,  plotlyOutput(session$ns("BoxMain"),
+            height=input$height, width=input$width))
+    })
 }
 
 #' BoxMainPlotControlsUI
@@ -64,7 +64,7 @@ debrowserboxmainplot <- function(input = NULL, output = NULL, session = NULL, da
 BoxMainPlotControlsUI <- function(id) {
   ns <- NS(id)
   shinydashboard::menuItem(paste0(id, " - Options"),
-                           textInput(ns("breaks"), "Breaks", value = "100" )
+      textInput(ns("breaks"), "Breaks", value = "100" )
   )
 }
 
@@ -77,24 +77,28 @@ BoxMainPlotControlsUI <- function(id) {
 #' @param cols, cols
 #' @param key, key
 #' @param title, title
-#'
+#' @param input, input
 #' @export
 #'
 #' @examples
 #'     getBoxMainPlot()
 #'
-getBoxMainPlot <- function(data=NULL, conds=NULL, cols = NULL, key=NULL, title = ""){
+getBoxMainPlot <- function(data=NULL, conds=NULL, cols = NULL, key=NULL, title = "", input = NULL){
   if (is.null(data)) return(NULL)
   vardata <- getVariationData(data, conds, cols, key)
-  
   title <- paste(vardata$genename, " variation")
-
   p <- plot_ly(vardata, x = ~conds, y = ~count, 
                color=~conds, colors=c("Red", "Blue"),
                boxpoints = "all", type = "box") %>%
-    plotly::layout(title = title,
+       plotly::layout(title = title,
                    xaxis = list(title = "Conditions"),
-                   yaxis = list(title = "Read Count"))
+                   yaxis = list(title = "Read Count"),
+                   height=input$height, width=input$width,
+                   margin = list(l = input$left,
+                                 b = input$bottom,
+                                 t = input$top,
+                                 r = input$right
+                   ))
   p$elementId <- NULL
   p
 }

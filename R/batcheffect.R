@@ -26,7 +26,6 @@ debrowserbatcheffect <- function(input, output, session, ldata = NULL) {
             countData <- getNormalizedMatrix(ldata$count, method=input$norm_method)
         }
     })
-    
     withProgress(message = 'Batch Effect Correction', detail = "Adjusting the Data", value = NULL, {
     if (input$batchmethod == "Combat"){
         batchdata$count <- correctCombat(input, countData, ldata$meta)
@@ -43,7 +42,7 @@ debrowserbatcheffect <- function(input, output, session, ldata = NULL) {
   
   output$batchfields <- renderUI({
     if (!is.null(ldata$meta))
-        list( conditionalPanel(condition <- paste0("input['", session$ns("batchmethod"),"']!='none'"),
+        list( conditionalPanel(condition = paste0("input['", session$ns("batchmethod"),"']!='none'"),
              selectGroupInfo( ldata$meta, input, session$ns("treatment"), "Treatment"),
              selectGroupInfo( ldata$meta, input, session$ns("batch"), "Batch")))
   })
@@ -115,7 +114,7 @@ batchEffectUI <- function (id) {
                 uiOutput(ns("afterbatchtable"))
           )
         ),
-        conditionalPanel(condition <- paste0("input['", ns("submitBatchEffect"),"']"),
+        conditionalPanel(condition = paste0("input['", ns("submitBatchEffect"),"']"),
         actionButton("goDE", "Go to DE Analysis", styleclass = "primary"),
         actionButton("goQCplots", "Go to QC plots", styleclass = "primary"))),
       shinydashboard::box(title = "Plots",
@@ -191,7 +190,7 @@ normalizationMethods <- function(id) {
 batchMethod <- function(id) {
   ns <- NS(id)
   selectInput(ns("batchmethod"), "Correction Method:",
-              choices <- c("none", "Combat", "Harman"),
+              choices = c("none", "Combat", "Harman"),
                selected='none'
   )
 }

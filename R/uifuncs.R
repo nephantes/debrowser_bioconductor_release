@@ -52,8 +52,8 @@ getMainPlotsLeftMenu <- function() {
         shinydashboard::menuItem("Heatmap Options", startExpanded=FALSE,
         heatmapControlsUI("heatmap"),
         plotSizeMarginsUI("heatmap", w=600, h=360)),
-        plotSizeMarginsUI("barmain", w=600,h=400),
-        plotSizeMarginsUI("boxmain", w=600, h=400)
+        plotSizeMarginsUI("barmain", w=600,h=400, t=30),
+        plotSizeMarginsUI("boxmain", w=600, h=400, t=30)
         )
     return(mainPlotsLeftMenu)
 }
@@ -518,7 +518,7 @@ hideObj <- function(btns = NULL) {
 #'
 #' @export
 getKEGGModal<-function(){
-    a <- bsModal("modalExample", "KEGG Pathway", "KeggPathway", size = "large",
+    bsModal("modalExample", "KEGG Pathway", "KeggPathway", size = "large",
     div(style = "display:block;overflow-y:auto; overflow-x:auto;",imageOutput("KEGGPlot")))
 }
 
@@ -538,12 +538,13 @@ getKEGGModal<-function(){
 #' @export
 #'
 getDownloadSection <- function(choices=NULL) {
-    list(conditionalPanel( (condition <- "input.methodtabs!='panel0'"),
+    list(conditionalPanel( (condition = "input.methodtabs!='panel0'"),
         shinydashboard::menuItem(" Select Plot Options",                
         selectInput("dataset", "Choose a dataset:",
         choices = choices),
+        conditionalPanel( (condition = "input.dataset=='selected'"),
         selectInput("selectedplot", "The plot used in selection:",
-        choices = c("Main Plot", "Main Heatmap", "QC Heatmap", "Search Box")),
+        choices = c("Main Plot", "Main Heatmap", "QC Heatmap"))),
         selectInput("norm_method", "Normalization Method:",
         c("none", "MRN", "TMM", "RLE", "upperquartile")),
         downloadButton("downloadData", "Download Data"),
