@@ -37,6 +37,7 @@ debrowserbatcheffect <- function(input, output, session, ldata = NULL) {
         batchdata$count <-  countData
     }
     })
+    
     batchdata$meta <- ldata$meta
   })
   
@@ -88,6 +89,7 @@ debrowserbatcheffect <- function(input, output, session, ldata = NULL) {
 #'
 batchEffectUI <- function (id) {
   ns <- NS(id)
+
   list(
     fluidRow(
         shinydashboard::box(title = "Batch Effect Correction and Normalization",
@@ -127,10 +129,10 @@ batchEffectUI <- function (id) {
                     column(2,  
                         shinydashboard::box(title = "PCA Controls",
                         solidHeader = T, status = "info",  width = 12, 
-                        tabsetPanel(
-                        tabPanel ("<== Before",
+                        tabsetPanel( id = ns("pcacontrols"),
+                        tabPanel ("Before",
                         pcaPlotControlsUI(ns("beforeCorrectionPCA"))),
-                        tabPanel ( "After ==>",
+                        tabPanel ( "After",
                         pcaPlotControlsUI(ns("afterCorrectionPCA")))))),
                     column(5,
                         getPCAPlotUI(ns("afterCorrectionPCA")))
@@ -152,7 +154,7 @@ batchEffectUI <- function (id) {
             )
         )
       )
-    ))
+    ), getPCAcontolUpdatesJS())
 }
 #' normalizationMethods
 #'

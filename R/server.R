@@ -27,7 +27,7 @@
 #'             updateQueryString callModule enableBookmarking htmlOutput
 #'             onRestored NS reactiveVal withProgress tableOutput
 #'             selectizeInput fluidRow div renderPrint renderImage
-#'             verbatimTextOutput imageOutput renderTable
+#'             verbatimTextOutput imageOutput renderTable incProgress
 #' @importFrom shinyjs show hide enable disable useShinyjs extendShinyjs
 #'             js inlineCSS onclick
 #' @importFrom d3heatmap d3heatmap renderD3heatmap d3heatmapOutput
@@ -83,7 +83,7 @@
 #'             exactTest estimateCommonDisp glmFit
 #' @importFrom shinydashboard dashboardHeader dropdownMenu messageItem
 #'             dashboardPage dashboardSidebar sidebarMenu dashboardBody
-#'             
+#'             updateTabItems menuItem tabItems tabItem
 #' @importFrom limma lmFit voom eBayes topTable
 #' @importFrom sva ComBat
 #' @importFrom RCurl getURL

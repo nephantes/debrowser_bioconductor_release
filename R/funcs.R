@@ -640,3 +640,42 @@ getTabUpdateJS<-function(){
                       })
                       "))
 }
+#' getPCAcontolUpdatesJS
+#' in the prep menu we have two PCA plots to show how batch effect correction worked. 
+#' One set of PCA input controls updates two PCA plots with this JS.
+#' @return the JS for tab updates
+#'
+#' @examples
+#'     x<- getTabUpdateJS()
+#'
+#' @export
+getPCAcontolUpdatesJS<-function(){
+    tags$script(HTML("  
+                        var nameInputs = ['pcselx', 'pcsely'];
+                        $.each(nameInputs, function (el) {
+                                              $(function () {
+                                              $(document).on('change keyup', '#batcheffect-beforeCorrectionPCA-'+nameInputs[el], function () {
+                                              var value = $(this).val();
+                                              $('#batcheffect-afterCorrectionPCA-'+nameInputs[el]).val(value)
+                                              $('#batcheffect-afterCorrectionPCA-'+nameInputs[el]).trigger('change');
+                                              });
+                                              });
+                        });
+                        
+                        var nameDropdowns = ['textonoff', 'legendSelect', 'color_pca','shape_pca'];
+                        $.each(nameDropdowns, function (el) {
+                            $(function () {
+                                $(document).on('change', '#batcheffect-beforeCorrectionPCA-'+nameDropdowns[el], function () {
+                                    var value = $(this).val();
+                                    $('#batcheffect-afterCorrectionPCA-'+nameDropdowns[el])[0].selectize.setValue(value)
+                                    $('#batcheffect-afterCorrectionPCA-'+nameDropdowns[el]).trigger('change');
+                                });
+                            });
+                        });
+                     $($('#batcheffect-pcacontrols')[0]).css('display', 'none');                     
+                     $(document).on('click','#batcheffect-submitBatchEffect',function () {
+                     setTimeout(function () { $($($('#batcheffect-pcacontrols')[0]).children()[1]).children().trigger('click')
+                     setTimeout(function () { $($($('#batcheffect-pcacontrols')[0]).children()[0]).children().trigger('click')}, 1000);
+                     }, 1000); })
+                     "))
+}
