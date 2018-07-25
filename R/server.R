@@ -147,12 +147,20 @@ deServer <- function(input, output, session) {
                     batch(callModule(debrowserbatcheffect, "batcheffect", filtd()$filter()))
                 }
             })
-            observeEvent (input$goDE, {
+
+            observeEvent (input$goDEFromFilter, {
+                if(is.null(batch())) batch(setBatch(filtd()))
                 updateTabItems(session, "DataPrep", "CondSelect")
-                sel(debrowsercondselect(input, output, session, batch()$BatchEffect()$count, batch()$BatchEffect()$meta))
+                sel(debrowsercondselect(input, output, session,
+                    batch()$BatchEffect()$count, batch()$BatchEffect()$meta))
                 choicecounter$nc <- sel()$cc()
             })
-            
+            observeEvent (input$goDE, {
+                updateTabItems(session, "DataPrep", "CondSelect")
+                sel(debrowsercondselect(input, output, session,
+                    batch()$BatchEffect()$count, batch()$BatchEffect()$meta))
+                choicecounter$nc <- sel()$cc()
+            })
             observeEvent (input$startDE, {
                 togglePanels(0, c(0), session)
                 dc(prepDataContainer(batch()$BatchEffect()$count, sel()$cc(), input))
@@ -160,7 +168,7 @@ deServer <- function(input, output, session) {
                
                 buttonValues$startDE <- TRUE
                 buttonValues$goQCplots <- FALSE
-                hideObj(c("load-uploadFile","load-demo", "load-demo2", "goQCplots"))
+                hideObj(c("load-uploadFile","load-demo", "load-demo2", "goQCplots", "goQCplotsFromFilter"))
             })
 
             observeEvent (input$goMain, {
@@ -251,7 +259,13 @@ deServer <- function(input, output, session) {
             choicecounter$nc
         })
         outputOptions(output, 'condReady', suspendWhenHidden = FALSE)
-
+        observeEvent(input$goQCplotsFromFilter, {
+            if(is.null(batch())) batch(setBatch(filtd()))
+            buttonValues$startDE <- FALSE
+            buttonValues$goQCplots <- TRUE
+            updateTabItems(session, "menutabs", "discover")
+            togglePanels(2, c( 0, 2, 4), session)
+        })
         observeEvent(input$goQCplots, {
             buttonValues$startDE <- FALSE
             buttonValues$goQCplots <- TRUE
@@ -340,7 +354,10 @@ deServer <- function(input, output, session) {
         })
         
         normdat <-  reactive({
-            norm <- getNormalizedMatrix(init_data()[,cols()], input$norm_method)
+            dat <- init_data()
+            if(!is.null(cols()))
+                dat <- init_data()[,cols()]
+            norm <- getNormalizedMatrix(dat, input$norm_method)
             getSelectedCols(norm, datasetInput(), input)
         })
 
@@ -562,6 +579,15 @@ deServer <- function(input, output, session) {
                 tmpDat <- addID(tmpDat)
             return(tmpDat)
         }
+        output$metaFile <-  renderTable({
+            read.delim(system.file("extdata", "www", "metaFile.txt",
+                package = "debrowser"), header=TRUE, skipNul = TRUE)
+        })
+        output$countFile <-  renderTable({
+            read.delim(system.file("extdata", "www", "countFile.txt",
+                package = "debrowser"), header=TRUE, skipNul = TRUE)
+        })
+        
         output$downloadData <- downloadHandler(filename = function() {
             paste(input$dataset, "csv", sep = ".")
         }, content = function(file) {

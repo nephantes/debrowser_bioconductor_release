@@ -569,6 +569,33 @@ getTableModal<-function(){
                 wellPanel( DT::dataTableOutput("GOGeneTable"))))
 }
 
+#' setBatch
+#' to skip batch effect correction batch variable set with the filter results
+#'
+#' @param fd, filtered data
+#' @return fd data
+#'
+#' @examples
+#'    
+#'     x <- setBatch()
+#'
+#' @export
+#'
+setBatch <- function(fd = NULL){
+    if(!is.null(fd)){ 
+        batchdata <- reactiveValues(count=NULL, meta = NULL)
+        batchdata$count <-  fd$filter()$count
+        batchdata$meta <-  fd$filter()$meta
+        batcheffectdata <- reactive({
+            ret <- NULL
+            if(!is.null(batchdata$count)){
+                ret <- batchdata
+            }
+            return(ret)
+        })
+        list(BatchEffect=batcheffectdata)
+    }
+}
 #' getTabUpdateJS
 #' prepmenu tab and discovery menu tab updates
 #'
@@ -606,7 +633,7 @@ getTabUpdateJS<-function(){
                       });
                       $('#discoveryMenu > ').css('display', 'none');
                       $(document).on('click', '#goMain', function () {
-                           $('#discoveryMenu > ').css('display', 'block');
+                      $('#discoveryMenu > ').css('display', 'block');
                       });
                       $(document).on('click', '#discoveryMenu', function () {
                       $($('#methodtabs >')[ $('#methodtabs').attr('selectedtab')]).find('a').click()
@@ -614,28 +641,35 @@ getTabUpdateJS<-function(){
                       //hide buttons on entrance
                       $('.sidebar-menu > ').css('display', 'none');
                       $('.sidebar-menu > :nth-child(1)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(2)').css('display', 'inline');
                       $(document).on('click', '#Filter', function () {
                       $('.sidebar-menu > :nth-child(2)').css('display', 'inline');
-                      $('.sidebar-menu > :nth-child(3)').css('display', 'none');
-                      $('.sidebar-menu > :nth-child(4)').css('display', 'none');
-                      $('.sidebar-menu > :nth-child(5)').css('display', 'none');
-                      $('.sidebar-menu > :nth-child(6)').css('display', 'none');
-                      });
-                      $(document).on('click', '#Batch', function () {
                       $('.sidebar-menu > :nth-child(3)').css('display', 'inline');
                       $('.sidebar-menu > :nth-child(4)').css('display', 'none');
                       $('.sidebar-menu > :nth-child(5)').css('display', 'none');
                       $('.sidebar-menu > :nth-child(6)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(7)').css('display', 'none');
                       });
-                      $(document).on('click', '#goDE', function () {
+                      $(document).on('click', '#Batch', function () {
                       $('.sidebar-menu > :nth-child(4)').css('display', 'inline');
                       $('.sidebar-menu > :nth-child(5)').css('display', 'none');
                       $('.sidebar-menu > :nth-child(6)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(7)').css('display', 'none');
+                      });
+                      $(document).on('click', '#goDEFromFilter', function () {
+                      $('.sidebar-menu > :nth-child(5)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(6)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(7)').css('display', 'none');
+                      });
+                      $(document).on('click', '#goDE', function () {
+                      $('.sidebar-menu > :nth-child(5)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(6)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(7)').css('display', 'none');
                       });
                       $(document).on('click', '#startDE', function () {
-                      $('.sidebar-menu > :nth-child(5)').css('display', 'inline');
                       $('.sidebar-menu > :nth-child(6)').css('display', 'inline');
-                      $('.sidebar-menu > :nth-child(1)').css('display', 'none');
+                      $('.sidebar-menu > :nth-child(7)').css('display', 'inline');
+                      $('.sidebar-menu > :nth-child(2)').css('display', 'none');
                       });
                       })
                       "))

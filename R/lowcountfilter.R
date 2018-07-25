@@ -86,30 +86,33 @@ dataLCFUI<- function (id) {
   list(
     fluidRow(
       shinydashboard::box(title = "Low Count Filtering",
-                          solidHeader = T, status = "info",  width = 12, 
-                          fluidRow(
-                            column(5,div(style = 'overflow: scroll',
-                                tableOutput(ns("uploadSummary")),
-                                DT::dataTableOutput(ns("sampleDetails"))),
-                                uiOutput(ns("loadedtable"))
-                            ),
-                            column(2,
-                                   shinydashboard::box(title = "Filtering Methods",
-                                       solidHeader = T, status = "info",
-                                       width = 12, 
-                                       lcfMetRadio(id),
-                                       uiOutput(ns("cutoffLCFMet")),
-                                       actionButton(ns("submitLCF"), label = "Filter", styleclass = "primary")
-                                   )
-                            ),
-                            column(5,div(style = 'overflow: scroll',
-                                 tableOutput(ns("filteredSummary")),
-                                 DT::dataTableOutput(ns("filteredDetails"))),
-                                 uiOutput(ns("filteredtable"))
-                            )
-                          ),
-                          conditionalPanel(condition <- paste0("input['", ns("submitLCF"),"']"),
-                          actionButton("Batch", label = "Batch Effect Correction", styleclass = "primary"))
+          solidHeader = T, status = "info",  width = 12, 
+          fluidRow(
+            column(5,div(style = 'overflow: scroll',
+                tableOutput(ns("uploadSummary")),
+                DT::dataTableOutput(ns("sampleDetails"))),
+                uiOutput(ns("loadedtable"))
+            ),
+            column(2,
+                   shinydashboard::box(title = "Filtering Methods",
+                       solidHeader = T, status = "info",
+                       width = 12, 
+                       lcfMetRadio(id),
+                       uiOutput(ns("cutoffLCFMet")),
+                       actionButton(ns("submitLCF"), label = "Filter", styleclass = "primary")
+                   )
+            ),
+            column(5,div(style = 'overflow: scroll',
+                 tableOutput(ns("filteredSummary")),
+                 DT::dataTableOutput(ns("filteredDetails"))),
+                 uiOutput(ns("filteredtable"))
+            )
+          ),
+          conditionalPanel(condition <- paste0("input['", ns("submitLCF"),"']"),
+          actionButton("Batch", label = "Batch Effect Correction", styleclass = "primary"),
+          conditionalPanel(condition = "!(input.Batch)",
+          actionButton("goDEFromFilter", "Go to DE Analysis", styleclass = "primary"),
+          actionButton("goQCplotsFromFilter", "Go to QC plots", styleclass = "primary")))
       ),
       shinydashboard::box(title = "Histograms",
                           solidHeader = TRUE, status = "info",  width = 12, 
@@ -147,3 +150,4 @@ lcfMetRadio <- function(id) {
                selected='Max'
   )
 }
+

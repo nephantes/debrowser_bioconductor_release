@@ -1,0 +1,7 @@
+samples	treatment	batch
+exper_rep1	cond1	1
+exper_rep2	cond1	2
+exper_rep3	cond1	1
+control_rep1	cond2	2
+control_rep2	cond2	1
+control_rep3	cond2	2
