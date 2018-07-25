@@ -221,10 +221,10 @@ deServer <- function(input, output, session) {
             getAfterLoadMsg()
         })
         output$mainmsgs <- renderUI({
-            if (is.null(condmsg$text))
+            if (is.null(condmsg()))
                 getStartPlotsMsg()
             else
-                condmsg$text 
+                condmsg()
         })
         buttonValues <- reactiveValues(goQCplots = FALSE, goDE = FALSE,
             startDE = FALSE)
@@ -309,12 +309,12 @@ deServer <- function(input, output, session) {
                 }
             }
         })
-        condmsg <- reactiveValues(text = NULL)
+        condmsg <- reactiveVal()
         selectedMain <- reactiveVal()
         observe({
             if (!is.null(filt_data())) {
-            condmsg$text <- getCondMsg(dc(), input$compselect,
-                cols(), conds())
+            condmsg(getCondMsg(dc(), input$compselect,
+                cols(), conds()))
             selectedMain(callModule(debrowsermainplot, "main", filt_data()))
             }
         })

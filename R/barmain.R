@@ -20,15 +20,11 @@ debrowserbarmainplot <- function(input, output, session, data = NULL,
                                  conds=NULL, cols = NULL, key=NULL) {
     if(is.null(data)) return(NULL)
     output$BarMainUI <- renderUI({
-        list(fluidRow(
-            column(12,
-                   shinydashboard::box(
-                       collapsible = TRUE, title = "BarMain", status = "primary", 
-                       solidHeader = TRUE, width = input$width, height =  input$height + 100,
-                       draggable = TRUE, plotlyOutput(session$ns("BarMain"),
-                                                      height=input$height, width=input$width)
-                   ))))
-
+        shinydashboard::box(
+            collapsible = TRUE, title = session$ns("plot"), status = "primary", 
+            solidHeader = TRUE, width = NULL,
+            draggable = TRUE,  plotlyOutput(session$ns("BarMain"),
+                height=input$height, width=input$width))
     })
     output$BarMain <- renderPlotly({
         getBarMainPlot(data, conds, cols, key, title = "", input =input)

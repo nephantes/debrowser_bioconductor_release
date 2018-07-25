@@ -53,13 +53,10 @@ debrowserheatmap <- function( input, output, session, data = NULL){
     })
     output$heatmapUI <- renderUI({
         if (is.null(input$interactive)) return(NULL)
-        list(fluidRow(
-            column(12,
-                   shinydashboard::box(
-                       collapsible = TRUE, title = "Heatmap", status = "primary", 
-                       solidHeader = TRUE, width = input$width, height =  input$height + 100,
-                       draggable = TRUE, getPlotArea(input, session)
-                   ))))
+        shinydashboard::box(
+            collapsible = TRUE, title = session$ns("Heatmap"), status = "primary", 
+            solidHeader = TRUE, width = NULL,
+            draggable = TRUE,   getPlotArea(input, session))
     })
     
     hselGenes <- reactive({

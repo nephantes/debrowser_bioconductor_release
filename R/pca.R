@@ -257,14 +257,16 @@ getPCAexplained <- function(datasetInput = NULL,
     if (is.null(datasetInput)) return(NULL)
     datexp <- NULL
     pcaset <- NULL
-    
+    size <- length(pca_data$explained)
+    if (size>9)
+        size <- 9
     datexp <- data.frame(cbind(unlist(lapply(
-        c(1:length(pca_data$explained)), 
+        c(1:size), 
         function(x){paste0("PC", x)})), 
         round(pca_data$explained * 100, 2)))
     colnames(datexp) <- c("PCs", "explained")
     datexp$explained <- as.numeric( as.character(datexp$explained) )
-    
+    datexp <- datexp[1:size,]
     var <- pca_data$pca$sdev^2/sum(pca_data$pca$sdev^2)
     
     ## Select the genes for PCA, removing the least variable 

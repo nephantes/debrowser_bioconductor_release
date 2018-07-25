@@ -51,9 +51,9 @@ getMainPlotsLeftMenu <- function() {
         plotSizeMarginsUI("main",  w=600, h=400),
         shinydashboard::menuItem("Heatmap Options", startExpanded=FALSE,
         heatmapControlsUI("heatmap"),
-        plotSizeMarginsUI("heatmap", w=600, h=360)),
-        plotSizeMarginsUI("barmain", w=600,h=400, t=30),
-        plotSizeMarginsUI("boxmain", w=600, h=400, t=30)
+        plotSizeMarginsUI("heatmap", w=600, h=400)),
+        plotSizeMarginsUI("barmain", w=600,h=400, t=90),
+        plotSizeMarginsUI("boxmain", w=600, h=400, t=90)
         )
     return(mainPlotsLeftMenu)
 }
